@@ -16,13 +16,13 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 | **Utilities** | `Ctrl+K` command palette that searches sections, links, docs, commands, templates and shortcuts (arrow keys, Enter, Esc); a scratchpad you can drag, resize and that autosaves; one-off or repeating timers with a WebAudio triple beep, toasts with a snooze button, and live countdowns in the sidebar |
 | **Break room** | 2048 (keyboard and swipe) and Memory Match, both with saved best scores |
 | **Morale** | Joke generator and a lightbox gallery whose images are generated as SVG, so no image files are needed |
-| **Themes** | 5 accent themes plus a separate light mode (`body.light-mode`) that keeps the theme's accent |
+| **Design** | iOS/macOS "Liquid Glass" look: frosted panels (`backdrop-filter: blur(20px) saturate(180%)`) over slowly drifting coloured light, pill buttons, 20px glass cards, a floating sidebar, a single glass clock bar and hover lift. 4 accent themes (`body.theme-*`) plus a frosted-white light mode (`body.light-mode`). Browsers without `backdrop-filter` get solid panels instead |
 
 ## Architecture
 
 - **Config-driven:** everything you see is rendered from the `SITE` object at the top of the script. The HTML holds only empty section shells.
 - **Numbered modules:** the script is split into `// --- N. Name ---` blocks (config, helpers, toasts, theme engine, routing, state, and one block per feature).
-- **State:** every user action is saved to `localStorage` under `SITE.storagePrefix` (`knocko:` by default).
+- **State:** every user action is saved to `localStorage` under `SITE.storagePrefix` (`noc_glass_` by default).
 - **Security:** all dynamic strings go through `esc()` before they reach `innerHTML`.
 - **Theme engine:** each theme is a `body.theme-*` CSS class that redefines the colour tokens. Light mode overrides only the surface and text tokens on `body`.
 
@@ -31,12 +31,13 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 Edit `SITE` in `index.html`:
 
 ```js
-customers:    [{ id, name, tier, platforms, vectors, license, git, manager, chat: { name, url } }]
+customers:    [{ id, name, hero, persona, tier, platforms, vectors, link, git, manager /* TAM */, group }]
+gitBase / chatBase                       // prefixes that turn git: 'git/apex' and group: '#ops-apex' into links
 checklistColumns: [{ id, label }]
 versionTables / versionColumns / versions   // version-tracking tables + seed rows
 shifts:       [{ id, name, icon, start, end, tasks: [{ time, text }] }]
 templates:    [{ id, title, tag, body }]   // use {customer} {service} {ticket} {time}
-timezones: [{ label, tz }]               // tz: null = local
+timezones: [{ label, tz, primary }]      // primary = highlighted HQ clock
 themes: { id: label }                    // each id maps to a body.theme-<id> CSS block
 linkGroups / docs / commands / jokes / gallery
 shortcuts: [{ keys: 'Alt+N', label, action, global }]   // actions map to ACTIONS in block 21

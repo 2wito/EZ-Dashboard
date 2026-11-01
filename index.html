@@ -8,176 +8,242 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1020'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%2322d3ee' font-family='Arial' font-weight='bold'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===== 1. Design Tokens ===== */
+/* ===== 1. Design Tokens — Liquid Glass ===== */
 :root {
-  --bg: #070b16;
-  --surface: #0e1424;
-  --surface-2: #141c30;
-  --surface-3: #1b2540;
-  --border: #22304f;
-  --text: #e6ebf5;
-  --muted: #8a97b3;
-  --accent: #22d3ee;
-  --accent-2: #a78bfa;
-  --accent-rgb: 34,211,238;
-  --ok: #34d399;
-  --warn: #fbbf24;
-  --bad: #f87171;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --sidebar-w: 248px;
-  --font: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
-  --term-bg: #05080f;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Inter, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, "Cascadia Code", Consolas, monospace;
+  --ok: #30d158;
+  --warn: #ffd60a;
+  --bad: #ff453a;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-pill: 9999px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --dur: .2s;
+  --sidebar-w: 272px;
+  --blur: 20px;
+  --glass-filter: blur(var(--blur)) saturate(180%);
+  --glass-filter-hover: blur(25px) saturate(190%);
+  --term-bg: rgba(8, 10, 16, .9);
   --term-text: #c8f7d4;
 }
-/* Derived tokens live on body so they resolve against the active theme class */
+/* Surface tokens live on body so theme + light-mode classes (also on body) can override them */
 body {
-  --bg-grad: radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb),.10), transparent 60%);
-  --glow: 0 0 18px rgba(var(--accent-rgb),.45);
-  --glow-soft: 0 0 10px rgba(var(--accent-rgb),.25);
+  --bg: #05060c;
+  --text: rgba(255, 255, 255, .94);
+  --muted: rgba(235, 235, 245, .58);
+  --glass: rgba(255, 255, 255, .05);
+  --glass-strong: rgba(30, 32, 44, .62);
+  --glass-border: rgba(255, 255, 255, .12);
+  --surface: var(--glass);
+  --surface-2: rgba(255, 255, 255, .06);
+  --surface-3: rgba(255, 255, 255, .11);
+  --border: rgba(255, 255, 255, .12);
+  --border-strong: rgba(255, 255, 255, .22);
+  --highlight: inset 0 1px 0 rgba(255, 255, 255, .08);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, .36), var(--highlight);
+  --shadow-hover: 0 14px 40px 0 rgba(0, 0, 0, .44), inset 0 1px 0 rgba(255, 255, 255, .14);
+  --sheen: rgba(255, 255, 255, .09);
+  --option-bg: #1c1d26;
+  --on-accent: #ffffff;
+  --glow: 0 0 22px rgba(var(--accent-rgb), .45);
+  --glow-soft: 0 0 0 4px rgba(var(--accent-rgb), .18);
 }
 
-/* ===== 1b. Themes (body.theme-*) - declared before light mode so light mode can override surfaces ===== */
-body.theme-cyber  { --accent: #22d3ee; --accent-2: #a78bfa; --accent-rgb: 34,211,238;  --bg: #070b16; --surface: #0e1424; --surface-2: #141c30; --surface-3: #1b2540; --border: #22304f; }
-body.theme-matrix { --accent: #4ade80; --accent-2: #22d3ee; --accent-rgb: 74,222,128;  --bg: #050c08; --surface: #0b1510; --surface-2: #101e17; --surface-3: #16281f; --border: #1e3a2c; }
-body.theme-ember  { --accent: #fb923c; --accent-2: #f43f5e; --accent-rgb: 251,146,60;  --bg: #0f0907; --surface: #18110d; --surface-2: #211813; --surface-3: #2b1f18; --border: #3d2b20; }
-body.theme-violet { --accent: #c084fc; --accent-2: #f472b6; --accent-rgb: 192,132,252; --bg: #0b0716; --surface: #140e24; --surface-2: #1b1430; --surface-3: #241b3f; --border: #33285a; }
-body.theme-arctic { --accent: #60a5fa; --accent-2: #5eead4; --accent-rgb: 96,165,250;  --bg: #060a12; --surface: #0d1320; --surface-2: #131b2c; --surface-3: #1a2439; --border: #24324d; }
+/* ===== 1b. Themes (body.theme-*) — accent + ambient light colours ===== */
+body.theme-liquid { --accent: #0a84ff; --accent-2: #bf5af2; --accent-rgb: 10,132,255;  --glow-a: #0a84ff; --glow-b: #bf5af2; --glow-c: #64d2ff; }
+body.theme-aurora { --accent: #30d158; --accent-2: #64d2ff; --accent-rgb: 48,209,88;   --glow-a: #30d158; --glow-b: #64d2ff; --glow-c: #5e5ce6; --on-accent: #032b10; }
+body.theme-sunset { --accent: #ff9f0a; --accent-2: #ff375f; --accent-rgb: 255,159,10;  --glow-a: #ff9f0a; --glow-b: #ff375f; --glow-c: #bf5af2; --on-accent: #2b1700; }
+body.theme-indigo { --accent: #5e5ce6; --accent-2: #ff2d55; --accent-rgb: 94,92,230;   --glow-a: #5e5ce6; --glow-b: #ff2d55; --glow-c: #0a84ff; }
 
-/* ===== 2. Light Mode (decoupled: overrides surfaces only, keeps theme accent) ===== */
+/* ===== 2. Glass Light Mode (frosted white layers, vibrant accents) ===== */
 body.light-mode {
-  --bg: #f3f5fa;
-  --bg-grad: radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb),.12), transparent 60%);
-  --surface: #ffffff;
-  --surface-2: #f6f8fc;
-  --surface-3: #eceff6;
-  --border: #dbe1ec;
-  --text: #121826;
-  --muted: #5b6780;
-  --shadow: 0 8px 24px rgba(20,30,60,.08);
+  --bg: #eef1f8;
+  --text: rgba(0, 0, 0, .88);
+  --muted: rgba(60, 60, 67, .64);
+  --glass: rgba(255, 255, 255, .55);
+  --glass-strong: rgba(255, 255, 255, .78);
+  --glass-border: rgba(255, 255, 255, .75);
+  --surface-2: rgba(255, 255, 255, .55);
+  --surface-3: rgba(0, 0, 0, .06);
+  --border: rgba(0, 0, 0, .09);
+  --border-strong: rgba(0, 0, 0, .16);
+  --highlight: inset 0 1px 0 rgba(255, 255, 255, .9);
+  --shadow: 0 8px 32px 0 rgba(31, 38, 135, .12), var(--highlight);
+  --shadow-hover: 0 14px 40px 0 rgba(31, 38, 135, .18), inset 0 1px 0 #fff;
+  --sheen: rgba(255, 255, 255, .55);
+  --option-bg: #ffffff;
+  --on-accent: #ffffff;
+  --ok: #248a3d;
+  --warn: #a05a00;
+  --bad: #d70015;
 }
-body.light-mode .term { --term-bg: #0b1220; }
+body.light-mode.theme-liquid { --accent: #007aff; --accent-rgb: 0,122,255; }
+body.light-mode.theme-aurora { --accent: #248a3d; --accent-rgb: 36,138,61; }
+body.light-mode.theme-sunset { --accent: #c93400; --accent-rgb: 201,52,0; }
+body.light-mode.theme-indigo { --accent: #5856d6; --accent-rgb: 88,86,214; }
+body.light-mode .term { --term-bg: #0d1220; }
+body.light-mode::before { opacity: .55; }
 
 /* ===== 3. Base ===== */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  margin: 0; font-family: var(--font); font-size: 14.5px; line-height: 1.5;
-  color: var(--text); background: var(--bg-grad), var(--bg); background-attachment: fixed;
-  transition: background-color .3s, color .3s;
-  -webkit-font-smoothing: antialiased;
+  margin: 0; min-height: 100vh; font-family: var(--font); font-size: 14.5px; line-height: 1.5; letter-spacing: -.003em;
+  color: var(--text); background: var(--bg);
+  transition: background-color .4s var(--ease), color var(--dur) var(--ease);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
-h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; letter-spacing: -.01em; }
+/* Ambient light glows that sit underneath every glass layer */
+body::before {
+  content: ""; position: fixed; inset: -20vmax; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38vmax 38vmax at 18% 22%, color-mix(in srgb, var(--glow-a) 45%, transparent), transparent 62%),
+    radial-gradient(34vmax 34vmax at 86% 14%, color-mix(in srgb, var(--glow-b) 36%, transparent), transparent 62%),
+    radial-gradient(44vmax 44vmax at 62% 96%, color-mix(in srgb, var(--glow-c) 30%, transparent), transparent 62%);
+  filter: blur(40px) saturate(140%);
+  animation: drift 30s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform: translate3d(3vmax, -2vmax, 0) scale(1.08); } }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; letter-spacing: -.02em; font-weight: 700; }
 a { color: var(--accent); text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; }
 input, select, textarea {
   font: inherit; color: var(--text); background: var(--surface-2);
-  border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 11px; outline: none;
-  transition: border-color .2s, box-shadow .2s;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; outline: none;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);
 }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.18); }
+input:focus, select:focus, textarea:focus { border-color: rgba(var(--accent-rgb), .7); box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .18); background: var(--surface-3); }
+select option { background: var(--option-bg); color: var(--text); }
 textarea { resize: vertical; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: var(--glow-soft); }
+::placeholder { color: var(--muted); opacity: .8; }
+:focus-visible { outline: 2px solid rgba(var(--accent-rgb), .9); outline-offset: 2px; }
 * { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background-color: var(--accent); }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(var(--accent-rgb), .6); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 kbd {
-  font-family: var(--font-mono); font-size: 11px; padding: 2px 6px; border-radius: 5px;
+  font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: 6px;
   background: var(--surface-3); border: 1px solid var(--border); color: var(--muted);
 }
 
-/* ===== 4. Layout: Sidebar + Main ===== */
+/* ===== 3b. Glass Material (shared by every panel) ===== */
+.sidebar, .card, .clocks, .hero, .stat, .tpl, .book, .link-tile, .term, .topbar, .palette, .toast, .scratch {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+.stat, .tpl, .book, .link-tile, .g-item {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease),
+              -webkit-backdrop-filter var(--dur) var(--ease), backdrop-filter var(--dur) var(--ease), opacity .2s, filter .2s;
+}
+.stat:hover, .tpl:hover, .book:hover, .link-tile:hover {
+  transform: translateY(-2px);
+  -webkit-backdrop-filter: var(--glass-filter-hover);
+  backdrop-filter: var(--glass-filter-hover);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--border-strong);
+}
+
+/* ===== 4. Layout: Floating Glass Sidebar + Main ===== */
 .app { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
 .sidebar {
-  position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column;
-  background: var(--surface); border-right: 1px solid var(--border); padding: 18px 14px; z-index: 40;
+  position: sticky; top: 12px; height: calc(100vh - 24px); margin: 12px 0 12px 12px; overflow-y: auto;
+  display: flex; flex-direction: column; padding: 18px 12px; z-index: 40; border-radius: 24px;
 }
-.brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px; }
+.brand { display: flex; align-items: center; gap: 11px; padding: 4px 8px 18px; }
 .brand-logo {
-  width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 700; color: #04121a;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: var(--glow);
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none;
+  font-family: var(--font-display); font-weight: 800; color: var(--on-accent);
+  background: linear-gradient(145deg, var(--accent), var(--accent-2));
+  box-shadow: var(--glow), inset 0 1px 0 rgba(255, 255, 255, .35);
 }
-.brand-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.15; }
+.brand-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.15; letter-spacing: -.02em; }
 .brand-sub { font-size: 11px; color: var(--muted); }
-.nav-group-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding: 14px 10px 6px; }
+.nav-group-label { font-size: 11px; font-weight: 600; letter-spacing: .02em; color: var(--muted); padding: 14px 12px 6px; }
 .nav-btn {
-  width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; background: none;
-  border-radius: var(--radius-sm); color: var(--muted); text-align: left; position: relative; transition: background .15s, color .15s;
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 0; background: none;
+  border-radius: var(--radius-sm); color: var(--muted); text-align: left; position: relative;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .nav-btn:hover { background: var(--surface-2); color: var(--text); }
-.nav-btn.active { background: rgba(var(--accent-rgb),.12); color: var(--text); }
+.nav-btn:active { transform: scale(.98); }
+.nav-btn.active { background: rgba(var(--accent-rgb), .16); color: var(--text); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), .22); }
 .nav-btn.active::before {
-  content: ""; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0;
+  content: ""; position: absolute; left: 3px; top: 50%; height: 16px; width: 3px; border-radius: 3px; transform: translateY(-50%);
   background: var(--accent); box-shadow: 0 0 10px var(--accent);
 }
 .nav-ico { width: 20px; height: 20px; display: grid; place-items: center; flex: none; }
 .nav-ico svg { width: 18px; height: 18px; }
 .nav-btn.active .nav-ico { color: var(--accent); }
-.nav-label { flex: 1; }
+.nav-label { flex: 1; font-weight: 500; }
 .badge {
-  min-width: 22px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; text-align: center;
+  min-width: 22px; padding: 1px 8px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; text-align: center;
   background: var(--surface-3); color: var(--muted);
 }
-.badge.hot { background: rgba(248,113,113,.18); color: var(--bad); }
-.badge.accent { background: rgba(var(--accent-rgb),.18); color: var(--accent); }
+.badge.hot { background: rgba(255, 69, 58, .18); color: var(--bad); }
+.badge.accent { background: rgba(var(--accent-rgb), .18); color: var(--accent); }
 .sidebar-foot { margin-top: auto; padding-top: 16px; display: grid; gap: 8px; }
 .theme-row { display: flex; gap: 8px; align-items: center; }
-.theme-row select { flex: 1; padding: 7px 9px; }
+.theme-row select { flex: 1; padding: 7px 12px; border-radius: var(--radius-pill); }
 .icon-btn {
-  border: 1px solid var(--border); background: var(--surface-2); border-radius: var(--radius-sm);
-  padding: 7px 10px; line-height: 1; transition: border-color .15s, background .15s;
+  border: 1px solid var(--border); background: var(--surface-2); border-radius: var(--radius-pill);
+  min-width: 34px; height: 34px; padding: 0 10px; line-height: 1;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
-.icon-btn:hover { border-color: var(--accent); }
+.icon-btn:hover { background: var(--surface-3); transform: translateY(-1px); }
 .palette-hint {
-  display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; width: 100%;
-  border: 1px dashed var(--border); border-radius: var(--radius-sm); background: none; color: var(--muted); font-size: 12.5px;
+  display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 8px 14px; width: 100%;
+  border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-2); color: var(--muted); font-size: 12.5px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-.palette-hint:hover { border-color: var(--accent); color: var(--text); }
+.palette-hint:hover { background: var(--surface-3); color: var(--text); }
 
-.main { min-width: 0; padding: 22px 28px 80px; }
+/* Mobile drawer backdrop — must never be a grid item, or it steals the main column */
+.scrim { position: fixed; inset: 0; z-index: 35; display: none; background: rgba(0, 0, 0, .35); }
+.scrim.open { display: block; }
+.main { min-width: 0; padding: 24px 28px 80px; }
 .topbar { display: none; }
 
-/* ===== 5. Clocks Bar ===== */
+/* ===== 5. Glass World Clocks Bar ===== */
 .clocks {
-  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: thin;
+  display: flex; overflow-x: auto; padding: 6px; margin-bottom: 18px; border-radius: var(--radius); scrollbar-width: thin;
 }
 .clock {
-  flex: 1 0 128px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 9px 12px; display: flex; flex-direction: column;
+  flex: 1 0 150px; padding: 9px 14px; display: flex; flex-direction: column; border-radius: 14px; position: relative;
+  transition: background var(--dur) var(--ease);
 }
-.clock-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; display: flex; justify-content: space-between; gap: 6px; }
-.clock-time { font-family: var(--font-mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.clock + .clock::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 1px; background: var(--border); }
+.clock:hover { background: var(--surface-2); }
+.clock-label { font-size: 11px; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
+.clock-time { font-family: var(--font-display); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 .clock-day { font-size: 11px; color: var(--muted); }
-.clock.local { border-color: rgba(var(--accent-rgb),.5); }
+.clock.local { background: rgba(var(--accent-rgb), .14); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), .25); }
+.clock.local::before, .clock.local + .clock::before { display: none; }
 .clock.local .clock-time { color: var(--accent); }
 .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; align-self: center; }
 .dot.on { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .dot.off { background: var(--muted); opacity: .5; }
 
-/* ===== 6. Sections & Cards ===== */
-.page-section { display: none; animation: fadeUp .35s ease both; }
+/* ===== 6. Sections, Glass Cards & Pill Buttons ===== */
+.page-section { display: none; animation: fadeUp .35s var(--ease) both; }
 .page-section.active { display: block; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 6px 0 16px; }
-.section-head h2 { font-size: 24px; }
+.section-head h2 { font-size: 28px; letter-spacing: -.03em; }
 .section-head p { margin: 4px 0 0; color: var(--muted); }
-.card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 18px; box-shadow: var(--shadow);
-}
+.card { border-radius: var(--radius); padding: 20px; transition: border-color var(--dur) var(--ease); }
+.card:hover { border-color: var(--border-strong); }
 .card + .card { margin-top: 16px; }
-.card-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-.card-title h3 { font-size: 16px; }
+.card-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.card-title h3 { font-size: 17px; }
 .grid { display: grid; gap: 16px; }
 .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -187,56 +253,57 @@ kbd {
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .spacer { flex: 1; }
 .btn {
-  border: 1px solid var(--border); background: var(--surface-2); padding: 8px 14px; border-radius: var(--radius-sm);
-  font-weight: 500; transition: border-color .15s, background .15s, transform .1s; white-space: nowrap;
+  border: 1px solid var(--border); background: var(--surface-2); padding: 8px 16px; border-radius: var(--radius-pill);
+  font-weight: 500; white-space: nowrap;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-.btn:hover { border-color: var(--accent); }
-.btn:active { transform: translateY(1px); }
-.btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; border-color: transparent; font-weight: 600; }
-.btn.primary:hover { filter: brightness(1.08); }
-.btn.danger:hover { border-color: var(--bad); color: var(--bad); }
-.btn.sm { padding: 5px 10px; font-size: 12.5px; }
+.btn:hover { background: var(--surface-3); border-color: var(--border-strong); transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(.97); }
+.btn.primary {
+  background: var(--accent); color: var(--on-accent); border-color: transparent; font-weight: 600;
+  box-shadow: 0 6px 18px rgba(var(--accent-rgb), .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.btn.primary:hover { filter: brightness(1.08); box-shadow: 0 10px 24px rgba(var(--accent-rgb), .45), inset 0 1px 0 rgba(255, 255, 255, .3); }
+.btn.danger:hover { border-color: rgba(255, 69, 58, .5); color: var(--bad); background: rgba(255, 69, 58, .1); }
+.btn.sm { padding: 5px 12px; font-size: 12.5px; }
 .empty { padding: 26px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-sm); }
 
-/* ===== 7. Hero ===== */
+/* ===== 7. Glass Hero ===== */
 .hero {
-  position: relative; overflow: hidden; border-radius: calc(var(--radius) + 4px); padding: 30px 30px 26px;
-  border: 1px solid var(--border); margin-bottom: 18px;
+  position: relative; overflow: hidden; border-radius: 28px; padding: 34px 32px 28px; margin-bottom: 18px;
   background:
-    radial-gradient(500px 220px at 15% 0%, rgba(var(--accent-rgb),.22), transparent 70%),
-    radial-gradient(500px 260px at 100% 100%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 70%),
-    var(--surface);
+    radial-gradient(600px 260px at 8% -10%, rgba(var(--accent-rgb), .30), transparent 70%),
+    radial-gradient(520px 280px at 100% 115%, color-mix(in srgb, var(--accent-2) 28%, transparent), transparent 70%),
+    var(--glass);
 }
-.hero::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
-  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 34px 34px; mask-image: linear-gradient(90deg, transparent, #000 60%);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+.hero::after { /* specular sheen across the glass */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, var(--sheen) 0%, transparent 38%);
 }
 .hero > * { position: relative; z-index: 1; }
-.hero-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: .18em; color: var(--accent); font-weight: 600; }
+.hero-kicker { font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
 .hero-title {
-  font-size: clamp(30px, 5vw, 52px); font-weight: 700; margin: 6px 0 4px; line-height: 1.05;
-  background: linear-gradient(90deg, var(--text), var(--accent) 55%, var(--accent-2));
+  font-size: clamp(32px, 5.2vw, 56px); font-weight: 800; margin: 6px 0 6px; line-height: 1.02; letter-spacing: -.04em;
+  background: linear-gradient(100deg, var(--text) 10%, var(--accent) 55%, var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb),.3));
+  filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), .3));
   animation: glow 4s ease-in-out infinite;
 }
-@keyframes glow { 50% { filter: drop-shadow(0 0 10px rgba(var(--accent-rgb),.45)); } }
-.hero-greet { font-size: 17px; margin: 0; }
-.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+@keyframes glow { 50% { filter: drop-shadow(0 0 16px rgba(var(--accent-rgb), .5)); } }
+.hero-greet { font-size: 17px; margin: 0; color: var(--text); opacity: .9; }
+.hero-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 .chip {
-  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-pill); font-size: 12.5px;
   background: var(--surface-2); border: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 18px; }
-.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: transform .15s, border-color .15s; }
-.stat:hover { transform: translateY(-2px); border-color: rgba(var(--accent-rgb),.5); }
-.stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-.stat-value { font-family: var(--font-display); font-size: 30px; font-weight: 700; margin-top: 2px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.stat { border-radius: var(--radius); padding: 18px; cursor: pointer; }
+.stat-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.stat-value { font-family: var(--font-display); font-size: 32px; font-weight: 700; margin-top: 2px; letter-spacing: -.03em; }
 .stat-sub { font-size: 12px; color: var(--muted); }
-.progress { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; margin-top: 10px; }
-.progress > span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .4s; }
+.progress { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; margin-top: 12px; }
+.progress > span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .4s var(--ease); }
 
 /* ===== 8. Tables & Matrix ===== */
 .table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
@@ -288,7 +355,7 @@ th.mx-head span { display: block; }
 .shift-col.current { border-color: rgba(var(--accent-rgb),.6); box-shadow: var(--glow-soft), var(--shadow); }
 .shift-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
 .shift-head h3 { font-size: 15px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #04121a; font-weight: 700; font-family: var(--font); }
+.now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: var(--on-accent); font-weight: 700; font-family: var(--font); }
 .shift-col .check-item { padding: 8px 10px; font-size: 13px; }
 .ci-body { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .ci-stamp { font-size: 11px; color: var(--ok); font-family: var(--font-mono); }
@@ -300,7 +367,7 @@ th.mx-head span { display: block; }
   font-size: 13px; display: inline-flex; gap: 7px; align-items: center;
 }
 .tab.active { border-color: var(--accent); background: rgba(var(--accent-rgb),.14); }
-.tab .now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #04121a; font-weight: 700; }
+.tab .now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
 .check-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .check-item {
   display: flex; gap: 11px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm);
@@ -420,7 +487,7 @@ body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,2
 
 .fab {
   position: fixed; right: 22px; bottom: 22px; width: 54px; height: 54px; border-radius: 50%; border: 0; z-index: 90;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; font-size: 22px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--on-accent); font-size: 22px;
   box-shadow: 0 10px 30px rgba(var(--accent-rgb),.4); transition: transform .2s;
 }
 .fab:hover { transform: scale(1.06) rotate(-6deg); }
@@ -486,7 +553,7 @@ body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,2
 .mem-inner { position: relative; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
 .mem-card.flip .mem-inner, .mem-card.match .mem-inner { transform: rotateY(180deg); }
 .mem-face { position: absolute; inset: 0; border-radius: 10px; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; font-size: clamp(20px, 5vw, 30px); }
-.mem-back { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; font-family: var(--font-display); font-weight: 700; }
+.mem-back { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--on-accent); font-family: var(--font-display); font-weight: 700; }
 .mem-front { background: var(--surface-2); border: 1px solid var(--border); transform: rotateY(180deg); }
 .mem-card.match .mem-front { border-color: var(--ok); box-shadow: inset 0 0 0 2px rgba(52,211,153,.4); }
 .score-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
@@ -522,9 +589,59 @@ body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,2
 }
 @media (max-width: 520px) { .stats { grid-template-columns: 1fr 1fr; gap: 10px; } .stat-value { font-size: 24px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+
+/* ===== 17. Glass Refinements (component overrides — keep last) ===== */
+.tpl, .book, .link-tile { background: var(--glass); border-color: var(--glass-border); }
+.tpl { border-radius: var(--radius); padding: 18px; }
+.link-tile { border-radius: 16px; padding: 11px 13px; }
+.book { border-radius: 8px var(--radius) var(--radius) 8px; }
+.book.hit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-soft), var(--shadow); }
+.term { background: var(--term-bg); border-color: rgba(255, 255, 255, .08); }
+.term-bar { background: rgba(255, 255, 255, .03); border-bottom-color: rgba(255, 255, 255, .06); }
+.overlay { background: rgba(0, 0, 0, .28); -webkit-backdrop-filter: blur(8px) saturate(120%); backdrop-filter: blur(8px) saturate(120%); }
+.palette, .toast, .scratch {
+  background: var(--glass-strong); border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+}
+.palette { border-radius: 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, .45), var(--highlight); }
+.palette input:focus { box-shadow: none; background: transparent; }
+.pal-item { border-radius: 12px; }
+.toast { border-radius: 16px; box-shadow: 0 14px 40px rgba(0, 0, 0, .35), var(--highlight); }
+.scratch { border-radius: 22px; box-shadow: 0 24px 60px rgba(0, 0, 0, .4), var(--highlight); }
+.scratch textarea, .scratch textarea:focus { background: transparent; box-shadow: none; }
+.fab {
+  background: linear-gradient(145deg, var(--accent), var(--accent-2)); color: var(--on-accent);
+  box-shadow: 0 10px 30px rgba(var(--accent-rgb), .45), inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+.table-wrap { border-radius: 14px; background: rgba(255, 255, 255, .02); }
+th { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size: 11px; letter-spacing: .04em; }
+.mx { border-radius: 10px; }
+.col-all { border-radius: var(--radius-pill); background: var(--surface-2); }
+.check-item, .rem, .side-timer, .score { border-radius: 14px; }
+.tab { padding: 7px 14px; transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.tab:hover { background: var(--surface-3); }
+.g2048 { border-radius: 22px; }
+.g2048 div { border-radius: 12px; }
+.mem-face { border-radius: 14px; }
+.g-item { border-radius: 16px; }
+.g-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.lightbox img { border-radius: 22px; }
+.lb-nav, .lb-close { background: rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.cust-persona { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+@media (max-width: 860px) {
+  .sidebar {
+    margin: 0; top: 0; height: 100vh; border-radius: 0 24px 24px 0; background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  }
+  .topbar { background: var(--glass-strong); border-width: 0 0 1px; border-radius: 0; box-shadow: none; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body { --glass: rgba(28, 30, 42, .92); --glass-strong: rgba(28, 30, 42, .97); }
+  body.light-mode { --glass: rgba(255, 255, 255, .94); --glass-strong: #fff; }
+}
 </style>
 </head>
-<body class="theme-cyber">
+<body class="theme-liquid">
 <div class="app">
   <aside class="sidebar" id="sidebar" aria-label="Main navigation">
     <div class="brand">
@@ -602,9 +719,9 @@ const SITE = {
   name: '(K) NOC (K) OUT',
   tagline: 'Team Operations Command Center',
   team: 'NOC Team',
-  storagePrefix: 'knocko:',
-  defaultTheme: 'cyber',
-  themes: { cyber: 'Cyber Cyan', matrix: 'Matrix Green', ember: 'Ember', violet: 'Ultraviolet', arctic: 'Arctic' },
+  storagePrefix: 'noc_glass_',
+  defaultTheme: 'liquid',
+  themes: { liquid: 'Liquid Glass', aurora: 'Aurora', sunset: 'Sunset', indigo: 'Indigo' },
   nav: [
     { group: 'Overview', items: [
       { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' }
@@ -627,42 +744,33 @@ const SITE = {
     ]}
   ],
   timezones: [
-    { label: 'Local', tz: null },
+    { label: 'HQ · Jerusalem', tz: 'Asia/Jerusalem', primary: true },
     { label: 'UTC', tz: 'UTC' },
-    { label: 'New York', tz: 'America/New_York' },
-    { label: 'London', tz: 'Europe/London' },
-    { label: 'Tel Aviv', tz: 'Asia/Jerusalem' },
-    { label: 'Singapore', tz: 'Asia/Singapore' },
-    { label: 'Sydney', tz: 'Australia/Sydney' }
+    { label: 'EST · New York', tz: 'America/New_York' },
+    { label: 'PST · Los Angeles', tz: 'America/Los_Angeles' }
   ],
   businessHours: { start: 9, end: 18 },
+  gitBase: 'https://git.internal/',
+  chatBase: 'https://chat.internal/channels/',
   customers: [
-    { id: 'acme', name: 'Acme Corp', tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Push', 'SDK', 'REST API'],
-      license: 'https://licenses.example.com/acme', git: 'https://git.example.com/clients/acme', manager: 'Dana Levi',
-      chat: { name: '#acme-support', url: 'https://chat.example.com/acme-support' } },
-    { id: 'globex', name: 'Globex', tier: 'Gold', platforms: ['Android'], vectors: ['SDK', 'Webhooks'],
-      license: 'https://licenses.example.com/globex', git: 'https://git.example.com/clients/globex', manager: 'Omer Katz',
-      chat: { name: '#globex-noc', url: 'https://chat.example.com/globex-noc' } },
-    { id: 'initech', name: 'Initech', tier: 'Silver', platforms: ['iOS'], vectors: ['REST API'],
-      license: 'https://licenses.example.com/initech', git: 'https://git.example.com/clients/initech', manager: 'Noa Peretz',
-      chat: { name: '#initech', url: 'https://chat.example.com/initech' } },
-    { id: 'umbrella', name: 'Umbrella Health', tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Push', 'SDK', 'SSO'],
-      license: 'https://licenses.example.com/umbrella', git: 'https://git.example.com/clients/umbrella', manager: 'Dana Levi',
-      chat: { name: '#umbrella-ops', url: 'https://chat.example.com/umbrella-ops' } },
-    { id: 'hooli', name: 'Hooli', tier: 'Gold', platforms: ['Android', 'iOS'], vectors: ['Push', 'Webhooks'],
-      license: 'https://licenses.example.com/hooli', git: 'https://git.example.com/clients/hooli', manager: 'Yuval Ben-Ami',
-      chat: { name: '#hooli-support', url: 'https://chat.example.com/hooli-support' } },
-    { id: 'wayne', name: 'Wayne Enterprises', tier: 'Silver', platforms: ['Android'], vectors: ['SDK'],
-      license: 'https://licenses.example.com/wayne', git: 'https://git.example.com/clients/wayne', manager: 'Omer Katz',
-      chat: { name: '#wayne', url: 'https://chat.example.com/wayne' } }
+    { id: 'apex',       name: 'Apex',       hero: 'Batman',           persona: 'Bruce Wayne',    tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Prod-K8s'],     link: 'https://apex.internal',       git: 'git/apex',       manager: 'Bruce W.',   group: '#ops-apex' },
+    { id: 'beacon',     name: 'Beacon',     hero: 'Captain America',  persona: 'Steve Rogers',   tier: 'Silver',   platforms: ['iOS'],            vectors: ['Legacy-VM'],    link: 'https://beacon.internal',     git: 'git/beacon',     manager: 'Steve R.',   group: '#ops-beacon' },
+    { id: 'citadel',    name: 'Citadel',    hero: 'Doctor Strange',   persona: 'Stephen Strange', tier: 'Gold',    platforms: ['Android', 'iOS'], vectors: ['Cloud-Native'], link: 'https://citadel.internal',    git: 'git/citadel',    manager: 'Stephen S.', group: '#ops-citadel' },
+    { id: 'dominion',   name: 'Dominion',   hero: 'Iron Man',         persona: 'Tony Stark',     tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Edge-Node'],    link: 'https://dominion.internal',   git: 'git/dominion',   manager: 'Tony S.',    group: '#ops-dominion' },
+    { id: 'eclipse',    name: 'Eclipse',    hero: 'Spider-Man',       persona: 'Peter Parker',   tier: 'Silver',   platforms: ['Android'],        vectors: ['Serverless'],   link: 'https://eclipse.internal',    git: 'git/eclipse',    manager: 'Peter P.',   group: '#ops-eclipse' },
+    { id: 'falcon',     name: 'Falcon',     hero: 'Thor',             persona: 'Thor Odinson',   tier: 'Gold',     platforms: ['iOS'],            vectors: ['Prod-K8s'],     link: 'https://falcon.internal',     git: 'git/falcon',     manager: 'Thor O.',    group: '#ops-falcon' },
+    { id: 'guardian',   name: 'Guardian',   hero: 'Wolverine',        persona: 'Logan',          tier: 'Gold',     platforms: ['Android', 'iOS'], vectors: ['On-Prem'],      link: 'https://guardian.internal',   git: 'git/guardian',   manager: 'Logan X.',   group: '#ops-guardian' },
+    { id: 'hyperion',   name: 'Hyperion',   hero: 'Superman',         persona: 'Clark Kent',     tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Cloud-Native'], link: 'https://hyperion.internal',   git: 'git/hyperion',   manager: 'Clark K.',   group: '#ops-hyperion' },
+    { id: 'infinitum',  name: 'Infinitum',  hero: 'Wonder Woman',     persona: 'Diana Prince',   tier: 'Gold',     platforms: ['iOS'],            vectors: ['Prod-K8s'],     link: 'https://infinitum.internal',  git: 'git/infinitum',  manager: 'Diana P.',   group: '#ops-infinitum' },
+    { id: 'juggernaut', name: 'Juggernaut', hero: 'Flash',            persona: 'Barry Allen',    tier: 'Silver',   platforms: ['Android'],        vectors: ['Serverless'],   link: 'https://juggernaut.internal', git: 'git/juggernaut', manager: 'Barry A.',   group: '#ops-juggernaut' }
   ],
   checklistColumns: [
-    { id: 'uptime', label: 'Uptime' },
-    { id: 'alerts', label: 'Alerts' },
-    { id: 'backups', label: 'Backups' },
-    { id: 'certs', label: 'Certs' },
-    { id: 'latency', label: 'Latency' },
-    { id: 'capacity', label: 'Capacity' }
+    { id: 'sdk', label: 'SDK Init' },
+    { id: 'config', label: 'Config Sync' },
+    { id: 'push', label: 'Test Push' },
+    { id: 'approved', label: 'Release Approved' },
+    { id: 'live', label: 'Deployment Live' },
+    { id: 'health', label: 'Health Check' }
   ],
   shifts: [
     { id: 'morning', name: 'Morning', icon: '🌅', start: 7, end: 15, tasks: [
@@ -714,17 +822,23 @@ const SITE = {
   ],
   versions: {
     android: [
-      { customer: 'Acme Corp', version: '5.4.2', build: '50402', minOS: 'Android 8', released: '2026-10-20', status: 'Live', notes: 'Push token fix' },
-      { customer: 'Globex', version: '3.1.0', build: '31007', minOS: 'Android 9', released: '2026-10-02', status: 'Live', notes: '' },
-      { customer: 'Umbrella Health', version: '7.0.0-rc2', build: '70002', minOS: 'Android 10', released: '2026-10-28', status: 'Staged rollout 20%', notes: 'Watch crash rate' },
-      { customer: 'Hooli', version: '2.9.5', build: '29050', minOS: 'Android 8', released: '2026-09-15', status: 'Live', notes: '' },
-      { customer: 'Wayne Enterprises', version: '1.12.3', build: '11203', minOS: 'Android 7', released: '2026-08-30', status: 'Deprecated', notes: 'Force-update in Dec' }
+      { customer: 'Apex', version: '5.4.2', build: '50402', minOS: 'Android 9', released: '2026-10-20', status: 'Live', notes: 'Push token refresh fix' },
+      { customer: 'Citadel', version: '3.1.0', build: '31007', minOS: 'Android 10', released: '2026-10-02', status: 'Live', notes: '' },
+      { customer: 'Dominion', version: '7.0.0-rc2', build: '70002', minOS: 'Android 11', released: '2026-10-28', status: 'Staged rollout 20%', notes: 'Watch crash-free rate' },
+      { customer: 'Eclipse', version: '2.9.5', build: '29050', minOS: 'Android 9', released: '2026-09-15', status: 'Live', notes: '' },
+      { customer: 'Guardian', version: '4.2.1', build: '42010', minOS: 'Android 10', released: '2026-10-09', status: 'Live', notes: 'On-prem push relay' },
+      { customer: 'Hyperion', version: '6.0.3', build: '60030', minOS: 'Android 10', released: '2026-10-25', status: 'Live', notes: '' },
+      { customer: 'Juggernaut', version: '1.12.3', build: '11203', minOS: 'Android 8', released: '2026-08-30', status: 'Deprecated', notes: 'Force-update in December' }
     ],
     ios: [
-      { customer: 'Acme Corp', version: '5.4.1', build: '1204', minOS: 'iOS 15', released: '2026-10-18', status: 'Live', notes: '' },
-      { customer: 'Initech', version: '4.0.3', build: '881', minOS: 'iOS 16', released: '2026-10-11', status: 'In review', notes: 'App Store review pending' },
-      { customer: 'Umbrella Health', version: '6.9.4', build: '2210', minOS: 'iOS 15', released: '2026-10-01', status: 'Live', notes: '' },
-      { customer: 'Hooli', version: '2.9.4', build: '640', minOS: 'iOS 14', released: '2026-09-12', status: 'Live', notes: 'Parity with Android 2.9.5 pending' }
+      { customer: 'Apex', version: '5.4.1', build: '1204', minOS: 'iOS 16', released: '2026-10-18', status: 'Live', notes: '' },
+      { customer: 'Beacon', version: '2.3.0', build: '512', minOS: 'iOS 15', released: '2026-09-21', status: 'Live', notes: 'Legacy-VM backend' },
+      { customer: 'Citadel', version: '3.1.0', build: '977', minOS: 'iOS 16', released: '2026-10-04', status: 'Live', notes: '' },
+      { customer: 'Dominion', version: '6.9.4', build: '2210', minOS: 'iOS 16', released: '2026-10-01', status: 'Live', notes: '' },
+      { customer: 'Falcon', version: '4.0.3', build: '881', minOS: 'iOS 17', released: '2026-10-11', status: 'In review', notes: 'App Store review pending' },
+      { customer: 'Guardian', version: '4.2.0', build: '734', minOS: 'iOS 16', released: '2026-10-07', status: 'Live', notes: '' },
+      { customer: 'Hyperion', version: '6.0.2', build: '1650', minOS: 'iOS 16', released: '2026-10-22', status: 'Live', notes: '' },
+      { customer: 'Infinitum', version: '1.8.7', build: '402', minOS: 'iOS 15', released: '2026-09-28', status: 'Live', notes: 'Parity with Android pending' }
     ]
   },
   linkGroups: [
@@ -1008,7 +1122,7 @@ function greeting(h) {
   if (h < 5) return 'Burning the midnight oil';
   if (h < 12) return 'Good morning';
   if (h < 17) return 'Good afternoon';
-  if (h < 21) return 'Good evening';
+  if (h < 23) return 'Good evening';
   return 'Good night shift';
 }
 
@@ -1100,7 +1214,7 @@ const clockFormatters = SITE.timezones.map(c => ({
 }));
 function renderClocks() {
   $('#clocks').innerHTML = SITE.timezones.map((c, i) => `
-    <div class="clock ${c.tz ? '' : 'local'}">
+    <div class="clock ${c.primary ? 'local' : ''}">
       <div class="clock-label"><span>${esc(c.label)}</span><span class="dot" data-clock-dot="${i}" title="Business hours"></span></div>
       <div class="clock-time" data-clock-time="${i}">--:--:--</div>
       <div class="clock-day" data-clock-day="${i}"></div>
@@ -1157,7 +1271,7 @@ function renderCustomers() {
     <div class="card">
       <div class="card-title"><h3>Customer summary</h3><span class="small muted">${SITE.customers.length} accounts</span></div>
       <div class="table-wrap"><table class="zebra"><thead><tr>
-        <th>Customer</th><th>Platforms</th><th>Vectors</th><th>License</th><th>Git</th><th>Account manager</th><th>Team chat</th><th>Checklist</th>
+        <th>Customer</th><th>Platforms</th><th>Vector</th><th>Link</th><th>Git</th><th>TAM</th><th>Group</th><th>Checklist</th>
       </tr></thead><tbody id="custBody"></tbody></table></div>
     </div>
     <div class="card">
@@ -1216,14 +1330,14 @@ function paintCustomers() {
   $('#custBody').innerHTML = customerStatuses().map(s => {
     const c = s.customer;
     return `<tr>
-      <td><strong>${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span></td>
+      <td><strong>${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span><span class="cust-persona">${esc(c.hero)} · ${esc(c.persona)}</span></td>
       <td>${(c.platforms || []).map(p => `<span class="plat plat-${esc(p.toLowerCase())}">${esc(p)}</span>`).join(' ')}</td>
       <td>${(c.vectors || []).map(v => `<span class="vchip">${esc(v)}</span>`).join(' ')}</td>
-      <td>${linkCell(c.license, 'License')}</td>
-      <td>${linkCell(c.git, 'Repo')}</td>
+      <td>${linkCell(c.link, String(c.link || '').replace(/^https?:\/\//, ''))}</td>
+      <td>${c.git ? linkCell(SITE.gitBase + c.git, c.git) : '<span class="muted">—</span>'}</td>
       <td>${esc(c.manager)}</td>
-      <td>${c.chat ? linkCell(c.chat.url, c.chat.name) : '<span class="muted">—</span>'}</td>
-      <td><span class="status ${s.level}" title="${esc(s.issues.join(', '))}">${LEVEL_TEXT[s.level]} · ${s.done}/${s.total}</span></td>
+      <td>${c.group ? linkCell(SITE.chatBase + encodeURIComponent(c.group.replace(/^#/, '')), c.group) : '<span class="muted">—</span>'}</td>
+      <td><span class="status ${s.level}" title="${esc(LEVEL_TEXT[s.level] + (s.issues.length ? ': ' + s.issues.join(', ') : ''))}">${s.issues.length ? `${s.issues.length} failed` : `${s.done}/${s.total}`}</span></td>
     </tr>`;
   }).join('');
   $('#mxBody').innerHTML = SITE.customers.map((c, r) => `
@@ -1281,7 +1395,7 @@ function renderShifts() {
       <div class="form-grid">
         <div class="field"><label for="hoEngineer">Outgoing engineer</label><input id="hoEngineer" data-ho="engineer" placeholder="Your name"></div>
         <div class="field"><label for="hoShift">Shift</label><select id="hoShift">${SITE.shifts.map(s => `<option value="${esc(s.id)}">${esc(s.icon + ' ' + s.name)}</option>`).join('')}</select></div>
-        <div class="field full"><label for="hoIncidents">Open incidents</label><textarea id="hoIncidents" data-ho="incidents" rows="2" placeholder="INC-1234 — Acme push delays, monitoring"></textarea></div>
+        <div class="field full"><label for="hoIncidents">Open incidents</label><textarea id="hoIncidents" data-ho="incidents" rows="2" placeholder="INC-1234 — Apex push delays, monitoring"></textarea></div>
         <div class="field full"><label for="hoEsc">Escalations / waiting on</label><textarea id="hoEsc" data-ho="escalations" rows="2" placeholder="Vendor ticket #889 awaiting reply"></textarea></div>
         <div class="field full"><label for="hoNotes">Notes</label><textarea id="hoNotes" data-ho="notes" rows="2" placeholder="Anything the next shift should know"></textarea></div>
       </div>
@@ -1564,7 +1678,7 @@ async function exportExcel() {
   const cols = SITE.versionColumns;
   const versionRows = id => (state.versions[id] || []).map(r => Object.fromEntries(cols.map(c => [c.label, r[c.key] ?? ''])));
   const matrixRows = customerStatuses().map(s => {
-    const row = { Customer: s.customer.name, Tier: s.customer.tier, Manager: s.customer.manager };
+    const row = { Customer: s.customer.name, Hero: s.customer.hero, Tier: s.customer.tier, TAM: s.customer.manager };
     SITE.checklistColumns.forEach((k, ci) => { row[k.label] = MX[mxGet(s.index, ci)].label; });
     row.Status = LEVEL_TEXT[s.level];
     return row;
@@ -1758,7 +1872,7 @@ function renderReminders() {
       <div class="card">
         <div class="card-title"><h3>New reminder</h3></div>
         <form id="remForm" class="grid">
-          <div class="field"><label for="remText">What</label><input id="remText" required maxlength="120" placeholder="Check backup job for Acme"></div>
+          <div class="field"><label for="remText">What</label><input id="remText" required maxlength="120" placeholder="Re-run Dominion health check"></div>
           <div class="form-grid">
             <div class="field"><label for="remIn">In minutes</label><input id="remIn" type="number" min="1" max="1440" placeholder="15"></div>
             <div class="field"><label for="remAt">…or at time</label><input id="remAt" type="time"></div>
@@ -2035,7 +2149,7 @@ function galleryImage(g, w = 800, h = 600) {
     <rect width="800" height="600" fill="url(#a)"/><rect width="800" height="600" fill="url(#b)"/>
     ${Array.from({ length: 7 }, (_, i) => `<rect x="${70 + i * 98}" y="${210 + (i % 3) * 22}" width="64" height="${300 - (i % 3) * 22}" rx="6" fill="hsla(${hue},40%,8%,.55)" stroke="hsla(${hue},80%,75%,.35)"/>
       ${Array.from({ length: 6 }, (_, k) => `<circle cx="${84 + i * 98}" cy="${236 + (i % 3) * 22 + k * 40}" r="4" fill="hsl(${(hue + k * 25) % 360},90%,${55 + (k % 2) * 15}%)"/>`).join('')}`).join('')}
-    <text x="40" y="110" font-family="Space Grotesk, Arial, sans-serif" font-size="54" font-weight="700" fill="#fff">${esc(g.title)}</text>
+    <text x="40" y="110" font-family="-apple-system, Segoe UI, Arial, sans-serif" font-size="54" font-weight="700" fill="#fff">${esc(g.title)}</text>
     <text x="42" y="152" font-family="Inter, Arial, sans-serif" font-size="24" fill="rgba(255,255,255,.75)">${esc(g.caption)}</text></svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
@@ -2078,7 +2192,7 @@ function paletteIndex() {
   const items = [];
   ALL_SECTIONS.forEach(s => items.push({ type: 'Section', label: s.label, sub: 'go to', run: () => showSection(s.id) }));
   SITE.shortcuts.forEach(sc => items.push({ type: 'Shortcut', label: sc.label, sub: sc.keys, kbd: true, run: () => ACTIONS[sc.action] && ACTIONS[sc.action]() }));
-  SITE.customers.forEach(c => items.push({ type: 'Customer', label: c.name, sub: `${c.tier} · ${c.platforms.join(' / ')} · ${c.manager}`, run: () => showSection('customers') }));
+  SITE.customers.forEach(c => items.push({ type: 'Customer', label: c.name, sub: `${c.hero} (${c.persona}) · ${c.platforms.join(' / ')} · TAM ${c.manager}`, run: () => showSection('customers') }));
   SITE.templates.forEach(t => items.push({ type: 'Template', label: t.title, sub: 'copy', run: () => copyTemplate(t.id) }));
   SITE.linkGroups.forEach(g => g.items.forEach(l => items.push({ type: 'Link', label: l.name, sub: `${g.group} · ${l.desc}`, run: () => window.open(safeUrl(l.url), '_blank', 'noopener') })));
   SITE.docs.forEach(d => items.push({ type: 'Doc', label: d.title, sub: d.cat, run: () => window.open(safeUrl(d.url), '_blank', 'noopener') }));
