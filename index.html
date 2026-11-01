@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="(K) NOC (K) OUT — a single-file, zero-framework NOC team operations dashboard.">
+<title>(K) NOC (K) OUT — Ops Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1020'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%2322d3ee' font-family='Arial' font-weight='bold'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 1. Design Tokens ===== */
+:root {
+  --bg: #070b16;
+  --surface: #0e1424;
+  --surface-2: #141c30;
+  --surface-3: #1b2540;
+  --border: #22304f;
+  --text: #e6ebf5;
+  --muted: #8a97b3;
+  --accent: #22d3ee;
+  --accent-2: #a78bfa;
+  --accent-rgb: 34,211,238;
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --sidebar-w: 248px;
+  --font: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+  --term-bg: #05080f;
+  --term-text: #c8f7d4;
+}
+/* Derived tokens live on body so they resolve against the active theme class */
+body {
+  --bg-grad: radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb),.10), transparent 60%);
+  --glow: 0 0 18px rgba(var(--accent-rgb),.45);
+  --glow-soft: 0 0 10px rgba(var(--accent-rgb),.25);
+}
+
+/* ===== 1b. Themes (body.theme-*) - declared before light mode so light mode can override surfaces ===== */
+body.theme-cyber  { --accent: #22d3ee; --accent-2: #a78bfa; --accent-rgb: 34,211,238;  --bg: #070b16; --surface: #0e1424; --surface-2: #141c30; --surface-3: #1b2540; --border: #22304f; }
+body.theme-matrix { --accent: #4ade80; --accent-2: #22d3ee; --accent-rgb: 74,222,128;  --bg: #050c08; --surface: #0b1510; --surface-2: #101e17; --surface-3: #16281f; --border: #1e3a2c; }
+body.theme-ember  { --accent: #fb923c; --accent-2: #f43f5e; --accent-rgb: 251,146,60;  --bg: #0f0907; --surface: #18110d; --surface-2: #211813; --surface-3: #2b1f18; --border: #3d2b20; }
+body.theme-violet { --accent: #c084fc; --accent-2: #f472b6; --accent-rgb: 192,132,252; --bg: #0b0716; --surface: #140e24; --surface-2: #1b1430; --surface-3: #241b3f; --border: #33285a; }
+body.theme-arctic { --accent: #60a5fa; --accent-2: #5eead4; --accent-rgb: 96,165,250;  --bg: #060a12; --surface: #0d1320; --surface-2: #131b2c; --surface-3: #1a2439; --border: #24324d; }
+
+/* ===== 2. Light Mode (decoupled: overrides surfaces only, keeps theme accent) ===== */
+body.light-mode {
+  --bg: #f3f5fa;
+  --bg-grad: radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb),.12), transparent 60%);
+  --surface: #ffffff;
+  --surface-2: #f6f8fc;
+  --surface-3: #eceff6;
+  --border: #dbe1ec;
+  --text: #121826;
+  --muted: #5b6780;
+  --shadow: 0 8px 24px rgba(20,30,60,.08);
+}
+body.light-mode .term { --term-bg: #0b1220; }
+
+/* ===== 3. Base ===== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; font-family: var(--font); font-size: 14.5px; line-height: 1.5;
+  color: var(--text); background: var(--bg-grad), var(--bg); background-attachment: fixed;
+  transition: background-color .3s, color .3s;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; letter-spacing: -.01em; }
+a { color: var(--accent); text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+input, select, textarea {
+  font: inherit; color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 11px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.18); }
+textarea { resize: vertical; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: var(--glow-soft); }
+* { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: var(--accent); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+kbd {
+  font-family: var(--font-mono); font-size: 11px; padding: 2px 6px; border-radius: 5px;
+  background: var(--surface-3); border: 1px solid var(--border); color: var(--muted);
+}
+
+/* ===== 4. Layout: Sidebar + Main ===== */
+.app { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+.sidebar {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column;
+  background: var(--surface); border-right: 1px solid var(--border); padding: 18px 14px; z-index: 40;
+}
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px; }
+.brand-logo {
+  width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; color: #04121a;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: var(--glow);
+}
+.brand-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.15; }
+.brand-sub { font-size: 11px; color: var(--muted); }
+.nav-group-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding: 14px 10px 6px; }
+.nav-btn {
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; background: none;
+  border-radius: var(--radius-sm); color: var(--muted); text-align: left; position: relative; transition: background .15s, color .15s;
+}
+.nav-btn:hover { background: var(--surface-2); color: var(--text); }
+.nav-btn.active { background: rgba(var(--accent-rgb),.12); color: var(--text); }
+.nav-btn.active::before {
+  content: ""; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0;
+  background: var(--accent); box-shadow: 0 0 10px var(--accent);
+}
+.nav-ico { width: 20px; height: 20px; display: grid; place-items: center; flex: none; }
+.nav-ico svg { width: 18px; height: 18px; }
+.nav-btn.active .nav-ico { color: var(--accent); }
+.nav-label { flex: 1; }
+.badge {
+  min-width: 22px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; text-align: center;
+  background: var(--surface-3); color: var(--muted);
+}
+.badge.hot { background: rgba(248,113,113,.18); color: var(--bad); }
+.badge.accent { background: rgba(var(--accent-rgb),.18); color: var(--accent); }
+.sidebar-foot { margin-top: auto; padding-top: 16px; display: grid; gap: 8px; }
+.theme-row { display: flex; gap: 8px; align-items: center; }
+.theme-row select { flex: 1; padding: 7px 9px; }
+.icon-btn {
+  border: 1px solid var(--border); background: var(--surface-2); border-radius: var(--radius-sm);
+  padding: 7px 10px; line-height: 1; transition: border-color .15s, background .15s;
+}
+.icon-btn:hover { border-color: var(--accent); }
+.palette-hint {
+  display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; width: 100%;
+  border: 1px dashed var(--border); border-radius: var(--radius-sm); background: none; color: var(--muted); font-size: 12.5px;
+}
+.palette-hint:hover { border-color: var(--accent); color: var(--text); }
+
+.main { min-width: 0; padding: 22px 28px 80px; }
+.topbar { display: none; }
+
+/* ===== 5. Clocks Bar ===== */
+.clocks {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: thin;
+}
+.clock {
+  flex: 1 0 128px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 9px 12px; display: flex; flex-direction: column;
+}
+.clock-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; display: flex; justify-content: space-between; gap: 6px; }
+.clock-time { font-family: var(--font-mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.clock-day { font-size: 11px; color: var(--muted); }
+.clock.local { border-color: rgba(var(--accent-rgb),.5); }
+.clock.local .clock-time { color: var(--accent); }
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; align-self: center; }
+.dot.on { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.dot.off { background: var(--muted); opacity: .5; }
+
+/* ===== 6. Sections & Cards ===== */
+.page-section { display: none; animation: fadeUp .35s ease both; }
+.page-section.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 6px 0 16px; }
+.section-head h2 { font-size: 24px; }
+.section-head p { margin: 4px 0 0; color: var(--muted); }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow);
+}
+.card + .card { margin-top: 16px; }
+.card-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.card-title h3 { font-size: 16px; }
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.muted { color: var(--muted); }
+.small { font-size: 12.5px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.btn {
+  border: 1px solid var(--border); background: var(--surface-2); padding: 8px 14px; border-radius: var(--radius-sm);
+  font-weight: 500; transition: border-color .15s, background .15s, transform .1s; white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent); }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; border-color: transparent; font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger:hover { border-color: var(--bad); color: var(--bad); }
+.btn.sm { padding: 5px 10px; font-size: 12.5px; }
+.empty { padding: 26px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-sm); }
+
+/* ===== 7. Hero ===== */
+.hero {
+  position: relative; overflow: hidden; border-radius: calc(var(--radius) + 4px); padding: 30px 30px 26px;
+  border: 1px solid var(--border); margin-bottom: 18px;
+  background:
+    radial-gradient(500px 220px at 15% 0%, rgba(var(--accent-rgb),.22), transparent 70%),
+    radial-gradient(500px 260px at 100% 100%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 70%),
+    var(--surface);
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 34px 34px; mask-image: linear-gradient(90deg, transparent, #000 60%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+.hero > * { position: relative; z-index: 1; }
+.hero-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: .18em; color: var(--accent); font-weight: 600; }
+.hero-title {
+  font-size: clamp(30px, 5vw, 52px); font-weight: 700; margin: 6px 0 4px; line-height: 1.05;
+  background: linear-gradient(90deg, var(--text), var(--accent) 55%, var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb),.3));
+  animation: glow 4s ease-in-out infinite;
+}
+@keyframes glow { 50% { filter: drop-shadow(0 0 10px rgba(var(--accent-rgb),.45)); } }
+.hero-greet { font-size: 17px; margin: 0; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px;
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 18px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: transform .15s, border-color .15s; }
+.stat:hover { transform: translateY(-2px); border-color: rgba(var(--accent-rgb),.5); }
+.stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.stat-value { font-family: var(--font-display); font-size: 30px; font-weight: 700; margin-top: 2px; }
+.stat-sub { font-size: 12px; color: var(--muted); }
+.progress { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; margin-top: 10px; }
+.progress > span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .4s; }
+
+/* ===== 8. Tables & Matrix ===== */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { background: var(--surface-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 600; position: sticky; top: 0; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: rgba(var(--accent-rgb),.04); }
+.status { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.status.ok { color: var(--ok); background: rgba(52,211,153,.12); }
+.status.warn { color: var(--warn); background: rgba(251,191,36,.12); }
+.status.bad { color: var(--bad); background: rgba(248,113,113,.12); }
+.tier { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--surface-3); }
+.tier.Platinum { color: var(--accent); }
+.tier.Gold { color: var(--warn); }
+.matrix td.cell { text-align: center; padding: 6px; }
+.mx {
+  width: 34px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2);
+  font-size: 14px; font-weight: 700; transition: transform .1s, background .15s;
+}
+.mx:hover { transform: scale(1.08); }
+.mx.s1 { background: rgba(52,211,153,.18); border-color: rgba(52,211,153,.5); color: var(--ok); }
+.mx.s2 { background: rgba(248,113,113,.18); border-color: rgba(248,113,113,.5); color: var(--bad); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.legend .mx { width: 22px; height: 20px; font-size: 11px; cursor: default; }
+
+/* ===== 8b. Customer Table, Matrix Controls ===== */
+table.zebra tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 65%, transparent); }
+table.zebra tbody tr:hover td { background: rgba(var(--accent-rgb),.08); }
+.plat { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); }
+.plat::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.plat-android { color: #3ddc84; background: rgba(61,220,132,.1); border-color: rgba(61,220,132,.3); }
+.plat-ios { color: var(--text); background: var(--surface-3); }
+.vchip { display: inline-block; font-size: 11px; padding: 2px 8px; margin: 1px 0; border-radius: 99px; background: rgba(var(--accent-rgb),.12); color: var(--accent); border: 1px solid rgba(var(--accent-rgb),.25); }
+th.mx-head { text-align: center; }
+th.mx-head span { display: block; }
+.col-all { margin-top: 4px; font-size: 10.5px; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); text-transform: none; letter-spacing: 0; }
+.col-all:hover { border-color: var(--ok); color: var(--ok); }
+.col-all.on { background: rgba(52,211,153,.15); border-color: rgba(52,211,153,.5); color: var(--ok); }
+.mx-progress { display: flex; align-items: center; gap: 10px; min-width: 240px; }
+.mx-progress .progress { flex: 1; margin: 0; }
+.badge.ok { background: rgba(52,211,153,.18); color: var(--ok); }
+.grid > .card + .card, .shift-cols > .card + .card { margin-top: 0; }
+
+/* ===== 9. Shift Checklist & Handoff ===== */
+.shift-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.shift-col.current { border-color: rgba(var(--accent-rgb),.6); box-shadow: var(--glow-soft), var(--shadow); }
+.shift-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.shift-head h3 { font-size: 15px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #04121a; font-weight: 700; font-family: var(--font); }
+.shift-col .check-item { padding: 8px 10px; font-size: 13px; }
+.ci-body { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ci-stamp { font-size: 11px; color: var(--ok); font-family: var(--font-mono); }
+@media (max-width: 1280px) { .shift-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .shift-cols { grid-template-columns: 1fr; } }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.tab {
+  border: 1px solid var(--border); background: var(--surface-2); padding: 7px 13px; border-radius: 999px;
+  font-size: 13px; display: inline-flex; gap: 7px; align-items: center;
+}
+.tab.active { border-color: var(--accent); background: rgba(var(--accent-rgb),.14); }
+.tab .now { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #04121a; font-weight: 700; }
+.check-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.check-item {
+  display: flex; gap: 11px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surface-2); border: 1px solid var(--border); cursor: pointer; transition: border-color .15s, opacity .2s;
+}
+.check-item:hover { border-color: rgba(var(--accent-rgb),.5); }
+.check-item input { margin-top: 3px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; cursor: pointer; }
+.check-item.done .ci-text { text-decoration: line-through; color: var(--muted); }
+.ci-time { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); }
+.ci-text { flex: 1; }
+.form-grid { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.form-grid .full { grid-column: 1 / -1; }
+.field { display: grid; gap: 5px; }
+.field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.output {
+  width: 100%; min-height: 240px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; background: var(--surface-2);
+}
+
+/* ===== 10. Templates & Versions ===== */
+.tpl {
+  text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: transform .15s, border-color .15s; position: relative;
+}
+.tpl:hover { transform: translateY(-2px); border-color: rgba(var(--accent-rgb),.6); }
+.tpl-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.tpl-title { font-weight: 600; font-family: var(--font-display); }
+.tpl-tag { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(var(--accent-rgb),.14); color: var(--accent); }
+.tpl-body { font-size: 12.5px; color: var(--muted); white-space: pre-wrap; max-height: 120px; overflow: hidden; mask-image: linear-gradient(#000 70%, transparent); -webkit-mask-image: linear-gradient(#000 70%, transparent); }
+.tpl-foot { font-size: 11.5px; color: var(--muted); }
+.tpl.copied { border-color: var(--ok); }
+
+.ver-table td[contenteditable] { cursor: text; min-width: 90px; border-radius: 4px; }
+.ver-table td[contenteditable]:hover { box-shadow: inset 0 0 0 1px var(--border); }
+.ver-table td[contenteditable]:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: rgba(var(--accent-rgb),.07); box-shadow: none; }
+.ver-table td[contenteditable]:empty::before { content: attr(data-placeholder); color: var(--muted); opacity: .45; }
+
+/* ===== 11. Links, Bookshelf, Terminal ===== */
+.link-wall h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 10px; }
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.link-tile {
+  display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text); transition: border-color .15s, transform .15s;
+}
+.link-tile:hover { border-color: var(--accent); transform: translateY(-1px); }
+.link-ico { font-size: 18px; }
+.link-name { font-weight: 500; font-size: 13px; }
+.link-desc { font-size: 11px; color: var(--muted); }
+.search-box { position: relative; max-width: 360px; width: 100%; }
+.search-box input { width: 100%; padding-left: 34px; }
+.search-box::before { content: "⌕"; position: absolute; left: 12px; top: 50%; transform: translateY(-52%); color: var(--muted); font-size: 16px; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.book {
+  display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 14px 22px; border-radius: 6px var(--radius) var(--radius) 6px;
+  background: var(--surface); border: 1px solid var(--border); position: relative; color: var(--text); transition: transform .15s, box-shadow .15s;
+}
+.book::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; border-radius: 6px 0 0 6px; background: var(--spine, var(--accent)); }
+.book:hover { transform: translateY(-3px) rotate(-.4deg); box-shadow: var(--shadow); }
+.book-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.book-title { font-family: var(--font-display); font-weight: 600; }
+.book-desc { font-size: 12.5px; color: var(--muted); }
+mark { background: rgba(var(--accent-rgb),.3); color: inherit; border-radius: 3px; padding: 0 1px; }
+.book { transition: transform .15s, box-shadow .15s, opacity .2s, filter .2s; }
+.book.hit { border-color: rgba(var(--accent-rgb),.6); box-shadow: var(--glow-soft); }
+.book.dim { opacity: .25; filter: grayscale(.85); pointer-events: none; transform: none; }
+.shelf-meta { font-size: 12.5px; color: var(--muted); margin: -4px 0 12px; }
+.term {
+  background: var(--term-bg); color: var(--term-text); border-radius: var(--radius); border: 1px solid #1d2a3f;
+  font-family: var(--font-mono); overflow: hidden; box-shadow: var(--shadow);
+}
+.term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #0c1322; border-bottom: 1px solid #1d2a3f; }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.term-bar i:nth-child(1) { background: #ff5f57; } .term-bar i:nth-child(2) { background: #febc2e; } .term-bar i:nth-child(3) { background: #28c840; }
+.term-bar span { margin-left: 8px; color: #7f8ba3; font-size: 12px; }
+.term-body { padding: 8px 6px 12px; }
+.cmd { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 8px 10px; border-radius: 7px; }
+.cmd:hover { background: rgba(255,255,255,.04); }
+.cmd-line { display: flex; gap: 8px; min-width: 0; }
+.prompt { color: #22c55e; font-weight: 700; user-select: none; }
+.cmd code { font-size: 13px; color: #e2fbe9; white-space: pre-wrap; word-break: break-all; }
+.term mark { background: rgba(34,197,94,.32); color: #fff; }
+.cmd-desc { grid-column: 1; font-size: 11.5px; color: #7f8ba3; font-family: var(--font); padding-left: 18px; }
+.cmd-copy { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-family: var(--font-mono); font-size: 11px; color: #9fb0c9; background: #0c1322; border: 1px solid #23324d; border-radius: 6px; padding: 4px 10px; transition: color .15s, border-color .15s; }
+.cmd-copy:hover, .cmd-copy.done { color: #22c55e; border-color: #22c55e; }
+.term-bar .term-count { margin-left: auto; color: #7f8ba3; font-size: 11px; }
+.term-cursor { display: flex; gap: 8px; padding: 6px 10px; }
+.cursor { width: 8px; height: 15px; align-self: center; background: #22c55e; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+/* Terminal stays dark regardless of light mode: every colour above is literal, not a theme token */
+body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,20,40,.25); }
+
+/* ===== 12. Overlays: Palette, Lightbox, Scratchpad, Toasts ===== */
+.overlay {
+  position: fixed; inset: 0; background: rgba(3,6,14,.62); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  display: none; z-index: 100; padding: 16px;
+}
+.overlay.open { display: flex; animation: fade .18s ease; }
+@keyframes fade { from { opacity: 0; } }
+.palette {
+  margin: 10vh auto auto; width: min(620px, 100%); background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: 0 30px 80px rgba(0,0,0,.5); overflow: hidden; align-self: flex-start;
+}
+.palette input { width: 100%; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; padding: 16px 18px; font-size: 16px; background: transparent; box-shadow: none; }
+.palette-list { max-height: 52vh; overflow-y: auto; padding: 6px; margin: 0; list-style: none; }
+.pal-item { display: flex; gap: 12px; align-items: center; padding: 9px 12px; border-radius: var(--radius-sm); cursor: pointer; }
+.pal-item.sel { background: rgba(var(--accent-rgb),.14); }
+.pal-type { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); width: 74px; flex: none; }
+.pal-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-sub { font-size: 12px; color: var(--muted); max-width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette-foot { display: flex; gap: 14px; padding: 9px 14px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); }
+
+.lightbox { align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+.lightbox img { max-width: min(92vw, 1000px); max-height: 76vh; border-radius: var(--radius); box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+.lb-cap { color: #e6ebf5; text-align: center; }
+.lb-nav { position: fixed; top: 50%; transform: translateY(-50%); font-size: 26px; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.4); color: #fff; }
+.lb-prev { left: 18px; } .lb-next { right: 18px; }
+.lb-close { position: fixed; top: 16px; right: 18px; font-size: 18px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.4); color: #fff; }
+
+.fab {
+  position: fixed; right: 22px; bottom: 22px; width: 54px; height: 54px; border-radius: 50%; border: 0; z-index: 90;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; font-size: 22px;
+  box-shadow: 0 10px 30px rgba(var(--accent-rgb),.4); transition: transform .2s;
+}
+.fab:hover { transform: scale(1.06) rotate(-6deg); }
+.scratch {
+  position: fixed; right: 22px; bottom: 88px; width: min(360px, calc(100vw - 32px)); z-index: 90;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  display: none; flex-direction: column; overflow: hidden; transform-origin: bottom right;
+  resize: both; min-width: 260px; min-height: 200px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px);
+}
+.scratch-head { cursor: grab; user-select: none; touch-action: none; }
+.scratch.dragging { opacity: .93; transition: none; }
+.scratch.dragging .scratch-head { cursor: grabbing; }
+.scratch-grip { color: var(--muted); font-size: 12px; letter-spacing: 2px; margin-right: 6px; }
+.scratch.open { display: flex; animation: pop .2s ease; }
+@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(8px); } }
+.scratch-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.scratch textarea { flex: 1 1 auto; height: 240px; min-height: 80px; resize: none; border: 0; border-radius: 0; background: var(--surface); font-family: var(--font-mono); font-size: 13px; box-shadow: none; }
+.scratch-foot { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); }
+
+.toasts { position: fixed; top: 18px; right: 18px; z-index: 200; display: grid; gap: 10px; width: min(340px, calc(100vw - 32px)); }
+.toast {
+  display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+  box-shadow: 0 14px 40px rgba(0,0,0,.4); animation: slideIn .35s cubic-bezier(.2,.9,.3,1.2) both;
+}
+.toast.ok { border-left-color: var(--ok); } .toast.warn { border-left-color: var(--warn); } .toast.bad { border-left-color: var(--bad); }
+.toast.out { animation: slideOut .3s ease forwards; }
+.toast-msg { flex: 1; font-size: 13.5px; }
+.toast-x { border: 0; background: none; color: var(--muted); padding: 0 2px; }
+.toast-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(110%); } }
+@keyframes slideOut { to { opacity: 0; transform: translateX(110%); } }
+
+/* ===== 13. Reminders ===== */
+.rem-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.rem { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--border); }
+.rem.fired { opacity: .55; }
+.rem-text { flex: 1; min-width: 0; }
+.rem-when { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.rep-chip { font-size: 11px; padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, var(--accent-2) 16%, transparent); color: var(--accent-2); margin-left: 6px; }
+.side-timers { margin-top: 14px; display: grid; gap: 6px; }
+.side-timers[hidden] { display: none; }
+.side-timer { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; width: 100%; text-align: left; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-2); }
+.side-timer:hover { border-color: var(--accent); }
+.st-text { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-cd { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.st-bar { grid-column: 1 / -1; height: 3px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.st-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 1s linear; }
+.side-timer.soon { border-color: var(--warn); animation: pulse 1s ease-in-out infinite; }
+.side-timer.soon .st-cd { color: var(--warn); }
+@keyframes pulse { 50% { box-shadow: 0 0 0 3px rgba(251,191,36,.22); } }
+
+/* ===== 14. Games ===== */
+.g2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 8px; background: var(--surface-3); border-radius: var(--radius); aspect-ratio: 1; max-width: 360px; margin: 0 auto; touch-action: none; }
+.g2048 div {
+  border-radius: 9px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(16px, 4vw, 28px); background: var(--surface-2); transition: background .12s;
+}
+.g2048 div.pop { animation: tilePop .15s ease; }
+@keyframes tilePop { 50% { transform: scale(1.1); } }
+.mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 360px; margin: 0 auto; }
+.mem-card { aspect-ratio: 1; border: 0; background: none; padding: 0; perspective: 600px; }
+.mem-inner { position: relative; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
+.mem-card.flip .mem-inner, .mem-card.match .mem-inner { transform: rotateY(180deg); }
+.mem-face { position: absolute; inset: 0; border-radius: 10px; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; font-size: clamp(20px, 5vw, 30px); }
+.mem-back { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04121a; font-family: var(--font-display); font-weight: 700; }
+.mem-front { background: var(--surface-2); border: 1px solid var(--border); transform: rotateY(180deg); }
+.mem-card.match .mem-front { border-color: var(--ok); box-shadow: inset 0 0 0 2px rgba(52,211,153,.4); }
+.score-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+.score { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 12px; text-align: center; min-width: 80px; }
+.score b { display: block; font-family: var(--font-display); font-size: 18px; }
+.score span { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ===== 15. Morale ===== */
+.joke { font-size: 18px; min-height: 90px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+.joke-punch { color: var(--accent); font-weight: 600; opacity: 0; transition: opacity .3s; }
+.joke-punch.show { opacity: 1; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.g-item { border: 0; padding: 0; background: none; border-radius: var(--radius-sm); overflow: hidden; position: relative; aspect-ratio: 4/3; }
+.g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.g-item:hover img { transform: scale(1.06); }
+.g-item span { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px; font-size: 12px; color: #fff; text-align: left; background: linear-gradient(transparent, rgba(0,0,0,.7)); }
+
+/* ===== 16. Responsive ===== */
+@media (max-width: 1100px) {
+  .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; left: 0; top: 0; width: 280px; transform: translateX(-100%); transition: transform .25s ease; box-shadow: var(--shadow); }
+  .sidebar.open { transform: none; }
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 35; display: none; }
+  .scrim.open { display: block; }
+  .topbar { display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 30; padding: 10px 16px; margin: -22px -16px 14px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .main { padding: 22px 16px 90px; }
+  .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
+  .hero { padding: 22px 18px; }
+}
+@media (max-width: 520px) { .stats { grid-template-columns: 1fr 1fr; gap: 10px; } .stat-value { font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+</style>
+</head>
+<body class="theme-cyber">
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <div class="brand-logo">K</div>
+      <div><div class="brand-name" id="brandName"></div><div class="brand-sub" id="brandSub"></div></div>
+    </div>
+    <button class="palette-hint" id="paletteHint" type="button"><span>Search everything…</span><kbd>Ctrl K</kbd></button>
+    <nav id="nav"></nav>
+    <div class="side-timers" id="sideTimers" hidden aria-live="off"></div>
+    <div class="sidebar-foot">
+      <div class="theme-row">
+        <label class="sr-only" for="themeSelect">Theme</label>
+        <select id="themeSelect"></select>
+        <button class="icon-btn" id="lightToggle" type="button" title="Toggle light mode" aria-label="Toggle light mode">☀</button>
+      </div>
+      <div class="small muted" id="footNote"></div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main" id="main">
+    <div class="topbar">
+      <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+      <strong class="brand-name" id="topTitle"></strong>
+      <span class="spacer"></span>
+      <button class="icon-btn" id="topSearch" type="button" aria-label="Search">⌕</button>
+    </div>
+    <div class="clocks" id="clocks" aria-label="World clocks"></div>
+
+    <!-- Sections are empty shells; all content renders from SITE -->
+    <div class="page-section" id="sec-dashboard"></div>
+    <div class="page-section" id="sec-customers"></div>
+    <div class="page-section" id="sec-shifts"></div>
+    <div class="page-section" id="sec-templates"></div>
+    <div class="page-section" id="sec-versions"></div>
+    <div class="page-section" id="sec-links"></div>
+    <div class="page-section" id="sec-docs"></div>
+    <div class="page-section" id="sec-terminal"></div>
+    <div class="page-section" id="sec-reminders"></div>
+    <div class="page-section" id="sec-games"></div>
+    <div class="page-section" id="sec-morale"></div>
+  </main>
+</div>
+
+<div class="overlay" id="paletteOverlay" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="palette">
+    <input id="paletteInput" type="text" placeholder="Jump to a section, link, doc, command, template…" autocomplete="off" aria-label="Search">
+    <ul class="palette-list" id="paletteList" role="listbox"></ul>
+    <div class="palette-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
+  </div>
+</div>
+
+<div class="overlay lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lb-close" id="lbClose" type="button" aria-label="Close">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev" type="button" aria-label="Previous">‹</button>
+  <img id="lbImg" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+  <button class="lb-nav lb-next" id="lbNext" type="button" aria-label="Next">›</button>
+</div>
+
+<button class="fab" id="scratchFab" type="button" title="Scratchpad" aria-label="Open scratchpad">✎</button>
+<div class="scratch" id="scratch" role="dialog" aria-label="Scratchpad">
+  <div class="scratch-head" title="Drag to move · double-click to reset position"><strong><span class="scratch-grip" aria-hidden="true">⋮⋮</span>Scratchpad</strong><button class="icon-btn" id="scratchClose" type="button" aria-label="Close scratchpad">✕</button></div>
+  <textarea id="scratchText" placeholder="Ticket numbers, IPs, half-thoughts… autosaved locally." spellcheck="false"></textarea>
+  <div class="scratch-foot"><span id="scratchStatus">Saved</span><span class="row"><button class="btn sm" id="scratchCopy" type="button">Copy</button><button class="btn sm danger" id="scratchClear" type="button">Clear</button></span></div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+// --- 1. Site Configuration ---
+const SITE = {
+  name: '(K) NOC (K) OUT',
+  tagline: 'Team Operations Command Center',
+  team: 'NOC Team',
+  storagePrefix: 'knocko:',
+  defaultTheme: 'cyber',
+  themes: { cyber: 'Cyber Cyan', matrix: 'Matrix Green', ember: 'Ember', violet: 'Ultraviolet', arctic: 'Arctic' },
+  nav: [
+    { group: 'Overview', items: [
+      { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' }
+    ]},
+    { group: 'Operations', items: [
+      { id: 'customers', label: 'Customers', icon: 'users', badge: 'progress' },
+      { id: 'shifts', label: 'Shift Tasks', icon: 'checklist', badge: 'tasks' },
+      { id: 'templates', label: 'Templates', icon: 'mail', badge: 'templates' },
+      { id: 'versions', label: 'Versions', icon: 'branch', badge: 'versions' }
+    ]},
+    { group: 'Knowledge', items: [
+      { id: 'links', label: 'Link Wall', icon: 'link', badge: 'links' },
+      { id: 'docs', label: 'Bookshelf', icon: 'book', badge: 'docs' },
+      { id: 'terminal', label: 'Cheatsheet', icon: 'terminal', badge: 'commands' }
+    ]},
+    { group: 'Utilities', items: [
+      { id: 'reminders', label: 'Reminders', icon: 'bell', badge: 'reminders' },
+      { id: 'games', label: 'Break Room', icon: 'gamepad' },
+      { id: 'morale', label: 'Morale', icon: 'smile' }
+    ]}
+  ],
+  timezones: [
+    { label: 'Local', tz: null },
+    { label: 'UTC', tz: 'UTC' },
+    { label: 'New York', tz: 'America/New_York' },
+    { label: 'London', tz: 'Europe/London' },
+    { label: 'Tel Aviv', tz: 'Asia/Jerusalem' },
+    { label: 'Singapore', tz: 'Asia/Singapore' },
+    { label: 'Sydney', tz: 'Australia/Sydney' }
+  ],
+  businessHours: { start: 9, end: 18 },
+  customers: [
+    { id: 'acme', name: 'Acme Corp', tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Push', 'SDK', 'REST API'],
+      license: 'https://licenses.example.com/acme', git: 'https://git.example.com/clients/acme', manager: 'Dana Levi',
+      chat: { name: '#acme-support', url: 'https://chat.example.com/acme-support' } },
+    { id: 'globex', name: 'Globex', tier: 'Gold', platforms: ['Android'], vectors: ['SDK', 'Webhooks'],
+      license: 'https://licenses.example.com/globex', git: 'https://git.example.com/clients/globex', manager: 'Omer Katz',
+      chat: { name: '#globex-noc', url: 'https://chat.example.com/globex-noc' } },
+    { id: 'initech', name: 'Initech', tier: 'Silver', platforms: ['iOS'], vectors: ['REST API'],
+      license: 'https://licenses.example.com/initech', git: 'https://git.example.com/clients/initech', manager: 'Noa Peretz',
+      chat: { name: '#initech', url: 'https://chat.example.com/initech' } },
+    { id: 'umbrella', name: 'Umbrella Health', tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Push', 'SDK', 'SSO'],
+      license: 'https://licenses.example.com/umbrella', git: 'https://git.example.com/clients/umbrella', manager: 'Dana Levi',
+      chat: { name: '#umbrella-ops', url: 'https://chat.example.com/umbrella-ops' } },
+    { id: 'hooli', name: 'Hooli', tier: 'Gold', platforms: ['Android', 'iOS'], vectors: ['Push', 'Webhooks'],
+      license: 'https://licenses.example.com/hooli', git: 'https://git.example.com/clients/hooli', manager: 'Yuval Ben-Ami',
+      chat: { name: '#hooli-support', url: 'https://chat.example.com/hooli-support' } },
+    { id: 'wayne', name: 'Wayne Enterprises', tier: 'Silver', platforms: ['Android'], vectors: ['SDK'],
+      license: 'https://licenses.example.com/wayne', git: 'https://git.example.com/clients/wayne', manager: 'Omer Katz',
+      chat: { name: '#wayne', url: 'https://chat.example.com/wayne' } }
+  ],
+  checklistColumns: [
+    { id: 'uptime', label: 'Uptime' },
+    { id: 'alerts', label: 'Alerts' },
+    { id: 'backups', label: 'Backups' },
+    { id: 'certs', label: 'Certs' },
+    { id: 'latency', label: 'Latency' },
+    { id: 'capacity', label: 'Capacity' }
+  ],
+  shifts: [
+    { id: 'morning', name: 'Morning', icon: '🌅', start: 7, end: 15, tasks: [
+      { time: '07:00', text: 'Read previous shift handoff and acknowledge open incidents' },
+      { time: '07:15', text: 'Review overnight alert queue and close resolved tickets' },
+      { time: '08:00', text: 'Run customer health matrix sweep' },
+      { time: '09:00', text: 'Verify backup job completion for all Platinum customers' },
+      { time: '11:00', text: 'Check certificate expiry report (< 30 days)' },
+      { time: '14:30', text: 'Prepare handoff for afternoon shift' }
+    ]},
+    { id: 'afternoon', name: 'Afternoon', icon: '☀️', start: 15, end: 19, tasks: [
+      { time: '15:00', text: 'Read morning handoff and sync with on-call engineer' },
+      { time: '15:30', text: 'Review change calendar for tonight\'s maintenance windows' },
+      { time: '16:30', text: 'Capacity check on edge clusters (CPU / bandwidth)' },
+      { time: '18:30', text: 'Prepare handoff for evening shift' }
+    ]},
+    { id: 'evening', name: 'Evening', icon: '🌆', start: 19, end: 23, tasks: [
+      { time: '19:00', text: 'Read afternoon handoff' },
+      { time: '19:30', text: 'Confirm maintenance window owners are online' },
+      { time: '21:00', text: 'Post-maintenance validation and customer notifications' },
+      { time: '22:30', text: 'Prepare handoff for night shift' }
+    ]},
+    { id: 'night', name: 'Night', icon: '🌙', start: 23, end: 7, tasks: [
+      { time: '23:00', text: 'Read evening handoff' },
+      { time: '00:30', text: 'Monitor APAC business-hours traffic peak' },
+      { time: '03:00', text: 'Verify nightly backup jobs started' },
+      { time: '05:00', text: 'Review disk usage and log rotation alerts' },
+      { time: '06:30', text: 'Prepare handoff for morning shift' }
+    ]}
+  ],
+  templates: [
+    { id: 'inc-open', title: 'Incident Opened', tag: 'Incident', body: 'Hello {customer},\n\nWe have identified an issue affecting {service} starting at {time} UTC.\nOur engineers are actively investigating. Next update within 30 minutes.\n\nIncident ID: {ticket}\n— NOC Team' },
+    { id: 'inc-update', title: 'Incident Update', tag: 'Incident', body: 'Hello {customer},\n\nUpdate on {ticket}: mitigation is in progress and impact is reduced.\nCurrent status: monitoring. Next update within 60 minutes.\n\n— NOC Team' },
+    { id: 'inc-resolved', title: 'Incident Resolved', tag: 'Incident', body: 'Hello {customer},\n\nIncident {ticket} has been resolved as of {time} UTC.\nA root-cause summary will follow within 2 business days.\n\nThank you for your patience,\n— NOC Team' },
+    { id: 'maint', title: 'Maintenance Notice', tag: 'Maintenance', body: 'Hello {customer},\n\nScheduled maintenance on {service} is planned for {time} UTC (approx. 60 minutes).\nNo service impact is expected; brief failovers may occur.\n\n— NOC Team' },
+    { id: 'escalate', title: 'Escalation to Tier 2', tag: 'Internal', body: 'ESCALATION — {ticket}\nCustomer: {customer}\nService: {service}\nStarted: {time} UTC\nActions taken: \nRequested from T2: ' },
+    { id: 'ack', title: 'Ticket Acknowledged', tag: 'Support', body: 'Hello {customer},\n\nThank you for contacting us. Your request {ticket} has been received and assigned.\nWe will follow up shortly.\n\n— NOC Team' }
+  ],
+  sheetJsUrl: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  versionTables: [ { id: 'android', label: 'Android' }, { id: 'ios', label: 'iOS' } ],
+  versionColumns: [
+    { key: 'customer', label: 'Customer' },
+    { key: 'version', label: 'Version' },
+    { key: 'build', label: 'Build' },
+    { key: 'minOS', label: 'Min OS' },
+    { key: 'released', label: 'Released' },
+    { key: 'status', label: 'Status' },
+    { key: 'notes', label: 'Notes' }
+  ],
+  versions: {
+    android: [
+      { customer: 'Acme Corp', version: '5.4.2', build: '50402', minOS: 'Android 8', released: '2026-10-20', status: 'Live', notes: 'Push token fix' },
+      { customer: 'Globex', version: '3.1.0', build: '31007', minOS: 'Android 9', released: '2026-10-02', status: 'Live', notes: '' },
+      { customer: 'Umbrella Health', version: '7.0.0-rc2', build: '70002', minOS: 'Android 10', released: '2026-10-28', status: 'Staged rollout 20%', notes: 'Watch crash rate' },
+      { customer: 'Hooli', version: '2.9.5', build: '29050', minOS: 'Android 8', released: '2026-09-15', status: 'Live', notes: '' },
+      { customer: 'Wayne Enterprises', version: '1.12.3', build: '11203', minOS: 'Android 7', released: '2026-08-30', status: 'Deprecated', notes: 'Force-update in Dec' }
+    ],
+    ios: [
+      { customer: 'Acme Corp', version: '5.4.1', build: '1204', minOS: 'iOS 15', released: '2026-10-18', status: 'Live', notes: '' },
+      { customer: 'Initech', version: '4.0.3', build: '881', minOS: 'iOS 16', released: '2026-10-11', status: 'In review', notes: 'App Store review pending' },
+      { customer: 'Umbrella Health', version: '6.9.4', build: '2210', minOS: 'iOS 15', released: '2026-10-01', status: 'Live', notes: '' },
+      { customer: 'Hooli', version: '2.9.4', build: '640', minOS: 'iOS 14', released: '2026-09-12', status: 'Live', notes: 'Parity with Android 2.9.5 pending' }
+    ]
+  },
+  linkGroups: [
+    { group: 'Monitoring', items: [
+      { name: 'Grafana', icon: '📈', url: 'https://grafana.com/', desc: 'Dashboards' },
+      { name: 'Prometheus', icon: '🔥', url: 'https://prometheus.io/', desc: 'Metrics' },
+      { name: 'Uptime Kuma', icon: '🟢', url: 'https://github.com/louislam/uptime-kuma', desc: 'Status checks' },
+      { name: 'Statuspage', icon: '📣', url: 'https://www.atlassian.com/software/statuspage', desc: 'Public status' }
+    ]},
+    { group: 'Ticketing & Comms', items: [
+      { name: 'Jira', icon: '🎫', url: 'https://www.atlassian.com/software/jira', desc: 'Tickets' },
+      { name: 'PagerDuty', icon: '🚨', url: 'https://www.pagerduty.com/', desc: 'On-call' },
+      { name: 'Slack', icon: '💬', url: 'https://slack.com/', desc: 'Team chat' },
+      { name: 'Zoom', icon: '🎥', url: 'https://zoom.us/', desc: 'Bridge calls' }
+    ]},
+    { group: 'Network Tools', items: [
+      { name: 'DNS Checker', icon: '🌐', url: 'https://dnschecker.org/', desc: 'Propagation' },
+      { name: 'SSL Labs', icon: '🔒', url: 'https://www.ssllabs.com/ssltest/', desc: 'TLS grading' },
+      { name: 'BGP.tools', icon: '🛰', url: 'https://bgp.tools/', desc: 'Routing' },
+      { name: 'Downdetector', icon: '📉', url: 'https://downdetector.com/', desc: 'Outage reports' }
+    ]}
+  ],
+  docs: [
+    { title: 'Incident Response Runbook', cat: 'Runbook', color: '#f87171', url: 'https://response.pagerduty.com/', desc: 'Severity matrix, roles, comms cadence and post-mortems.' },
+    { title: 'Google SRE Book', cat: 'Reference', color: '#60a5fa', url: 'https://sre.google/sre-book/table-of-contents/', desc: 'SLOs, error budgets, toil and on-call fundamentals.' },
+    { title: 'Linux Networking Guide', cat: 'Networking', color: '#34d399', url: 'https://wiki.archlinux.org/title/Network_configuration', desc: 'Interfaces, routing tables, DNS resolution.' },
+    { title: 'TLS Certificate Rotation', cat: 'Runbook', color: '#fbbf24', url: 'https://letsencrypt.org/docs/', desc: 'Renewal workflow, chain validation and rollback.' },
+    { title: 'Kubernetes Troubleshooting', cat: 'Platform', color: '#a78bfa', url: 'https://kubernetes.io/docs/tasks/debug/', desc: 'Pods, services, networking and cluster debugging.' },
+    { title: 'Escalation Matrix', cat: 'Process', color: '#22d3ee', url: 'https://www.atlassian.com/incident-management/on-call/escalation-policies', desc: 'Who to page, when, and how fast.' },
+    { title: 'BGP Fundamentals', cat: 'Networking', color: '#34d399', url: 'https://www.cloudflare.com/learning/security/glossary/what-is-bgp/', desc: 'Peering, route leaks and hijack detection.' },
+    { title: 'Post-Mortem Template', cat: 'Process', color: '#22d3ee', url: 'https://github.com/dastergon/postmortem-templates', desc: 'Blameless write-up structure and examples.' }
+  ],
+  commands: [
+    { group: 'Network', items: [
+      { cmd: 'ping -c 4 8.8.8.8', desc: 'Basic reachability test' },
+      { cmd: 'mtr -rwc 50 example.com', desc: 'Combined traceroute + loss report' },
+      { cmd: 'dig +short example.com A', desc: 'Quick DNS A-record lookup' },
+      { cmd: 'curl -sSI https://example.com', desc: 'Fetch HTTP response headers only' },
+      { cmd: 'openssl s_client -connect example.com:443 -servername example.com </dev/null | openssl x509 -noout -dates', desc: 'Check certificate validity dates' },
+      { cmd: 'ss -tulpn', desc: 'List listening sockets with owning process' }
+    ]},
+    { group: 'System', items: [
+      { cmd: 'df -h', desc: 'Disk usage per filesystem' },
+      { cmd: 'du -sh /var/log/* | sort -h | tail', desc: 'Largest log directories' },
+      { cmd: 'journalctl -u nginx --since "1 hour ago"', desc: 'Service logs for the last hour' },
+      { cmd: 'systemctl status nginx --no-pager', desc: 'Service state' },
+      { cmd: 'sudo systemctl restart nginx && systemctl is-active nginx', desc: 'Restart a service and confirm it came back' },
+      { cmd: 'top -b -n 1 | head -20', desc: 'One-shot process snapshot' }
+    ]},
+    { group: 'Logs', items: [
+      { cmd: 'tail -f /var/log/syslog', desc: 'Follow the system log live' },
+      { cmd: 'grep -i "error" /var/log/nginx/error.log | tail -50', desc: 'Last 50 nginx errors' },
+      { cmd: 'journalctl -p err -b --no-pager', desc: 'All error-level entries since boot' },
+      { cmd: 'zgrep -c "timeout" /var/log/app/*.gz', desc: 'Count timeouts in rotated logs' }
+    ]},
+    { group: 'Docker', items: [
+      { cmd: 'docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"', desc: 'Running containers, compact table' },
+      { cmd: 'docker logs -f --tail 200 <container>', desc: 'Follow the last 200 container log lines' },
+      { cmd: 'docker restart <container>', desc: 'Restart a container' },
+      { cmd: 'docker stats --no-stream', desc: 'One-shot CPU / memory usage per container' },
+      { cmd: 'docker compose up -d --force-recreate <service>', desc: 'Recreate a single compose service' }
+    ]},
+    { group: 'Kubernetes', items: [
+      { cmd: 'kubectl get pods -A --field-selector=status.phase!=Running', desc: 'Pods not running, all namespaces' },
+      { cmd: 'kubectl describe pod <pod> -n <ns>', desc: 'Events and status for a pod' },
+      { cmd: 'kubectl logs -f deploy/<name> -n <ns> --tail=100', desc: 'Follow deployment logs' },
+      { cmd: 'kubectl rollout restart deploy/<name> -n <ns>', desc: 'Rolling restart' }
+    ]}
+  ],
+  jokes: [
+    { q: 'Why do network engineers never get lost?', a: 'They always follow the best route.' },
+    { q: 'What did the router say to the doctor?', a: '"It hurts when IP."' },
+    { q: 'Why was the DNS server so calm during the outage?', a: 'It knew everything would resolve eventually.' },
+    { q: 'How many NOC engineers does it take to change a lightbulb?', a: 'None — they just open a ticket with facilities and monitor the darkness.' },
+    { q: 'Why did the packet break up with the firewall?', a: 'It kept getting dropped.' },
+    { q: 'What is a sysadmin\'s favourite exercise?', a: 'Restarting.' },
+    { q: 'Why did the UDP joke fail?', a: 'I\'m not sure you got it — and I won\'t check.' },
+    { q: 'What do you call a 3 a.m. alert that resolves itself?', a: 'A flapping good time.' }
+  ],
+  gallery: [
+    { title: 'Server Room Sunrise', caption: 'Morning shift vibes', hue: 190 },
+    { title: 'Zero Alerts', caption: 'A mythical green dashboard', hue: 145 },
+    { title: 'Maintenance Night', caption: 'Coffee #4, window still open', hue: 265 },
+    { title: 'Fiber Spaghetti', caption: 'Cable management: in progress', hue: 20 },
+    { title: 'Team Offsite', caption: 'Nobody got paged. Almost.', hue: 320 },
+    { title: 'Postmortem Pizza', caption: 'Blameless and delicious', hue: 45 }
+  ],
+  terminalUser: 'noc@ops',
+  reminderRepeats: [0, 5, 15, 30, 60, 120],
+  shortcuts: [
+    { keys: 'Ctrl+K', label: 'Open command palette', action: 'palette', global: true },
+    { keys: 'Esc', label: 'Close palette / lightbox / scratchpad', action: 'close', global: true },
+    { keys: 'Alt+N', label: 'Toggle scratchpad', action: 'scratch', global: true },
+    { keys: '/', label: 'Focus search on current page', action: 'search' },
+    { keys: 'Alt+L', label: 'Toggle light mode', action: 'light' },
+    { keys: 'Alt+R', label: 'New reminder', action: 'reminder' },
+    { keys: 'Alt+B', label: 'Test reminder beep', action: 'beep' }
+  ],
+  memoryIcons: ['🖥', '📡', '🔒', '☕', '🚨', '🛰', '🔥', '🧯']
+};
+
+// --- 2. Core Helpers (esc, storage, DOM, clipboard) ---
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(v) { return String(v ?? '').replace(/[&<>"']/g, ch => ESC_MAP[ch]); }
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+const store = {
+  get(key, fallback) {
+    try {
+      const raw = localStorage.getItem(SITE.storagePrefix + key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(SITE.storagePrefix + key, JSON.stringify(value)); } catch { /* storage full or blocked */ }
+  }
+};
+
+function safeUrl(u) { const v = String(u ?? '').trim(); return /^(https?:|mailto:)/i.test(v) ? v : '#'; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function pad(n) { return String(n).padStart(2, '0'); }
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+async function copyText(text, label = 'Copied to clipboard') {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch { /* ignore */ }
+    ta.remove();
+  }
+  toast(label, 'ok');
+}
+
+// SVG icon registry: config references icons by key only, so no config string is injected as raw markup.
+const ICONS = {
+  dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.8 3.1 2.5 3.5 5.2"/>',
+  checklist: '<path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17"/><path d="M11 6h9M11 12h9M11 18h9"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/>',
+  branch: '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 4-6 3.5-11.2 7.4"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8"/>',
+  terminal: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/>',
+  bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  gamepad: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r="1"/><circle cx="18" cy="14" r="1"/>',
+  smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>'
+};
+function icon(name) {
+  const body = Object.prototype.hasOwnProperty.call(ICONS, name) ? ICONS[name] : ICONS.dashboard;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+}
+
+// --- 3. Toast Notifications ---
+function toast(message, type = 'info', ms = 3200, actions = []) {
+  const box = $('#toasts');
+  while (box.children.length >= 5) box.firstElementChild.remove();
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.setAttribute('role', 'status');
+  el.innerHTML = `<div class="toast-msg">${esc(message)}${actions.length
+    ? `<div class="toast-actions">${actions.map((a, i) => `<button class="btn sm" type="button" data-ta="${i}">${esc(a.label)}</button>`).join('')}</div>` : ''}</div>
+    <button class="toast-x" type="button" aria-label="Dismiss">✕</button>`;
+  let closed = false;
+  const close = () => { if (closed) return; closed = true; el.classList.add('out'); setTimeout(() => el.remove(), 300); };
+  el.addEventListener('click', e => {
+    if (e.target.closest('.toast-x')) { close(); return; }
+    const b = e.target.closest('[data-ta]');
+    if (b) { actions[+b.dataset.ta].run(); close(); }
+  });
+  box.appendChild(el);
+  if (ms > 0) setTimeout(close, ms);
+  return close;
+}
+
+// --- 4. Theme Engine ---
+function applyTheme(id) {
+  if (!SITE.themes[id]) id = SITE.defaultTheme;
+  Object.keys(SITE.themes).forEach(t => document.body.classList.remove(`theme-${t}`));
+  document.body.classList.add(`theme-${id}`);
+  store.set('theme', id);
+}
+function applyLight(on) {
+  document.body.classList.toggle('light-mode', on);
+  $('#lightToggle').textContent = on ? '☾' : '☀';
+  store.set('light', on);
+}
+function initTheme() {
+  const sel = $('#themeSelect');
+  sel.innerHTML = Object.entries(SITE.themes).map(([id, label]) => `<option value="${esc(id)}">${esc(label)}</option>`).join('');
+  const saved = store.get('theme', SITE.defaultTheme);
+  sel.value = SITE.themes[saved] ? saved : SITE.defaultTheme;
+  applyTheme(sel.value);
+  applyLight(store.get('light', false));
+  sel.addEventListener('change', () => { applyTheme(sel.value); toast(`Theme: ${SITE.themes[sel.value]}`); });
+  $('#lightToggle').addEventListener('click', () => applyLight(!document.body.classList.contains('light-mode')));
+}
+
+// --- 5. Navigation & Section Routing ---
+const ALL_SECTIONS = SITE.nav.flatMap(g => g.items);
+function renderNav() {
+  $('#nav').innerHTML = SITE.nav.map(g => `
+    <div class="nav-group-label">${esc(g.group)}</div>
+    ${g.items.map(it => `
+      <button class="nav-btn" type="button" data-section="${esc(it.id)}">
+        <span class="nav-ico">${icon(it.icon)}</span>
+        <span class="nav-label">${esc(it.label)}</span>
+        ${it.badge ? `<span class="badge" data-badge="${esc(it.badge)}">0</span>` : ''}
+      </button>`).join('')}
+  `).join('');
+  $('#nav').addEventListener('click', e => {
+    const btn = e.target.closest('[data-section]');
+    if (btn) showSection(btn.dataset.section);
+  });
+}
+function showSection(id) {
+  if (!ALL_SECTIONS.some(s => s.id === id)) id = 'dashboard';
+  $$('.page-section').forEach(s => s.classList.toggle('active', s.id === `sec-${id}`));
+  $$('.nav-btn').forEach(b => {
+    const on = b.dataset.section === id;
+    b.classList.toggle('active', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  store.set('section', id);
+  if (location.hash !== `#${id}`) history.replaceState(null, '', `#${id}`);
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function currentSection() { return store.get('section', 'dashboard'); }
+function openSidebar() { $('#sidebar').classList.add('open'); $('#scrim').classList.add('open'); }
+function closeSidebar() { $('#sidebar').classList.remove('open'); $('#scrim').classList.remove('open'); }
+
+function updateBadges() {
+  const mt = matrixTotals();
+  const counts = {
+    progress: `${mt.pct}%`,
+    tasks: shiftRemaining(currentShift().id),
+    templates: SITE.templates.length,
+    versions: versionCount(),
+    links: SITE.linkGroups.reduce((n, g) => n + g.items.length, 0),
+    docs: SITE.docs.length,
+    commands: SITE.commands.reduce((n, g) => n + g.items.length, 0),
+    reminders: state.reminders.filter(r => !r.fired).length
+  };
+  $$('[data-badge]').forEach(b => {
+    const key = b.dataset.badge;
+    b.textContent = counts[key] ?? 0;
+    if (key === 'progress') {
+      b.title = `${mt.done}/${mt.total} checks completed · ${mt.failed} failed`;
+      b.classList.toggle('hot', mt.failed > 0);
+      b.classList.toggle('ok', !mt.failed && mt.pct === 100);
+      b.classList.toggle('accent', !mt.failed && mt.pct > 0 && mt.pct < 100);
+    } else {
+      b.classList.toggle('accent', (key === 'tasks' || key === 'reminders') && counts[key] > 0);
+    }
+  });
+  renderStats();
+}
+
+// --- 6. App State ---
+const state = {
+  matrix: store.get('matrixV2', {}), // keyed by "row-col" index
+  shiftChecks: store.get('shiftChecks', {}),
+  handoff: store.get('handoff', { engineer: '', incidents: '', escalations: '', notes: '' }),
+  versions: store.get('versionsV2', null) || seedVersions(),
+  reminders: store.get('reminders', []),
+  scratch: store.get('scratch', ''),
+  tplVars: store.get('tplVars', { customer: '', service: '', ticket: '', time: '' })
+};
+
+// --- 7. Shift Logic & Hero Banner ---
+function inShift(s, h) { return s.start < s.end ? h >= s.start && h < s.end : h >= s.start || h < s.end; }
+function currentShift(date = new Date()) {
+  return SITE.shifts.find(s => inShift(s, date.getHours())) || SITE.shifts[0];
+}
+function nextShift(s) { return SITE.shifts[(SITE.shifts.indexOf(s) + 1) % SITE.shifts.length]; }
+function greeting(h) {
+  if (h < 5) return 'Burning the midnight oil';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  if (h < 21) return 'Good evening';
+  return 'Good night shift';
+}
+
+function renderDashboard() {
+  $('#sec-dashboard').innerHTML = `
+    <div class="hero">
+      <div class="hero-kicker">${esc(SITE.team)} · ${esc(SITE.tagline)}</div>
+      <h1 class="hero-title">${esc(SITE.name)}</h1>
+      <p class="hero-greet" id="heroGreet"></p>
+      <div class="hero-meta">
+        <span class="chip" id="heroShift"></span>
+        <span class="chip" id="heroDate"></span>
+        <span class="chip" id="heroNext"></span>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title"><h3>Customers needing attention</h3><button class="btn sm" type="button" data-goto="customers">Open matrix</button></div>
+        <div id="dashAttention"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>Upcoming reminders</h3><button class="btn sm" type="button" data-goto="reminders">Manage</button></div>
+        <div id="dashReminders"></div>
+      </div>
+    </div>`;
+  $('#sec-dashboard').addEventListener('click', e => {
+    const go = e.target.closest('[data-goto]');
+    if (go) showSection(go.dataset.goto);
+  });
+  updateHero();
+}
+function updateHero() {
+  const now = new Date();
+  const s = currentShift(now);
+  const n = nextShift(s);
+  const g = $('#heroGreet');
+  if (!g) return;
+  g.textContent = `${greeting(now.getHours())}, team — you're on the ${s.name} shift.`;
+  $('#heroShift').textContent = `${s.icon} ${s.name} · ${pad(s.start)}:00–${pad(s.end)}:00`;
+  $('#heroDate').textContent = `📅 ${now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}`;
+  const nextAt = new Date(now); nextAt.setHours(n.start, 0, 0, 0);
+  if (nextAt <= now) nextAt.setDate(nextAt.getDate() + 1);
+  const mins = Math.round((nextAt - now) / 60000);
+  $('#heroNext').textContent = `⏭ ${n.name} in ${Math.floor(mins / 60)}h ${mins % 60}m`;
+}
+function renderStats() {
+  const el = $('#stats');
+  if (!el) return;
+  const statuses = customerStatuses();
+  const healthy = statuses.filter(s => s.level === 'ok').length;
+  const bad = statuses.filter(s => s.level === 'bad').length;
+  const s = currentShift();
+  const total = s.tasks.length, done = total - shiftRemaining(s.id);
+  const pending = state.reminders.filter(r => !r.fired).length;
+  const cells = SITE.customers.length * SITE.checklistColumns.length;
+  const mt = matrixTotals(), checked = mt.done + mt.failed;
+  const card = (label, value, sub, pct, goto) => `
+    <div class="stat" data-goto="${esc(goto)}" role="button" tabindex="0">
+      <div class="stat-label">${esc(label)}</div>
+      <div class="stat-value">${esc(value)}</div>
+      <div class="stat-sub">${esc(sub)}</div>
+      ${pct !== null ? `<div class="progress"><span style="width:${Math.round(pct)}%"></span></div>` : ''}
+    </div>`;
+  el.innerHTML =
+    card('Healthy customers', `${healthy}/${statuses.length}`, `${bad} need attention`, statuses.length ? healthy / statuses.length * 100 : 0, 'customers') +
+    card(`${s.name} tasks`, `${done}/${total}`, `${total - done} remaining`, total ? done / total * 100 : 0, 'shifts') +
+    card('Matrix coverage', `${cells ? Math.round(checked / cells * 100) : 0}%`, `${checked} of ${cells} checks done`, cells ? checked / cells * 100 : 0, 'customers') +
+    card('Reminders', pending, pending ? 'pending' : 'all clear', null, 'reminders');
+
+  const att = $('#dashAttention');
+  const issues = statuses.filter(x => x.level === 'bad');
+  att.innerHTML = issues.length
+    ? `<ul class="check-list">${issues.map(x => `<li class="check-item" data-goto="customers"><span class="status bad">Issue</span><span class="ci-text"><strong>${esc(x.customer.name)}</strong> <span class="muted small">— ${esc(x.issues.join(', '))}</span></span></li>`).join('')}</ul>`
+    : `<div class="empty">✅ No open issues in the matrix.</div>`;
+
+  const rem = $('#dashReminders');
+  const up = state.reminders.filter(r => !r.fired).sort((a, b) => a.at - b.at).slice(0, 4);
+  rem.innerHTML = up.length
+    ? `<ul class="rem-list">${up.map(r => `<li class="rem"><span class="rem-when">${esc(fmtTime(r.at))}</span><span class="rem-text">${esc(r.text)}</span><span class="small muted">${esc(fmtCountdown(r.at))}</span></li>`).join('')}</ul>`
+    : `<div class="empty">No reminders scheduled.</div>`;
+}
+
+// --- 8. World Clocks ---
+const clockFormatters = SITE.timezones.map(c => ({
+  time: new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, ...(c.tz ? { timeZone: c.tz } : {}) }),
+  day: new Intl.DateTimeFormat([], { weekday: 'short', day: 'numeric', month: 'short', ...(c.tz ? { timeZone: c.tz } : {}) }),
+  hour: new Intl.DateTimeFormat('en-US', { hour: 'numeric', hourCycle: 'h23', ...(c.tz ? { timeZone: c.tz } : {}) })
+}));
+function renderClocks() {
+  $('#clocks').innerHTML = SITE.timezones.map((c, i) => `
+    <div class="clock ${c.tz ? '' : 'local'}">
+      <div class="clock-label"><span>${esc(c.label)}</span><span class="dot" data-clock-dot="${i}" title="Business hours"></span></div>
+      <div class="clock-time" data-clock-time="${i}">--:--:--</div>
+      <div class="clock-day" data-clock-day="${i}"></div>
+    </div>`).join('');
+  tickClocks();
+}
+function tickClocks() {
+  const now = new Date();
+  clockFormatters.forEach((f, i) => {
+    const t = $(`[data-clock-time="${i}"]`); if (!t) return;
+    t.textContent = f.time.format(now);
+    $(`[data-clock-day="${i}"]`).textContent = f.day.format(now);
+    const h = parseInt(f.hour.format(now), 10) % 24;
+    const open = h >= SITE.businessHours.start && h < SITE.businessHours.end;
+    const dot = $(`[data-clock-dot="${i}"]`);
+    dot.className = `dot ${open ? 'on' : 'off'}`;
+    dot.title = open ? 'Business hours' : 'After hours';
+  });
+}
+
+// --- 9. Customers: Summary Table & 3-State Checklist Matrix ---
+const MX = [
+  { sym: '', label: 'None', cls: 's0' },
+  { sym: '✓', label: 'Completed', cls: 's1' },
+  { sym: '✕', label: 'Failed', cls: 's2' }
+];
+const LEVEL_TEXT = { ok: 'Healthy', warn: 'In progress', bad: 'Failed checks' };
+function mxKey(r, c) { return `${r}-${c}`; }
+function mxGet(r, c) { return state.matrix[mxKey(r, c)] || 0; }
+function mxSet(r, c, v) { if (v) state.matrix[mxKey(r, c)] = v; else delete state.matrix[mxKey(r, c)]; }
+function matrixTotals() {
+  let done = 0, failed = 0;
+  SITE.customers.forEach((_, r) => SITE.checklistColumns.forEach((_, c) => { const v = mxGet(r, c); if (v === 1) done++; else if (v === 2) failed++; }));
+  const total = SITE.customers.length * SITE.checklistColumns.length;
+  return { total, done, failed, open: total - done - failed, pct: total ? Math.round(done / total * 100) : 0 };
+}
+function customerStatuses() {
+  return SITE.customers.map((c, r) => {
+    const vals = SITE.checklistColumns.map((_, ci) => mxGet(r, ci));
+    const issues = SITE.checklistColumns.filter((_, ci) => vals[ci] === 2).map(k => k.label);
+    const open = SITE.checklistColumns.filter((_, ci) => vals[ci] === 0).map(k => k.label);
+    const done = vals.filter(v => v === 1).length;
+    const level = issues.length ? 'bad' : done === vals.length ? 'ok' : 'warn';
+    return { customer: c, index: r, issues, open, done, total: vals.length, level };
+  });
+}
+function linkCell(url, text) {
+  return url ? `<a href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(text)} ↗</a>` : '<span class="muted">—</span>';
+}
+function renderCustomers() {
+  const cols = SITE.checklistColumns;
+  $('#sec-customers').innerHTML = `
+    <div class="section-head"><div><h2>Customers</h2><p>Environment overview and the per-shift health checklist.</p></div></div>
+    <div class="card">
+      <div class="card-title"><h3>Customer summary</h3><span class="small muted">${SITE.customers.length} accounts</span></div>
+      <div class="table-wrap"><table class="zebra"><thead><tr>
+        <th>Customer</th><th>Platforms</th><th>Vectors</th><th>License</th><th>Git</th><th>Account manager</th><th>Team chat</th><th>Checklist</th>
+      </tr></thead><tbody id="custBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <h3>Checklist matrix</h3>
+        <div class="row"><span class="small muted" id="mxStamp"></span><button class="btn sm danger" type="button" id="mxClear">Clear all</button></div>
+      </div>
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <div class="legend">${MX.map(m => `<span><span class="mx ${m.cls}">${m.sym}</span>${esc(m.label)}</span>`).join('')}<span>Click a cell to cycle · “✓ all” fills a column</span></div>
+        <div class="mx-progress"><div class="progress"><span id="mxBar"></span></div><span class="small" id="mxSummary"></span></div>
+      </div>
+      <div class="table-wrap"><table class="matrix zebra"><thead id="mxHead"><tr><th>Customer</th>
+        ${cols.map((k, ci) => `<th class="mx-head"><span>${esc(k.label)}</span><button type="button" class="col-all" data-col="${ci}" aria-label="Mark every ${esc(k.label)} check completed">✓ all</button></th>`).join('')}
+      </tr></thead><tbody id="mxBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>Shift handoff report</h3>
+        <div class="row"><button class="btn primary" type="button" id="mxReport">Generate report</button><button class="btn" type="button" id="mxReportCopy">Copy</button></div></div>
+      <textarea class="output" id="mxReportOut" readonly aria-label="Checklist handoff report" placeholder="Generate a plain-text summary of the checklist matrix for the next shift."></textarea>
+    </div>`;
+
+  $('#mxBody').addEventListener('click', e => {
+    const b = e.target.closest('.mx[data-r]');
+    if (!b) return;
+    const r = +b.dataset.r, c = +b.dataset.c;
+    mxSet(r, c, (mxGet(r, c) + 1) % 3);
+    saveMatrix();
+    const again = $(`.mx[data-r="${r}"][data-c="${c}"]`);
+    if (again) again.focus();
+  });
+  $('#mxHead').addEventListener('click', e => {
+    const b = e.target.closest('[data-col]');
+    if (!b) return;
+    const c = +b.dataset.col;
+    const allDone = SITE.customers.every((_, r) => mxGet(r, c) === 1);
+    SITE.customers.forEach((_, r) => mxSet(r, c, allDone ? 0 : 1));
+    saveMatrix();
+    toast(`${SITE.checklistColumns[c].label}: ${allDone ? 'cleared' : 'all completed'}`, allDone ? 'warn' : 'ok');
+  });
+  $('#mxClear').addEventListener('click', () => { state.matrix = {}; saveMatrix(); toast('Matrix cleared', 'warn'); });
+  $('#mxReport').addEventListener('click', () => { $('#mxReportOut').value = matrixReport(); toast('Report generated', 'ok'); });
+  $('#mxReportCopy').addEventListener('click', () => {
+    const out = $('#mxReportOut');
+    if (!out.value) out.value = matrixReport();
+    copyText(out.value, 'Report copied');
+  });
+  paintCustomers();
+}
+function saveMatrix() {
+  store.set('matrixV2', state.matrix);
+  store.set('matrixStamp', Date.now());
+  paintCustomers();
+  updateBadges();
+}
+function paintCustomers() {
+  $('#custBody').innerHTML = customerStatuses().map(s => {
+    const c = s.customer;
+    return `<tr>
+      <td><strong>${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span></td>
+      <td>${(c.platforms || []).map(p => `<span class="plat plat-${esc(p.toLowerCase())}">${esc(p)}</span>`).join(' ')}</td>
+      <td>${(c.vectors || []).map(v => `<span class="vchip">${esc(v)}</span>`).join(' ')}</td>
+      <td>${linkCell(c.license, 'License')}</td>
+      <td>${linkCell(c.git, 'Repo')}</td>
+      <td>${esc(c.manager)}</td>
+      <td>${c.chat ? linkCell(c.chat.url, c.chat.name) : '<span class="muted">—</span>'}</td>
+      <td><span class="status ${s.level}" title="${esc(s.issues.join(', '))}">${LEVEL_TEXT[s.level]} · ${s.done}/${s.total}</span></td>
+    </tr>`;
+  }).join('');
+  $('#mxBody').innerHTML = SITE.customers.map((c, r) => `
+    <tr><td><strong>${esc(c.name)}</strong></td>
+    ${SITE.checklistColumns.map((k, ci) => {
+      const m = MX[mxGet(r, ci)];
+      return `<td class="cell"><button type="button" class="mx ${m.cls}" data-r="${r}" data-c="${ci}" aria-label="${esc(`${c.name} ${k.label}: ${m.label}`)}">${m.sym}</button></td>`;
+    }).join('')}</tr>`).join('');
+  $$('#mxHead .col-all').forEach(b => b.classList.toggle('on', SITE.customers.every((_, r) => mxGet(r, +b.dataset.col) === 1)));
+  const t = matrixTotals();
+  $('#mxBar').style.width = `${t.pct}%`;
+  $('#mxSummary').textContent = `${t.done}/${t.total} completed · ${t.failed} failed`;
+  const stamp = store.get('matrixStamp', null);
+  $('#mxStamp').textContent = stamp ? `Updated ${new Date(stamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : '';
+}
+function matrixSummaryLines() {
+  const t = matrixTotals(), st = customerStatuses();
+  const failed = st.filter(x => x.issues.length);
+  const pending = st.filter(x => x.open.length);
+  const full = st.filter(x => x.level === 'ok');
+  return [
+    `Progress: ${t.done}/${t.total} completed (${t.pct}%) · ${t.failed} failed · ${t.open} not checked`,
+    `✕ FAILED (${failed.length})`,
+    ...(failed.length ? failed.map(x => `  - ${x.customer.name} [${x.customer.tier}]: ${x.issues.join(', ')}`) : ['  none']),
+    `◌ NOT CHECKED (${pending.length})`,
+    ...(pending.length ? pending.map(x => `  - ${x.customer.name}: ${x.open.join(', ')}`) : ['  none']),
+    `✓ FULLY COMPLETED (${full.length})`,
+    `  ${full.map(x => x.customer.name).join(', ') || 'none'}`
+  ];
+}
+function matrixReport() {
+  const s = currentShift();
+  return [
+    `=== ${SITE.name} — CHECKLIST HANDOFF ===`,
+    `Shift:     ${s.icon} ${s.name} → ${nextShift(s).name}`,
+    `Generated: ${new Date().toLocaleString()}`,
+    '',
+    ...matrixSummaryLines()
+  ].join('\n');
+}
+
+// --- 10. Shift Task Management & Handoff Generator ---
+function shiftRemaining(id) {
+  const s = SITE.shifts.find(x => x.id === id);
+  const checks = state.shiftChecks[id] || {};
+  return s ? s.tasks.filter((_, i) => !checks[i]).length : 0;
+}
+function fmtStamp(v) { return typeof v === 'number' ? fmtTime(v) : 'done'; }
+function renderShifts() {
+  $('#sec-shifts').innerHTML = `
+    <div class="section-head"><div><h2>Shift Tasks</h2><p>All four shifts side by side. Checking a task records when it was done.</p></div></div>
+    <div class="shift-cols" id="shiftCols"></div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title"><h3>Handoff generator</h3><span class="small muted">Combines shift tasks, checklist matrix and your notes</span></div>
+      <div class="form-grid">
+        <div class="field"><label for="hoEngineer">Outgoing engineer</label><input id="hoEngineer" data-ho="engineer" placeholder="Your name"></div>
+        <div class="field"><label for="hoShift">Shift</label><select id="hoShift">${SITE.shifts.map(s => `<option value="${esc(s.id)}">${esc(s.icon + ' ' + s.name)}</option>`).join('')}</select></div>
+        <div class="field full"><label for="hoIncidents">Open incidents</label><textarea id="hoIncidents" data-ho="incidents" rows="2" placeholder="INC-1234 — Acme push delays, monitoring"></textarea></div>
+        <div class="field full"><label for="hoEsc">Escalations / waiting on</label><textarea id="hoEsc" data-ho="escalations" rows="2" placeholder="Vendor ticket #889 awaiting reply"></textarea></div>
+        <div class="field full"><label for="hoNotes">Notes</label><textarea id="hoNotes" data-ho="notes" rows="2" placeholder="Anything the next shift should know"></textarea></div>
+      </div>
+      <div class="row" style="margin:12px 0"><button class="btn primary" type="button" id="hoGen">Generate handoff</button><button class="btn" type="button" id="hoCopy">Copy</button><button class="btn danger" type="button" id="hoClear">Clear fields</button></div>
+      <textarea class="output" id="hoOut" readonly aria-label="Generated handoff"></textarea>
+    </div>`;
+
+  $('#shiftCols').addEventListener('change', e => {
+    const cb = e.target.closest('input[data-shift]');
+    if (!cb) return;
+    const id = cb.dataset.shift, task = cb.dataset.task;
+    state.shiftChecks[id] = state.shiftChecks[id] || {};
+    if (cb.checked) state.shiftChecks[id][task] = Date.now(); else delete state.shiftChecks[id][task];
+    store.set('shiftChecks', state.shiftChecks);
+    paintShifts(); updateBadges();
+    const again = $(`input[data-shift="${CSS.escape(id)}"][data-task="${CSS.escape(task)}"]`);
+    if (again) again.focus();
+  });
+  $('#shiftCols').addEventListener('click', e => {
+    const b = e.target.closest('[data-reset]');
+    if (!b) return;
+    state.shiftChecks[b.dataset.reset] = {};
+    store.set('shiftChecks', state.shiftChecks);
+    paintShifts(); updateBadges();
+  });
+
+  $$('[data-ho]').forEach(el => {
+    el.value = state.handoff[el.dataset.ho] || '';
+    el.addEventListener('input', () => { state.handoff[el.dataset.ho] = el.value; store.set('handoff', state.handoff); });
+  });
+  $('#hoShift').value = currentShift().id;
+  $('#hoGen').addEventListener('click', () => { $('#hoOut').value = buildHandoff($('#hoShift').value); toast('Handoff generated', 'ok'); });
+  $('#hoCopy').addEventListener('click', () => {
+    if (!$('#hoOut').value) $('#hoOut').value = buildHandoff($('#hoShift').value);
+    copyText($('#hoOut').value, 'Handoff copied');
+  });
+  $('#hoClear').addEventListener('click', () => {
+    state.handoff = { engineer: state.handoff.engineer, incidents: '', escalations: '', notes: '' };
+    store.set('handoff', state.handoff);
+    $$('[data-ho]').forEach(el => { el.value = state.handoff[el.dataset.ho] || ''; });
+    $('#hoOut').value = '';
+  });
+  paintShifts();
+}
+function paintShifts() {
+  const cur = currentShift();
+  $('#shiftCols').innerHTML = SITE.shifts.map(s => {
+    const checks = state.shiftChecks[s.id] || {};
+    const done = s.tasks.filter((_, i) => checks[i]).length;
+    return `
+    <div class="card shift-col ${s.id === cur.id ? 'current' : ''}">
+      <div class="shift-head">
+        <div><h3>${esc(s.icon)} ${esc(s.name)} ${s.id === cur.id ? '<span class="now">NOW</span>' : ''}</h3>
+          <span class="small muted">${pad(s.start)}:00 – ${pad(s.end)}:00 · ${done}/${s.tasks.length} done</span></div>
+        <button class="btn sm" type="button" data-reset="${esc(s.id)}" aria-label="Reset ${esc(s.name)} tasks">Reset</button>
+      </div>
+      <div class="progress" style="margin:0 0 12px"><span style="width:${s.tasks.length ? done / s.tasks.length * 100 : 0}%"></span></div>
+      <ul class="check-list">${s.tasks.map((t, i) => `
+        <li><label class="check-item ${checks[i] ? 'done' : ''}">
+          <input type="checkbox" data-shift="${esc(s.id)}" data-task="${i}" ${checks[i] ? 'checked' : ''}>
+          <span class="ci-body">
+            <span class="ci-time">${esc(t.time)}${checks[i] ? ` <span class="ci-stamp">· ✓ ${esc(fmtStamp(checks[i]))}</span>` : ''}</span>
+            <span class="ci-text">${esc(t.text)}</span>
+          </span>
+        </label></li>`).join('')}
+      </ul>
+    </div>`;
+  }).join('');
+}
+function buildHandoff(shiftId) {
+  const s = SITE.shifts.find(x => x.id === shiftId) || currentShift();
+  const checks = state.shiftChecks[s.id] || {};
+  const done = s.tasks.map((t, i) => ({ t, v: checks[i] })).filter(x => x.v);
+  const open = s.tasks.filter((_, i) => !checks[i]);
+  const h = state.handoff;
+  const block = (v, empty = 'None') => (v && v.trim()) ? v.trim().split('\n').map(l => `  ${l}`).join('\n') : `  ${empty}`;
+  return [
+    `=== ${SITE.name} — SHIFT HANDOFF ===`,
+    `Date:      ${new Date().toLocaleString()}`,
+    `Handoff:   ${s.name} → ${nextShift(s).name}`,
+    `Engineer:  ${h.engineer || '(not set)'}`,
+    '',
+    `TASKS (${done.length}/${s.tasks.length} complete)`,
+    ...done.map(x => `  [x] ${x.t.time} ${x.t.text} (done ${fmtStamp(x.v)})`),
+    ...open.map(t => `  [ ] ${t.time} ${t.text}`),
+    '',
+    'CUSTOMER CHECKLIST',
+    ...matrixSummaryLines().map(l => `  ${l}`),
+    '',
+    'OPEN INCIDENTS', block(h.incidents),
+    '',
+    'ESCALATIONS / WAITING ON', block(h.escalations),
+    '',
+    'NOTES', block(h.notes, '—'),
+    '',
+    `Pending reminders: ${state.reminders.filter(r => !r.fired).map(r => `${fmtTime(r.at)} ${r.text}`).join('; ') || 'none'}`
+  ].join('\n');
+}
+
+// --- 11. Message Templates ---
+function fillTemplate(body) {
+  return body.replace(/\{(\w+)\}/g, (m, k) => (state.tplVars[k] && state.tplVars[k].trim()) ? state.tplVars[k].trim() : m);
+}
+function renderTemplates() {
+  const vars = ['customer', 'service', 'ticket', 'time'];
+  $('#sec-templates').innerHTML = `
+    <div class="section-head"><div><h2>Message Templates</h2><p>Fill the variables once, then click any card to copy a ready-to-send message.</p></div></div>
+    <div class="card">
+      <div class="card-title"><h3>Variables</h3><button class="btn sm" type="button" id="tplNow">Set time to now (UTC)</button></div>
+      <div class="grid grid-auto" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+        ${vars.map(v => `<div class="field"><label for="tv-${v}">{${v}}</label>
+          <input id="tv-${v}" data-var="${v}" ${v === 'customer' ? 'list="custList"' : ''} placeholder="${esc(v)}"></div>`).join('')}
+      </div>
+      <datalist id="custList">${SITE.customers.map(c => `<option value="${esc(c.name)}">`).join('')}</datalist>
+    </div>
+    <div class="grid grid-auto" id="tplGrid" style="margin-top:16px"></div>`;
+  $$('[data-var]').forEach(inp => {
+    inp.value = state.tplVars[inp.dataset.var] || '';
+    inp.addEventListener('input', () => { state.tplVars[inp.dataset.var] = inp.value; store.set('tplVars', state.tplVars); paintTemplates(); });
+  });
+  $('#tplNow').addEventListener('click', () => {
+    const d = new Date();
+    const v = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+    $('#tv-time').value = v; state.tplVars.time = v; store.set('tplVars', state.tplVars); paintTemplates();
+  });
+  $('#tplGrid').addEventListener('click', e => {
+    const card = e.target.closest('[data-tpl]');
+    if (card) copyTemplate(card.dataset.tpl, card);
+  });
+  paintTemplates();
+}
+function paintTemplates() {
+  const counts = store.get('tplCounts', {});
+  $('#tplGrid').innerHTML = SITE.templates.map(t => `
+    <button type="button" class="tpl" data-tpl="${esc(t.id)}">
+      <div class="tpl-head"><span class="tpl-title">${esc(t.title)}</span><span class="tpl-tag">${esc(t.tag)}</span></div>
+      <div class="tpl-body">${esc(fillTemplate(t.body))}</div>
+      <div class="tpl-foot">Click to copy · used ${counts[t.id] || 0}×</div>
+    </button>`).join('');
+}
+function copyTemplate(id, card) {
+  const t = SITE.templates.find(x => x.id === id);
+  if (!t) return;
+  const counts = store.get('tplCounts', {});
+  counts[id] = (counts[id] || 0) + 1;
+  store.set('tplCounts', counts);
+  copyText(fillTemplate(t.body), `Copied “${t.title}”`);
+  paintTemplates();
+  const fresh = card && $(`[data-tpl="${CSS.escape(id)}"]`);
+  if (fresh) { fresh.classList.add('copied'); setTimeout(() => fresh.classList.remove('copied'), 900); }
+}
+
+// --- 12. App Version Tracking (contenteditable) & SheetJS Export ---
+const CE_MODE = (() => {
+  const d = document.createElement('div');
+  try { d.contentEditable = 'plaintext-only'; } catch { return 'true'; }
+  return d.contentEditable === 'plaintext-only' ? 'plaintext-only' : 'true';
+})();
+let verSaveTimer = null;
+let sheetJsPromise = null;
+function seedVersions() {
+  const out = {};
+  SITE.versionTables.forEach(t => { out[t.id] = (SITE.versions[t.id] || []).map(r => ({ id: uid(), ...r })); });
+  return out;
+}
+function versionCount() { return SITE.versionTables.reduce((n, t) => n + (state.versions[t.id] || []).length, 0); }
+function findVersion(plat, id) { return (state.versions[plat] || []).find(r => r.id === id); }
+function saveVersions() { clearTimeout(verSaveTimer); store.set('versionsV2', state.versions); updateBadges(); }
+function renderVersions() {
+  SITE.versionTables.forEach(t => { if (!Array.isArray(state.versions[t.id])) state.versions[t.id] = []; });
+  $('#sec-versions').innerHTML = `
+    <div class="section-head">
+      <div><h2>Version Tracking</h2><p>Click any cell to edit · <kbd>Enter</kbd> saves · <kbd>Esc</kbd> reverts. Changes persist automatically.</p></div>
+      <div class="row">
+        <div class="search-box" style="max-width:240px"><input id="verFilter" type="search" placeholder="Filter rows…" aria-label="Filter versions" data-page-search></div>
+        <button class="btn primary" type="button" id="verExport">⬇ Export to Excel</button>
+      </div>
+    </div>
+    ${SITE.versionTables.map(t => `
+    <div class="card">
+      <div class="card-title">
+        <h3><span class="plat plat-${esc(t.id)}">${esc(t.label)}</span> app versions</h3>
+        <div class="row"><span class="small muted" data-vcount="${esc(t.id)}"></span><button class="btn sm" type="button" data-vadd="${esc(t.id)}">+ Add row</button></div>
+      </div>
+      <div class="table-wrap"><table class="zebra ver-table"><thead><tr>${SITE.versionColumns.map(c => `<th>${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
+        <tbody data-vbody="${esc(t.id)}"></tbody></table></div>
+    </div>`).join('')}`;
+
+  const sec = $('#sec-versions');
+  sec.addEventListener('focusin', e => { const td = e.target.closest('td[data-key]'); if (td) td.dataset.orig = td.textContent; });
+  sec.addEventListener('input', e => {
+    const td = e.target.closest('td[data-key]');
+    if (!td) return;
+    const row = findVersion(td.dataset.plat, td.dataset.id);
+    if (!row) return;
+    row[td.dataset.key] = td.textContent.trim();
+    clearTimeout(verSaveTimer);
+    verSaveTimer = setTimeout(saveVersions, 300);
+  });
+  sec.addEventListener('focusout', e => {
+    const td = e.target.closest('td[data-key]');
+    if (!td) return;
+    const clean = td.textContent.replace(/\s+/g, ' ').trim();
+    if (td.textContent !== clean) td.textContent = clean;
+    const row = findVersion(td.dataset.plat, td.dataset.id);
+    if (row) row[td.dataset.key] = clean;
+    saveVersions();
+  });
+  sec.addEventListener('keydown', e => {
+    const td = e.target.closest('td[data-key]');
+    if (!td) return;
+    if (e.key === 'Enter') { e.preventDefault(); td.blur(); }
+    else if (e.key === 'Escape') {
+      e.stopPropagation();
+      td.textContent = td.dataset.orig ?? td.textContent;
+      td.blur();
+    }
+  });
+  sec.addEventListener('paste', e => {
+    const td = e.target.closest('td[data-key]');
+    if (!td || CE_MODE === 'plaintext-only') return;
+    e.preventDefault(); // contenteditable="true" fallback: never accept pasted HTML
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\s+/g, ' ');
+    document.execCommand('insertText', false, text);
+  });
+  sec.addEventListener('click', e => {
+    const add = e.target.closest('[data-vadd]');
+    if (add) {
+      const plat = add.dataset.vadd;
+      const row = { id: uid() };
+      SITE.versionColumns.forEach(c => { row[c.key] = ''; });
+      if ('released' in row) row.released = todayISO();
+      state.versions[plat].unshift(row);
+      $('#verFilter').value = '';
+      saveVersions(); paintVersions();
+      const first = $(`td[data-plat="${CSS.escape(plat)}"][data-id="${row.id}"]`);
+      if (first) first.focus();
+      return;
+    }
+    const del = e.target.closest('[data-vdel]');
+    if (del) {
+      const [plat, id] = del.dataset.vdel.split('|');
+      state.versions[plat] = state.versions[plat].filter(r => r.id !== id);
+      saveVersions(); paintVersions();
+      toast('Row removed', 'warn');
+    }
+  });
+  $('#verFilter').addEventListener('input', paintVersions);
+  $('#verExport').addEventListener('click', exportExcel);
+  paintVersions();
+}
+function paintVersions() {
+  const q = ($('#verFilter')?.value || '').toLowerCase().trim();
+  const cols = SITE.versionColumns;
+  SITE.versionTables.forEach(t => {
+    const rows = state.versions[t.id] || [];
+    const shown = rows.filter(r => !q || cols.some(c => String(r[c.key] ?? '').toLowerCase().includes(q)));
+    $(`[data-vbody="${CSS.escape(t.id)}"]`).innerHTML = shown.length ? shown.map(r => `<tr>
+      ${cols.map(c => `<td contenteditable="${CE_MODE}" spellcheck="false" data-plat="${esc(t.id)}" data-id="${esc(r.id)}" data-key="${esc(c.key)}" data-placeholder="${esc(c.label)}">${esc(r[c.key])}</td>`).join('')}
+      <td><button class="btn sm danger" type="button" data-vdel="${esc(t.id)}|${esc(r.id)}" aria-label="Delete row">✕</button></td></tr>`).join('')
+      : `<tr><td colspan="${cols.length + 1}"><div class="empty">${q ? 'No rows match the filter.' : 'No versions yet — add a row.'}</div></td></tr>`;
+    $(`[data-vcount="${CSS.escape(t.id)}"]`).textContent = `${rows.length} row${rows.length === 1 ? '' : 's'}`;
+  });
+}
+function loadSheetJS() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (!sheetJsPromise) {
+    sheetJsPromise = new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = SITE.sheetJsUrl;
+      tag.async = true;
+      tag.onload = () => (window.XLSX ? resolve(window.XLSX) : reject(new Error('XLSX global missing')));
+      tag.onerror = () => { tag.remove(); sheetJsPromise = null; reject(new Error('SheetJS failed to load')); };
+      document.head.appendChild(tag);
+    });
+  }
+  return sheetJsPromise;
+}
+async function exportExcel() {
+  const cols = SITE.versionColumns;
+  const versionRows = id => (state.versions[id] || []).map(r => Object.fromEntries(cols.map(c => [c.label, r[c.key] ?? ''])));
+  const matrixRows = customerStatuses().map(s => {
+    const row = { Customer: s.customer.name, Tier: s.customer.tier, Manager: s.customer.manager };
+    SITE.checklistColumns.forEach((k, ci) => { row[k.label] = MX[mxGet(s.index, ci)].label; });
+    row.Status = LEVEL_TEXT[s.level];
+    return row;
+  });
+  const fname = `noc-versions-${todayISO()}`;
+  try {
+    if (!window.XLSX) toast('Loading SheetJS…');
+    const X = await loadSheetJS();
+    const wb = X.utils.book_new();
+    SITE.versionTables.forEach(t => {
+      const ws = X.utils.json_to_sheet(versionRows(t.id), { header: cols.map(c => c.label) });
+      ws['!cols'] = cols.map(c => ({ wch: c.key === 'notes' ? 36 : Math.max(c.label.length + 4, 14) }));
+      X.utils.book_append_sheet(wb, ws, t.label.slice(0, 31));
+    });
+    X.utils.book_append_sheet(wb, X.utils.json_to_sheet(matrixRows), 'Checklist Matrix');
+    X.writeFile(wb, `${fname}.xlsx`);
+    toast('Excel file exported', 'ok');
+  } catch {
+    const header = ['Platform', ...cols.map(c => c.label)];
+    const lines = SITE.versionTables.flatMap(t => (state.versions[t.id] || []).map(r => [t.label, ...cols.map(c => r[c.key] ?? '')]));
+    const csv = [header, ...lines].map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `${fname}.csv`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('SheetJS unavailable — exported CSV instead', 'warn');
+  }
+}
+
+// --- 13. Link Walls ---
+function renderLinks() {
+  $('#sec-links').innerHTML = `
+    <div class="section-head"><div><h2>Link Wall</h2><p>Everything the shift touches, one click away. All links open in a new tab.</p></div></div>
+    <div class="grid">${SITE.linkGroups.map(g => `
+      <div class="card link-wall"><h4>${esc(g.group)} <span class="badge">${g.items.length}</span></h4><div class="links">
+        ${g.items.map(l => `<a class="link-tile" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener noreferrer" title="${esc(l.url)}">
+          <span class="link-ico" aria-hidden="true">${esc(l.icon)}</span><span><span class="link-name">${esc(l.name)}</span><br><span class="link-desc">${esc(l.desc)}</span></span></a>`).join('')}
+      </div></div>`).join('')}</div>`;
+}
+
+// --- 14. Documentation Bookshelf (live search, dims non-matches) ---
+function highlight(text, q) {
+  const safe = esc(text);
+  if (!q) return safe;
+  const pattern = esc(q).replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
+  return safe.replace(new RegExp('(' + pattern + ')', 'gi'), '<mark>$1</mark>');
+}
+let docCat = 'All';
+function renderDocs() {
+  const cats = ['All', ...new Set(SITE.docs.map(d => d.cat))];
+  $('#sec-docs').innerHTML = `
+    <div class="section-head">
+      <div><h2>Bookshelf</h2><p>Runbooks, references and process docs. <kbd>Enter</kbd> opens the first match.</p></div>
+      <div class="search-box"><input id="docSearch" type="search" placeholder="Search docs…" aria-label="Search docs" data-page-search></div>
+    </div>
+    <div class="tabs" id="docCats">${cats.map(c => `<button type="button" class="tab ${c === docCat ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <div class="shelf-meta" id="docCount" aria-live="polite"></div>
+    <div class="shelf" id="shelf"></div>`;
+  $('#docSearch').addEventListener('input', paintDocs);
+  $('#docSearch').addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const first = $('#shelf .book:not(.dim)');
+    if (first) window.open(first.href, '_blank', 'noopener');
+  });
+  $('#docCats').addEventListener('click', e => {
+    const b = e.target.closest('[data-cat]');
+    if (!b) return;
+    docCat = b.dataset.cat;
+    $$('#docCats .tab').forEach(t => t.classList.toggle('active', t === b));
+    paintDocs();
+  });
+  paintDocs();
+}
+function paintDocs() {
+  const q = $('#docSearch').value.trim();
+  const ql = q.toLowerCase();
+  const list = SITE.docs.filter(d => docCat === 'All' || d.cat === docCat);
+  let hits = 0;
+  $('#shelf').innerHTML = list.map(d => {
+    const match = !ql || `${d.title} ${d.desc} ${d.cat}`.toLowerCase().includes(ql);
+    if (match) hits++;
+    return `<a class="book ${match ? (ql ? 'hit' : '') : 'dim'}" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer" style="--spine:${esc(d.color)}"
+      ${match ? '' : 'tabindex="-1" aria-hidden="true"'}>
+      <span class="book-cat">${esc(d.cat)}</span>
+      <span class="book-title">${highlight(d.title, q)}</span>
+      <span class="book-desc">${highlight(d.desc, q)}</span>
+    </a>`;
+  }).join('');
+  $('#docCount').textContent = ql ? `${hits} of ${list.length} docs match “${q}”` : `${list.length} docs`;
+}
+
+// --- 15. Terminal Cheatsheet ---
+function renderTerminal() {
+  $('#sec-terminal').innerHTML = `
+    <div class="section-head">
+      <div><h2>Terminal Cheatsheet</h2><p>Battle-tested commands for live incidents. Hit copy, paste, go.</p></div>
+      <div class="search-box"><input id="cmdSearch" type="search" placeholder="Filter commands…" aria-label="Filter commands" data-page-search></div>
+    </div>
+    <div class="grid grid-2" id="termGrid"></div>`;
+  $('#cmdSearch').addEventListener('input', paintTerminal);
+  $('#termGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    copyText(b.dataset.copy, 'Command copied');
+    b.textContent = 'copied ✓';
+    b.classList.add('done');
+    setTimeout(() => { b.textContent = 'copy'; b.classList.remove('done'); }, 1200);
+  });
+  paintTerminal();
+}
+function paintTerminal() {
+  const q = $('#cmdSearch').value.trim();
+  const ql = q.toLowerCase();
+  const groups = SITE.commands
+    .map(g => ({ ...g, items: g.items.filter(c => !ql || `${c.cmd} ${c.desc} ${g.group}`.toLowerCase().includes(ql)) }))
+    .filter(g => g.items.length);
+  $('#termGrid').innerHTML = groups.length ? groups.map(g => `
+    <div class="term">
+      <div class="term-bar"><i></i><i></i><i></i><span>${esc(SITE.terminalUser)}:~/${esc(g.group.toLowerCase())}</span><span class="term-count">${g.items.length} cmd</span></div>
+      <div class="term-body">
+        ${g.items.map(c => `
+        <div class="cmd">
+          <div class="cmd-line"><span class="prompt" aria-hidden="true">$</span><code>${highlight(c.cmd, q)}</code></div>
+          <button class="cmd-copy" type="button" data-copy="${esc(c.cmd)}" aria-label="Copy command ${esc(c.cmd)}">copy</button>
+          <div class="cmd-desc"># ${highlight(c.desc, q)}</div>
+        </div>`).join('')}
+        <div class="term-cursor" aria-hidden="true"><span class="prompt">$</span><span class="cursor"></span></div>
+      </div>
+    </div>`).join('') : `<div class="empty" style="grid-column:1/-1">No commands match “${esc(q)}”.</div>`;
+}
+
+// --- 16. Reminders & Interval Timers (WebAudio triple-beep, toasts, sidebar countdowns) ---
+let audioCtx = null;
+function getAudio() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch { audioCtx = null; }
+  return audioCtx;
+}
+function tripleBeep() {
+  const ctx = getAudio();
+  if (!ctx) return;
+  const start = ctx.currentTime + 0.03;
+  for (let i = 0; i < 3; i++) {
+    const t = start + i * 0.22;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(1046.5, t);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+    gain.gain.setValueAtTime(0.3, t + 0.11);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.17);
+  }
+}
+function fmtTime(ms) { const d = new Date(ms); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fmtCountdown(ms) {
+  const s = Math.max(0, Math.round((ms - Date.now()) / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  return h ? `in ${h}h ${m}m` : m ? `in ${m}m ${pad(sec)}s` : `in ${sec}s`;
+}
+function fmtClock(ms) {
+  const s = Math.max(0, Math.round((ms - Date.now()) / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  return h ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+}
+function repeatLabel(min) { return min >= 60 ? `${min / 60}h` : `${min}m`; }
+function saveReminders() { store.set('reminders', state.reminders); paintReminders(); updateBadges(); }
+function addReminder(text, at, repeat = 0) {
+  state.reminders.push({ id: uid(), text, at, from: Date.now(), repeat, fired: false });
+  saveReminders();
+  toast(`Reminder set for ${fmtTime(at)}${repeat ? ` · repeats every ${repeatLabel(repeat)}` : ''}`, 'ok');
+}
+function snoozeReminder(id, min) {
+  const r = state.reminders.find(x => x.id === id);
+  if (!r) return;
+  const at = Date.now() + min * 60000;
+  if (r.repeat) state.reminders.push({ id: uid(), text: `${r.text} (snoozed)`, at, from: Date.now(), repeat: 0, fired: false });
+  else Object.assign(r, { at, from: Date.now(), fired: false });
+  saveReminders();
+  toast(`Snoozed ${min}m — back at ${fmtTime(at)}`);
+}
+function renderReminders() {
+  $('#sec-reminders').innerHTML = `
+    <div class="section-head"><div><h2>Reminders & Timers</h2><p>One-off reminders or repeating interval timers. Triple-beep + toast when due; next timers count down in the sidebar.</p></div></div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title"><h3>New reminder</h3></div>
+        <form id="remForm" class="grid">
+          <div class="field"><label for="remText">What</label><input id="remText" required maxlength="120" placeholder="Check backup job for Acme"></div>
+          <div class="form-grid">
+            <div class="field"><label for="remIn">In minutes</label><input id="remIn" type="number" min="1" max="1440" placeholder="15"></div>
+            <div class="field"><label for="remAt">…or at time</label><input id="remAt" type="time"></div>
+            <div class="field full"><label for="remRepeat">Repeat</label>
+              <select id="remRepeat">${SITE.reminderRepeats.map(m => `<option value="${m}">${m ? `Every ${repeatLabel(m)}` : 'Once'}</option>`).join('')}</select></div>
+          </div>
+          <div class="row"><span class="small muted">Quick:</span>${[5, 15, 30, 60].map(m => `<button class="btn sm" type="button" data-quick="${m}">+${m}m</button>`).join('')}</div>
+          <div class="row"><button class="btn primary" type="submit">Add reminder</button><button class="btn" type="button" id="remTest">🔔 Test beep</button></div>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>Scheduled</h3><button class="btn sm danger" type="button" id="remClear">Clear finished</button></div>
+        <ul class="rem-list" id="remList"></ul>
+      </div>
+    </div>`;
+  $('#remForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const text = $('#remText').value.trim();
+    if (!text) return;
+    const repeat = parseInt($('#remRepeat').value, 10) || 0;
+    const mins = parseInt($('#remIn').value, 10);
+    let at = null;
+    if (mins > 0) at = Date.now() + mins * 60000;
+    else if ($('#remAt').value) {
+      const [h, m] = $('#remAt').value.split(':').map(Number);
+      const d = new Date(); d.setHours(h, m, 0, 0);
+      if (d <= new Date()) d.setDate(d.getDate() + 1);
+      at = d.getTime();
+    } else if (repeat) at = Date.now() + repeat * 60000;
+    if (!at) { toast('Pick minutes, a time, or a repeat interval', 'warn'); return; }
+    getAudio(); // unlock audio inside a user gesture so later beeps are allowed
+    addReminder(text, at, repeat);
+    $('#remText').value = ''; $('#remIn').value = ''; $('#remAt').value = ''; $('#remRepeat').value = '0';
+  });
+  $$('[data-quick]').forEach(b => b.addEventListener('click', () => { $('#remIn').value = b.dataset.quick; $('#remAt').value = ''; }));
+  $('#remTest').addEventListener('click', () => { tripleBeep(); toast('🔔 This is what a reminder sounds like'); });
+  $('#remClear').addEventListener('click', () => { state.reminders = state.reminders.filter(r => !r.fired); saveReminders(); });
+  $('#remList').addEventListener('click', e => {
+    const del = e.target.closest('[data-rdel]');
+    if (del) { state.reminders = state.reminders.filter(r => r.id !== del.dataset.rdel); saveReminders(); return; }
+    const sn = e.target.closest('[data-rsnooze]');
+    if (sn) snoozeReminder(sn.dataset.rsnooze, 5);
+  });
+  $('#sideTimers').addEventListener('click', e => { if (e.target.closest('.side-timer')) showSection('reminders'); });
+  document.addEventListener('pointerdown', getAudio, { once: true });
+  paintReminders();
+}
+function paintReminders() {
+  const list = $('#remList');
+  if (list) {
+    const sorted = [...state.reminders].sort((a, b) => (a.fired - b.fired) || (a.at - b.at));
+    list.innerHTML = sorted.length ? sorted.map(r => `
+      <li class="rem ${r.fired ? 'fired' : ''}">
+        <span class="rem-when">${esc(fmtTime(r.at))}</span>
+        <span class="rem-text">${esc(r.text)}${r.repeat ? `<span class="rep-chip">↻ ${esc(repeatLabel(r.repeat))}</span>` : ''}<br>
+          <span class="small muted" data-cd="${esc(r.id)}">${r.fired ? 'done' : esc(fmtCountdown(r.at))}</span></span>
+        ${r.fired ? '' : `<button class="btn sm" type="button" data-rsnooze="${esc(r.id)}" title="Push back 5 minutes">+5m</button>`}
+        <button class="btn sm danger" type="button" data-rdel="${esc(r.id)}" aria-label="Delete reminder">✕</button>
+      </li>`).join('') : `<li class="empty">Nothing scheduled.</li>`;
+  }
+  paintSideTimers(true);
+}
+let sideTimerKey = '';
+function paintSideTimers(force = false) {
+  const el = $('#sideTimers');
+  const up = state.reminders.filter(r => !r.fired).sort((a, b) => a.at - b.at).slice(0, 3);
+  const key = up.map(r => `${r.id}:${r.at}`).join('|');
+  if (force || key !== sideTimerKey) {
+    sideTimerKey = key;
+    el.hidden = !up.length;
+    el.innerHTML = up.length ? `<div class="nav-group-label">Timers</div>${up.map(r => `
+      <button class="side-timer" type="button" data-st="${esc(r.id)}" title="${esc(r.text)}">
+        <span class="st-text">${r.repeat ? '↻ ' : ''}${esc(r.text)}</span><span class="st-cd"></span>
+        <span class="st-bar"><span></span></span>
+      </button>`).join('')}` : '';
+  }
+  up.forEach(r => {
+    const btn = $(`[data-st="${CSS.escape(r.id)}"]`, el);
+    if (!btn) return;
+    const left = r.at - Date.now();
+    const span = Math.max(r.at - (r.from || r.at), 1);
+    btn.querySelector('.st-cd').textContent = fmtClock(r.at);
+    btn.querySelector('.st-bar span').style.width = `${Math.min(100, Math.max(0, (1 - left / span) * 100))}%`;
+    btn.classList.toggle('soon', left <= 60000);
+  });
+}
+function fireReminder(r) {
+  tripleBeep();
+  toast(`⏰ ${r.text}`, 'warn', 0, [{ label: 'Snooze 5m', run: () => snoozeReminder(r.id, 5) }]);
+  if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+    try { new Notification(SITE.name, { body: r.text }); } catch { /* ignore */ }
+  }
+  if (r.repeat > 0) {
+    const step = r.repeat * 60000;
+    while (r.at <= Date.now()) r.at += step;
+    r.from = r.at - step;
+  } else {
+    r.fired = true;
+  }
+}
+function checkReminders() {
+  let changed = false;
+  state.reminders.forEach(r => { if (!r.fired && r.at <= Date.now()) { fireReminder(r); changed = true; } });
+  if (changed) { saveReminders(); return; }
+  state.reminders.forEach(r => {
+    if (r.fired) return;
+    const el = $(`[data-cd="${CSS.escape(r.id)}"]`);
+    if (el) el.textContent = fmtCountdown(r.at);
+  });
+  paintSideTimers();
+}
+
+// --- 17. Games: 2048 & Memory Match ---
+let g2048 = store.get('g2048', null);
+function new2048() {
+  g2048 = { cells: Array(16).fill(0), score: 0, over: false, won: false };
+  spawnTile(); spawnTile(); save2048(); render2048();
+}
+function spawnTile() {
+  const empty = g2048.cells.map((v, i) => v ? -1 : i).filter(i => i >= 0);
+  if (!empty.length) return -1;
+  const i = empty[Math.floor(Math.random() * empty.length)];
+  g2048.cells[i] = Math.random() < 0.9 ? 2 : 4;
+  return i;
+}
+function lineIdx(dir, n) {
+  const idx = [0, 1, 2, 3].map(k => dir === 'left' || dir === 'right' ? n * 4 + k : k * 4 + n);
+  return dir === 'right' || dir === 'down' ? idx.reverse() : idx;
+}
+function move2048(dir) {
+  if (!g2048 || g2048.over) return;
+  let moved = false, gained = 0;
+  for (let n = 0; n < 4; n++) {
+    const idx = lineIdx(dir, n);
+    const vals = idx.map(i => g2048.cells[i]).filter(Boolean);
+    const out = [];
+    for (let i = 0; i < vals.length; i++) {
+      if (vals[i] === vals[i + 1]) { out.push(vals[i] * 2); gained += vals[i] * 2; i++; }
+      else out.push(vals[i]);
+    }
+    while (out.length < 4) out.push(0);
+    idx.forEach((ci, k) => { if (g2048.cells[ci] !== out[k]) moved = true; g2048.cells[ci] = out[k]; });
+  }
+  if (!moved) return;
+  g2048.score += gained;
+  const spawned = spawnTile();
+  const best = Math.max(store.get('g2048best', 0), g2048.score);
+  store.set('g2048best', best);
+  if (!g2048.won && g2048.cells.includes(2048)) { g2048.won = true; toast('🎉 2048! You absolute legend.', 'ok'); }
+  if (!canMove()) { g2048.over = true; toast(`Game over — score ${g2048.score}`, 'bad'); }
+  save2048(); render2048(spawned);
+}
+function canMove() {
+  const c = g2048.cells;
+  for (let i = 0; i < 16; i++) {
+    if (!c[i]) return true;
+    if (i % 4 < 3 && c[i] === c[i + 1]) return true;
+    if (i < 12 && c[i] === c[i + 4]) return true;
+  }
+  return false;
+}
+function save2048() { store.set('g2048', g2048); }
+function tileStyle(v) {
+  if (!v) return '';
+  const lvl = Math.min(Math.log2(v), 11);
+  const mix = Math.round(lvl / 11 * 100);
+  const color = `color-mix(in srgb, var(--accent-2) ${mix}%, var(--accent))`;
+  const alpha = 15 + lvl * 7;
+  return `background:color-mix(in srgb, ${color} ${alpha}%, var(--surface-2));color:${lvl > 5 ? '#fff' : 'var(--text)'};${v >= 128 ? `box-shadow:0 0 ${lvl * 2}px color-mix(in srgb, ${color} 60%, transparent);` : ''}`;
+}
+function render2048(popIdx = -1) {
+  const board = $('#g2048');
+  if (!board || !g2048) return;
+  board.innerHTML = g2048.cells.map((v, i) => `<div class="${i === popIdx ? 'pop' : ''}" style="${tileStyle(v)}">${v || ''}</div>`).join('');
+  $('#g2048score').textContent = g2048.score;
+  $('#g2048best').textContent = store.get('g2048best', 0);
+  $('#g2048state').textContent = g2048.over ? 'Game over' : g2048.won ? 'You hit 2048 — keep going!' : 'Arrow keys / WASD / swipe';
+}
+
+let mem = null, memLock = false;
+function newMemory() {
+  const deck = [...SITE.memoryIcons, ...SITE.memoryIcons].map(icon => ({ icon, state: 'down' }));
+  for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+  mem = { deck, moves: 0, open: [], start: null };
+  memLock = false;
+  renderMemory();
+}
+function renderMemory() {
+  $('#memBoard').innerHTML = mem.deck.map((c, i) => `
+    <button type="button" class="mem-card ${c.state === 'up' ? 'flip' : ''} ${c.state === 'match' ? 'match' : ''}" data-mem="${i}" aria-label="${c.state === 'down' ? 'Hidden card' : esc(c.icon)}">
+      <span class="mem-inner"><span class="mem-face mem-back">K</span><span class="mem-face mem-front">${esc(c.icon)}</span></span>
+    </button>`).join('');
+  $('#memMoves').textContent = mem.moves;
+  $('#memPairs').textContent = `${mem.deck.filter(c => c.state === 'match').length / 2}/${SITE.memoryIcons.length}`;
+  const best = store.get('memBest', null);
+  $('#memBest').textContent = best ?? '—';
+}
+function flipMemory(i) {
+  const c = mem.deck[i];
+  if (memLock || !c || c.state !== 'down') return;
+  if (!mem.start) mem.start = Date.now();
+  c.state = 'up'; mem.open.push(i);
+  if (mem.open.length === 2) {
+    mem.moves++;
+    const [a, b] = mem.open;
+    if (mem.deck[a].icon === mem.deck[b].icon) {
+      mem.deck[a].state = mem.deck[b].state = 'match'; mem.open = [];
+      if (mem.deck.every(x => x.state === 'match')) {
+        const best = store.get('memBest', null);
+        if (best === null || mem.moves < best) store.set('memBest', mem.moves);
+        const secs = Math.round((Date.now() - mem.start) / 1000);
+        toast(`🧠 Cleared in ${mem.moves} moves (${secs}s)`, 'ok');
+      }
+    } else {
+      memLock = true;
+      setTimeout(() => { mem.deck[a].state = mem.deck[b].state = 'down'; mem.open = []; memLock = false; renderMemory(); }, 750);
+    }
+  }
+  renderMemory();
+}
+function renderGames() {
+  $('#sec-games').innerHTML = `
+    <div class="section-head"><div><h2>Break Room</h2><p>Five-minute resets for long shifts. Progress is saved.</p></div></div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-title"><h3>2048</h3><button class="btn sm" type="button" id="g2048new">New game</button></div>
+        <div class="score-row"><div class="score"><span>Score</span><b id="g2048score">0</b></div><div class="score"><span>Best</span><b id="g2048best">0</b></div></div>
+        <div class="g2048" id="g2048" aria-label="2048 board"></div>
+        <p class="small muted" style="text-align:center;margin:10px 0 0" id="g2048state"></p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>Memory Match</h3><button class="btn sm" type="button" id="memNew">Shuffle</button></div>
+        <div class="score-row"><div class="score"><span>Moves</span><b id="memMoves">0</b></div><div class="score"><span>Pairs</span><b id="memPairs">0</b></div><div class="score"><span>Best</span><b id="memBest">—</b></div></div>
+        <div class="mem" id="memBoard"></div>
+      </div>
+    </div>`;
+  $('#g2048new').addEventListener('click', new2048);
+  $('#memNew').addEventListener('click', newMemory);
+  $('#memBoard').addEventListener('click', e => { const b = e.target.closest('[data-mem]'); if (b) flipMemory(+b.dataset.mem); });
+  let touch = null;
+  const board = $('#g2048');
+  board.addEventListener('touchstart', e => { const t = e.touches[0]; touch = { x: t.clientX, y: t.clientY }; }, { passive: true });
+  board.addEventListener('touchend', e => {
+    if (!touch) return;
+    const t = e.changedTouches[0], dx = t.clientX - touch.x, dy = t.clientY - touch.y;
+    touch = null;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+    move2048(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+  });
+  if (!g2048 || !Array.isArray(g2048.cells) || g2048.cells.length !== 16) new2048(); else render2048();
+  newMemory();
+}
+
+// --- 18. Morale: Jokes & Lightbox Gallery ---
+let jokeOrder = [], jokePos = -1;
+function nextJoke() {
+  if (jokePos >= jokeOrder.length - 1) {
+    const last = jokeOrder[jokePos];
+    jokeOrder = SITE.jokes.map((_, i) => i).sort(() => Math.random() - 0.5);
+    if (jokeOrder.length > 1 && jokeOrder[0] === last) jokeOrder.push(jokeOrder.shift());
+    jokePos = -1;
+  }
+  const j = SITE.jokes[jokeOrder[++jokePos]];
+  $('#jokeQ').textContent = j.q;
+  const p = $('#jokeA');
+  p.textContent = j.a; p.classList.remove('show');
+  setTimeout(() => p.classList.add('show'), 1400);
+}
+function galleryImage(g, w = 800, h = 600) {
+  const hue = Number(g.hue) || 0;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 800 600">
+    <defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue},70%,22%)"/><stop offset="1" stop-color="hsl(${(hue + 60) % 360},75%,45%)"/></linearGradient>
+    <radialGradient id="b" cx=".75" cy=".2" r=".6"><stop offset="0" stop-color="hsla(${(hue + 30) % 360},90%,70%,.55)"/><stop offset="1" stop-color="transparent"/></radialGradient></defs>
+    <rect width="800" height="600" fill="url(#a)"/><rect width="800" height="600" fill="url(#b)"/>
+    ${Array.from({ length: 7 }, (_, i) => `<rect x="${70 + i * 98}" y="${210 + (i % 3) * 22}" width="64" height="${300 - (i % 3) * 22}" rx="6" fill="hsla(${hue},40%,8%,.55)" stroke="hsla(${hue},80%,75%,.35)"/>
+      ${Array.from({ length: 6 }, (_, k) => `<circle cx="${84 + i * 98}" cy="${236 + (i % 3) * 22 + k * 40}" r="4" fill="hsl(${(hue + k * 25) % 360},90%,${55 + (k % 2) * 15}%)"/>`).join('')}`).join('')}
+    <text x="40" y="110" font-family="Space Grotesk, Arial, sans-serif" font-size="54" font-weight="700" fill="#fff">${esc(g.title)}</text>
+    <text x="42" y="152" font-family="Inter, Arial, sans-serif" font-size="24" fill="rgba(255,255,255,.75)">${esc(g.caption)}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+let lbIndex = 0;
+function openLightbox(i) {
+  lbIndex = (i + SITE.gallery.length) % SITE.gallery.length;
+  const g = SITE.gallery[lbIndex];
+  $('#lbImg').src = galleryImage(g, 1200, 900);
+  $('#lbImg').alt = g.title;
+  $('#lbCap').innerHTML = `<strong>${esc(g.title)}</strong> — ${esc(g.caption)} <span class="muted small">(${lbIndex + 1}/${SITE.gallery.length})</span>`;
+  $('#lightbox').classList.add('open');
+}
+function closeLightbox() { $('#lightbox').classList.remove('open'); }
+function renderMorale() {
+  $('#sec-morale').innerHTML = `
+    <div class="section-head"><div><h2>Morale</h2><p>Because uptime includes the humans.</p></div></div>
+    <div class="card">
+      <div class="card-title"><h3>Joke generator</h3><span class="row"><button class="btn sm" type="button" id="jokeCopy">Copy</button><button class="btn sm primary" type="button" id="jokeNext">Next joke</button></span></div>
+      <div class="joke"><div id="jokeQ"></div><div class="joke-punch" id="jokeA"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>Team gallery</h3><span class="small muted">Click to enlarge · ← → to browse</span></div>
+      <div class="gallery" id="gallery">${SITE.gallery.map((g, i) => `
+        <button type="button" class="g-item" data-g="${i}"><img src="${galleryImage(g, 400, 300)}" alt="${esc(g.title)}" loading="lazy"><span>${esc(g.title)}</span></button>`).join('')}
+      </div>
+    </div>`;
+  $('#jokeNext').addEventListener('click', nextJoke);
+  $('#jokeCopy').addEventListener('click', () => copyText(`${$('#jokeQ').textContent}\n${$('#jokeA').textContent}`, 'Joke copied — share responsibly'));
+  $('#gallery').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) openLightbox(+b.dataset.g); });
+  $('#lbClose').addEventListener('click', closeLightbox);
+  $('#lbPrev').addEventListener('click', () => openLightbox(lbIndex - 1));
+  $('#lbNext').addEventListener('click', () => openLightbox(lbIndex + 1));
+  $('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
+  nextJoke();
+}
+
+// --- 19. Command Palette (Ctrl+K) ---
+let palItems = [], palSel = 0, palIndex = null;
+function paletteIndex() {
+  const items = [];
+  ALL_SECTIONS.forEach(s => items.push({ type: 'Section', label: s.label, sub: 'go to', run: () => showSection(s.id) }));
+  SITE.shortcuts.forEach(sc => items.push({ type: 'Shortcut', label: sc.label, sub: sc.keys, kbd: true, run: () => ACTIONS[sc.action] && ACTIONS[sc.action]() }));
+  SITE.customers.forEach(c => items.push({ type: 'Customer', label: c.name, sub: `${c.tier} · ${c.platforms.join(' / ')} · ${c.manager}`, run: () => showSection('customers') }));
+  SITE.templates.forEach(t => items.push({ type: 'Template', label: t.title, sub: 'copy', run: () => copyTemplate(t.id) }));
+  SITE.linkGroups.forEach(g => g.items.forEach(l => items.push({ type: 'Link', label: l.name, sub: `${g.group} · ${l.desc}`, run: () => window.open(safeUrl(l.url), '_blank', 'noopener') })));
+  SITE.docs.forEach(d => items.push({ type: 'Doc', label: d.title, sub: d.cat, run: () => window.open(safeUrl(d.url), '_blank', 'noopener') }));
+  SITE.commands.forEach(g => g.items.forEach(c => items.push({ type: 'Command', label: c.cmd, sub: g.group, mono: true, run: () => copyText(c.cmd, 'Command copied') })));
+  Object.entries(SITE.themes).forEach(([id, label]) => items.push({ type: 'Theme', label: `Theme: ${label}`, sub: '', run: () => { $('#themeSelect').value = id; applyTheme(id); } }));
+  items.push({ type: 'Action', label: 'Generate shift handoff', sub: '', run: () => { showSection('shifts'); $('#hoGen').click(); } });
+  items.push({ type: 'Action', label: 'Generate checklist report', sub: '', run: () => { showSection('customers'); $('#mxReport').click(); } });
+  items.push({ type: 'Action', label: 'Export versions to Excel', sub: '', run: exportExcel });
+  return items;
+}
+function openPalette() {
+  palIndex = paletteIndex(); // rebuilt per open so it reflects current config/state
+  $('#paletteOverlay').classList.add('open');
+  const inp = $('#paletteInput');
+  inp.value = '';
+  palSel = 0;
+  filterPalette();
+  setTimeout(() => inp.focus(), 10);
+}
+function closePalette() { $('#paletteOverlay').classList.remove('open'); }
+function isPaletteOpen() { return $('#paletteOverlay').classList.contains('open'); }
+function filterPalette() {
+  const words = $('#paletteInput').value.toLowerCase().split(/\s+/).filter(Boolean);
+  const all = palIndex || paletteIndex();
+  palItems = (words.length
+    ? all.filter(it => { const hay = `${it.type} ${it.label} ${it.sub}`.toLowerCase(); return words.every(w => hay.includes(w)); })
+    : all).slice(0, 50);
+  palSel = Math.min(palSel, Math.max(palItems.length - 1, 0));
+  $('#paletteList').innerHTML = palItems.length ? palItems.map((it, i) => `
+    <li class="pal-item ${i === palSel ? 'sel' : ''}" data-pi="${i}" id="pal-${i}" role="option" aria-selected="${i === palSel}">
+      <span class="pal-type">${esc(it.type)}</span>
+      <span class="pal-label" ${it.mono ? 'style="font-family:var(--font-mono);font-size:13px"' : ''}>${esc(it.label)}</span>
+      <span class="pal-sub">${it.kbd ? `<kbd>${esc(it.sub)}</kbd>` : esc(it.sub)}</span>
+    </li>`).join('') : `<li class="empty" style="margin:8px">No results</li>`;
+  $('#paletteInput').setAttribute('aria-activedescendant', palItems.length ? `pal-${palSel}` : '');
+  const sel = $('.pal-item.sel');
+  if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+function runPalette(i) {
+  const it = palItems[i];
+  if (!it) return;
+  closePalette();
+  it.run();
+}
+function initPalette() {
+  const inp = $('#paletteInput');
+  inp.setAttribute('role', 'combobox');
+  inp.setAttribute('aria-controls', 'paletteList');
+  inp.setAttribute('aria-expanded', 'true');
+  inp.addEventListener('input', () => { palSel = 0; filterPalette(); });
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); palSel = (palSel + 1) % Math.max(palItems.length, 1); filterPalette(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); palSel = (palSel - 1 + palItems.length) % Math.max(palItems.length, 1); filterPalette(); }
+    else if (e.key === 'Enter') { e.preventDefault(); runPalette(palSel); }
+  });
+  $('#paletteList').addEventListener('click', e => { const li = e.target.closest('[data-pi]'); if (li) runPalette(+li.dataset.pi); });
+  $('#paletteList').addEventListener('mousemove', e => {
+    const li = e.target.closest('[data-pi]');
+    if (!li || +li.dataset.pi === palSel) return;
+    $$('.pal-item.sel').forEach(x => { x.classList.remove('sel'); x.setAttribute('aria-selected', 'false'); });
+    palSel = +li.dataset.pi;
+    li.classList.add('sel'); li.setAttribute('aria-selected', 'true');
+  });
+  $('#paletteOverlay').addEventListener('click', e => { if (e.target.id === 'paletteOverlay') closePalette(); });
+  $('#paletteHint').addEventListener('click', openPalette);
+  $('#topSearch').addEventListener('click', openPalette);
+}
+
+// --- 20. Floating Scratchpad (draggable, resizable, autosaved) ---
+let scratchTimer = null, scratchGeomTimer = null;
+function scratchEl() { return $('#scratch'); }
+function clampGeom(g) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const w = Math.min(Math.max(g.w, 260), vw - 16);
+  const h = Math.min(Math.max(g.h, 200), vh - 16);
+  return { w, h, x: Math.min(Math.max(g.x, 8), vw - w - 8), y: Math.min(Math.max(g.y, 8), vh - h - 8) };
+}
+function applyGeom(g) {
+  const el = scratchEl();
+  Object.assign(el.style, { left: `${g.x}px`, top: `${g.y}px`, width: `${g.w}px`, height: `${g.h}px`, right: 'auto', bottom: 'auto' });
+}
+function currentGeom() {
+  // offset* = untransformed layout box (getBoundingClientRect would include the open animation's scale)
+  const el = scratchEl();
+  return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight };
+}
+function resetScratchGeom() {
+  const el = scratchEl();
+  ['left', 'top', 'width', 'height', 'right', 'bottom'].forEach(k => { el.style[k] = ''; });
+  store.set('scratchGeom', null);
+  applyGeom(clampGeom(currentGeom())); // re-anchor to top/left so CSS resize grows toward the handle
+}
+function toggleScratch(force) {
+  const el = scratchEl();
+  const open = typeof force === 'boolean' ? force : !el.classList.contains('open');
+  el.classList.toggle('open', open);
+  store.set('scratchOpen', open);
+  if (!open) return;
+  const saved = store.get('scratchGeom', null);
+  if (saved) applyGeom(clampGeom(saved)); else applyGeom(clampGeom(currentGeom()));
+  setTimeout(() => $('#scratchText').focus(), 20);
+}
+function initScratch() {
+  const el = scratchEl(), ta = $('#scratchText'), head = $('.scratch-head', el);
+  ta.value = state.scratch;
+  ta.addEventListener('input', () => {
+    $('#scratchStatus').textContent = 'Saving…';
+    clearTimeout(scratchTimer);
+    scratchTimer = setTimeout(() => {
+      state.scratch = ta.value;
+      store.set('scratch', ta.value);
+      $('#scratchStatus').textContent = `Saved ${fmtTime(Date.now())} · ${ta.value.length} chars`;
+    }, 400);
+  });
+
+  let drag = null;
+  head.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('button')) return;
+    const g = currentGeom();
+    drag = { dx: e.clientX - g.x, dy: e.clientY - g.y, w: g.w, h: g.h };
+    head.setPointerCapture(e.pointerId);
+    el.classList.add('dragging');
+  });
+  head.addEventListener('pointermove', e => {
+    if (!drag) return;
+    applyGeom(clampGeom({ x: e.clientX - drag.dx, y: e.clientY - drag.dy, w: drag.w, h: drag.h }));
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    drag = null;
+    el.classList.remove('dragging');
+    store.set('scratchGeom', currentGeom());
+  };
+  head.addEventListener('pointerup', endDrag);
+  head.addEventListener('pointercancel', endDrag);
+  head.addEventListener('dblclick', e => { if (!e.target.closest('button')) resetScratchGeom(); });
+
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      if (!el.classList.contains('open') || drag) return;
+      clearTimeout(scratchGeomTimer);
+      scratchGeomTimer = setTimeout(() => { if (el.style.left) store.set('scratchGeom', currentGeom()); }, 250);
+    }).observe(el);
+  }
+  window.addEventListener('resize', () => { if (el.classList.contains('open')) applyGeom(clampGeom(currentGeom())); });
+
+  $('#scratchFab').addEventListener('click', () => toggleScratch());
+  $('#scratchClose').addEventListener('click', () => toggleScratch(false));
+  $('#scratchCopy').addEventListener('click', () => copyText(ta.value, 'Scratchpad copied'));
+  $('#scratchClear').addEventListener('click', () => {
+    if (!ta.value) return;
+    const backup = ta.value;
+    ta.value = ''; state.scratch = ''; store.set('scratch', '');
+    toast('Scratchpad cleared', 'warn', 6000, [{ label: 'Undo', run: () => { ta.value = backup; state.scratch = backup; store.set('scratch', backup); } }]);
+  });
+  if (store.get('scratchOpen', false)) toggleScratch(true);
+}
+
+// --- 21. Keyboard Shortcuts (driven by SITE.shortcuts) ---
+const ACTIONS = {
+  palette: () => (isPaletteOpen() ? closePalette() : openPalette()),
+  scratch: () => toggleScratch(),
+  light: () => applyLight(!document.body.classList.contains('light-mode')),
+  reminder: () => { showSection('reminders'); setTimeout(() => { const t = $('#remText'); if (t) t.focus(); }, 60); },
+  beep: () => { tripleBeep(); toast('🔔 Test beep'); },
+  search: () => {
+    const inp = $('.page-section.active [data-page-search]');
+    if (inp) inp.focus(); else openPalette();
+  },
+  close: () => {
+    if (isPaletteOpen()) return closePalette();
+    if ($('#lightbox').classList.contains('open')) return closeLightbox();
+    if (scratchEl().classList.contains('open')) return toggleScratch(false);
+    closeSidebar();
+  }
+};
+function isTyping(e) { const t = e.target; return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable); }
+function matchShortcut(e, combo) {
+  const parts = combo.split('+');
+  const key = parts.pop();
+  if ((e.ctrlKey || e.metaKey) !== parts.includes('Ctrl') || e.altKey !== parts.includes('Alt')) return false;
+  if (parts.includes('Shift') && !e.shiftKey) return false;
+  if (key === 'Esc') return e.key === 'Escape';
+  if (/^[A-Z]$/.test(key)) return e.code === `Key${key}`;
+  if (/^\d$/.test(key)) return e.code === `Digit${key}`;
+  return e.key === key;
+}
+function initKeys() {
+  document.addEventListener('keydown', e => {
+    const typing = isTyping(e);
+    for (const sc of SITE.shortcuts) {
+      if ((sc.global || !typing) && matchShortcut(e, sc.keys)) {
+        e.preventDefault();
+        if (ACTIONS[sc.action]) ACTIONS[sc.action]();
+        return;
+      }
+    }
+    if ($('#lightbox').classList.contains('open')) {
+      if (e.key === 'ArrowLeft') openLightbox(lbIndex - 1);
+      if (e.key === 'ArrowRight') openLightbox(lbIndex + 1);
+      return;
+    }
+    if (typing || isPaletteOpen()) return;
+    if ($('#sec-games').classList.contains('active')) {
+      const map = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', a: 'left', d: 'right', w: 'up', s: 'down' };
+      const dir = map[e.key];
+      if (dir) { e.preventDefault(); move2048(dir); }
+    }
+  });
+}
+
+// --- 22. Boot ---
+function boot() {
+  $('#brandName').textContent = SITE.name;
+  $('#brandSub').textContent = SITE.tagline;
+  $('#topTitle').textContent = SITE.name;
+  $('#footNote').textContent = `Data stored locally · ${SITE.storagePrefix}*`;
+  document.title = `${SITE.name} — ${SITE.tagline}`;
+
+  renderNav();
+  renderClocks();
+  renderDashboard();
+  renderCustomers();
+  renderShifts();
+  renderTemplates();
+  renderVersions();
+  renderLinks();
+  renderDocs();
+  renderTerminal();
+  renderReminders();
+  renderGames();
+  renderMorale();
+  initTheme();
+  initPalette();
+  initScratch();
+  initKeys();
+
+  $('#menuBtn').addEventListener('click', openSidebar);
+  $('#scrim').addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', e => {
+    const st = e.target.closest && e.target.closest('.stat[data-goto]');
+    if (st && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showSection(st.dataset.goto); }
+  });
+  window.addEventListener('hashchange', () => showSection(location.hash.slice(1)));
+  window.addEventListener('storage', e => {
+    if (e.key && e.key.startsWith(SITE.storagePrefix)) toast('Data changed in another tab — reload to sync', 'warn');
+  });
+
+  showSection(location.hash.slice(1) || currentSection());
+  updateBadges();
+
+  let lastShift = currentShift().id;
+  setInterval(() => {
+    tickClocks();
+    checkReminders();
+    const now = new Date();
+    if (now.getSeconds() === 0) {
+      updateHero(); renderStats();
+      const s = currentShift(now);
+      if (s.id !== lastShift) { lastShift = s.id; toast(`${s.icon} ${s.name} shift has started`, 'info', 6000); paintShifts(); updateBadges(); }
+    }
+  }, 1000);
+}
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
