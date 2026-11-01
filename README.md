@@ -9,6 +9,7 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 | **Dashboard** | Glowing hero banner, greeting that changes with the time of day and current shift, countdown to the next shift, live KPI cards |
 | **World clocks** | Clocks for each configured time zone, updated every second, with a business-hours indicator |
 | **Customers** | Summary table (platform tags, vector chips, license/Git/chat links, account manager) with zebra striping, plus a 3-state checklist matrix (None → ✓ → ✕) saved by row/column index, with column "✓ all" controls, Clear all, a live % badge in the sidebar and a copyable handoff report |
+| **Support Desk** | A ticket workspace for the same customers. It has 4 KPI cards with inline SVG sparklines (open tickets, first response, CSAT, escalations) and a queue with quick views (All / Mine / Urgent / Unassigned), status filter, search and sort. Each ticket shows a priority bar and a live SLA countdown. The conversation view holds customer messages, agent replies, internal notes and system events, plus quick-reply macros (`{name}`, `{customer}`, `{agent}`) and one saved draft per ticket. The customer panel shows tier, platforms, TAM, shift-checklist health and links. A toast fires when an SLA is breached, the sidebar badge turns red, and tickets are searchable from `Ctrl+K` |
 | **Shift tasks** | Four shift columns side by side; checked tasks show the time they were done and get struck through; a handoff generator combines tasks, the matrix and your notes |
 | **Templates** | Message cards you click to copy, with `{customer}`, `{service}`, `{ticket}` and `{time}` variable substitution and usage counters |
 | **Versions** | Android and iOS release tables with editable (`contenteditable`) cells; SheetJS loads only on the first export and produces a 3-sheet `.xlsx` (CSV if it can't load) |
@@ -36,6 +37,7 @@ gitBase / chatBase                       // prefixes that turn git: 'git/apex' a
 checklistColumns: [{ id, label }]
 versionTables / versionColumns / versions   // version-tracking tables + seed rows
 shifts:       [{ id, name, icon, start, end, tasks: [{ time, text }] }]
+support: { agent, macros: [{ id, label, body }], kpi, tickets: [{ id, customer /* SITE.customers id */, subject, priority, status, channel, tags, assignee, ageMin, slaInMin, thread }] }
 templates:    [{ id, title, tag, body }]   // use {customer} {service} {ticket} {time}
 timezones: [{ label, tz, primary }]      // primary = highlighted HQ clock
 themes: { id: label }                    // each id maps to a body.theme-<id> CSS block
@@ -45,8 +47,11 @@ shortcuts: [{ keys: 'Alt+N', label, action, global }]   // actions map to ACTION
 
 ## Run / Deploy
 
-Open `index.html` in a browser. To publish it, push to GitHub and turn on **Pages** (deploy from branch, root). It uses no absolute paths, so it also works from a sub-path.
+Open `index.html` in a browser. There is no build step.
+
+- **Vercel:** import the repo at [vercel.com/new](https://vercel.com/new), set **Framework Preset = Other** and leave Build Command and Output Directory empty, then click **Deploy**. `.vercelignore` keeps the deployment to the dashboard only. Alternatively run `vercel --prod` from the repo root.
+- **GitHub Pages:** deploy from branch, root. The page uses no absolute paths, so it also works from a sub-path.
 
 ## Keyboard shortcuts
 
-`Ctrl/⌘+K` command palette · `Esc` close overlays · `Alt+N` scratchpad · `/` focus the search box on the current page · `Alt+L` light mode · `Alt+R` new reminder · `Alt+B` test beep · arrow keys or `WASD` play 2048 · `←` `→` move through the gallery lightbox. All of these are configured in `SITE.shortcuts`.
+`Ctrl/⌘+K` command palette · `Esc` close overlays · `Alt+N` scratchpad · `/` focus the search box on the current page · `Alt+L` light mode · `Alt+R` new reminder · `Alt+B` test beep · arrow keys or `WASD` play 2048 · `←` `→` move through the gallery lightbox · `J` / `K` move through the Support Desk queue and `R` focuses the reply box. All of these are configured in `SITE.shortcuts`.
