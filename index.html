@@ -467,6 +467,134 @@ th.mx-head span { display: block; }
 .env-flag-key.warn { background: var(--warn); }
 .env-flag-key.bad { background: var(--bad); }
 
+/* ===== 13c. QA Lab ===== */
+.card-title h3 > svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 8px; color: var(--accent); }
+.qa-note { display: flex; gap: 8px; align-items: flex-start; margin: -4px 0 14px; }
+.qa-note svg { width: 16px; height: 16px; flex: none; color: var(--ok); margin-top: 1px; }
+.qa-note code { font-family: var(--font-mono); font-size: 11.5px; }
+.qa-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.qa-person { padding: 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--border); }
+.qa-person header { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.qa-avatar { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--on-accent); }
+.qa-person dl { margin: 0; display: grid; gap: 2px; }
+.qa-person dl > div { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }
+.qa-person dl > div:last-child { border-bottom: 0; }
+.qa-person dt { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.qa-person dd { margin: 0; min-width: 0; text-align: right; }
+.qa-val { background: none; border: 0; padding: 0; font-size: 12.5px; text-align: right; word-break: break-all; cursor: copy; color: var(--text); }
+.qa-val.mono, .t-v.mono, .t-chip.mono { font-family: var(--font-mono); font-size: 12px; }
+.qa-val:hover, .qa-val:focus-visible { color: var(--accent); }
+.qa-split { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+.qa-split > .card + .card { margin-top: 0; }
+.qa-meta { margin-bottom: 4px; }
+.qa-meta input, .qa-meta select, .qa-new input, .qa-new select, .qa-new textarea, #qaNotes { width: 100%; }
+.qa-progress { margin: 12px 0 4px; }
+.qa-progress > span.bad { background: linear-gradient(90deg, var(--bad), var(--warn)); }
+.qa-group h4 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 14px 0 6px; }
+.qa-item { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 12px; margin-bottom: 5px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--border); }
+.qa-item.s-pass { border-left-color: var(--ok); }
+.qa-item.s-fail { border-left-color: var(--bad); background: rgba(255, 69, 58, .07); }
+.qa-item.s-skip { border-left-color: var(--muted); }
+.qa-item.s-skip .qa-item-text { color: var(--muted); text-decoration: line-through; }
+.qa-item-text { flex: 1; font-size: 13.5px; }
+.qa-seg { display: inline-flex; flex: none; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+.qa-seg button { width: 32px; height: 26px; border: 0; background: var(--surface); color: var(--muted); font-weight: 700; font-size: 13px; }
+.qa-seg button + button { border-left: 1px solid var(--border); }
+.qa-seg button:hover { color: var(--text); background: var(--surface-3); }
+.qa-seg button.on.m-pass { background: var(--ok); color: #04130b; }
+.qa-seg button.on.m-fail { background: var(--bad); color: #fff; }
+.qa-seg button.on.m-skip { background: var(--muted); color: var(--bg); }
+.qa-export { margin-top: 14px; display: grid; gap: 10px; }
+.qa-export .tabs { margin: 0; }
+.qa-msg { min-height: 190px; }
+.qa-export .btn { justify-self: start; }
+.qa-new { display: grid; gap: 10px; padding: 14px; margin-bottom: 14px; border: 1px dashed rgba(var(--accent-rgb), .5); border-radius: 14px; background: rgba(var(--accent-rgb), .05); }
+.qa-new[hidden], .tool [hidden] { display: none !important; }
+.qa-ticket-bar { justify-content: space-between; margin-bottom: 10px; }
+.qa-ticket-bar .tabs { margin: 0; }
+.qa-ticket-bar .search-box { max-width: 220px; }
+.qa-tickets { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.qa-ticket { display: flex; gap: 10px; align-items: flex-start; padding: 10px 10px 10px 12px; border-radius: 12px; background: var(--surface-2);
+  border: 1px solid var(--border); border-left: 3px solid var(--accent); }
+.qa-ticket.sev-blocker, .qa-ticket.sev-critical { border-left-color: var(--bad); }
+.qa-ticket.sev-major { border-left-color: var(--warn); }
+.qa-ticket.closed { opacity: .62; border-left-color: var(--ok); }
+.qa-ticket.closed .qa-ttitle { text-decoration: line-through; }
+.qa-ticket details { flex: 1; min-width: 0; }
+.qa-ticket summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 8px; align-items: center; }
+.qa-ticket summary::-webkit-details-marker { display: none; }
+.qa-tid { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.qa-ttitle { font-weight: 600; font-size: 13.5px; }
+.qa-tmeta { grid-column: 1 / -1; }
+.qa-steps { white-space: pre-wrap; font-family: var(--font-mono); font-size: 12px; margin: 8px 0 0; padding: 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); }
+.qa-tacts { display: flex; gap: 5px; flex: none; }
+.qa-tacts .btn svg { margin: 0; }
+@media (max-width: 1200px) { .qa-split { grid-template-columns: 1fr; } }
+
+/* ===== 13d. Tools ===== */
+/* masonry via CSS columns: cards of different heights pack without gaps */
+.tool-grid { column-width: 360px; column-gap: 16px; }
+.tool-grid > .card, .tool-grid > .card + .card { break-inside: avoid; margin: 0 0 16px; display: block; }
+.tool-grid > .card[hidden] { display: none; }
+.tool { scroll-margin-top: 16px; }
+.tool.flash { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .35); }
+.tool-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.tool-head h3 { font-size: 16px; }
+.tool-head p { margin: 2px 0 0; }
+.tool-ico { width: 38px; height: 38px; flex: none; border-radius: 11px; display: grid; place-items: center; background: rgba(var(--accent-rgb), .14); color: var(--accent); }
+.tool-ico svg { width: 20px; height: 20px; }
+.tool-cat { margin-left: auto; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border: 1px solid var(--border); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+.tool-body { display: grid; gap: 10px; }
+.tool-body > input, .tool-body > textarea, .tool-body > select { width: 100%; }
+.tool .form-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.tool .form-grid input, .tool .form-grid select { width: 100%; min-width: 0; }
+.tool input, .tool select, .tool textarea { max-width: 100%; }
+.t-row input[type=datetime-local] { flex: 1 1 180px; min-width: 0; }
+.tool-body textarea.mono, .tool-body input.mono, .mono { font-family: var(--font-mono); font-size: 12.5px; }
+.t-row, .t-calc { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.t-grow { flex: 1; min-width: 0; }
+label.t-grow { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); }
+label.t-grow input[type=range] { flex: 1; accent-color: var(--accent); padding: 0; }
+.t-checks { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+.t-checks label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.t-checks input { accent-color: var(--accent); width: 15px; height: 15px; }
+.t-result { padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); display: grid; gap: 2px; }
+.t-big { font-family: var(--font-mono); font-size: 17px; font-weight: 600; word-break: break-all; color: var(--text); }
+.t-meter { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.t-meter span { display: block; height: 100%; width: 0; border-radius: 99px; transition: width .3s var(--ease), background .3s; background: var(--ok); }
+.t-meter span.warn { background: var(--warn); } .t-meter span.bad { background: var(--bad); }
+.t-actions { justify-content: flex-start; }
+.t-list, .t-outs { display: grid; gap: 6px; }
+.t-v { text-align: left; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; word-break: break-all; cursor: copy; color: var(--text); transition: border-color .15s; }
+.t-v:hover, .t-v:focus-visible { border-color: rgba(var(--accent-rgb), .6); }
+.t-out { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; align-items: center; }
+.t-k { font-size: 12px; color: var(--muted); }
+.t-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.t-chip { padding: 4px 11px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface-2); font-size: 12.5px; cursor: copy; }
+.t-chip:hover, .t-chip.on { border-color: var(--accent); background: rgba(var(--accent-rgb), .14); }
+.t-chip[data-sla] { cursor: pointer; }
+.t-num { width: 92px; }
+.t-flags { width: 64px; }
+.t-calc { font-size: 13.5px; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); }
+.t-calc strong { margin-left: auto; font-family: var(--font-mono); color: var(--accent); }
+.t-calc .t-num { padding: 6px 9px; }
+.t-hl { white-space: pre-wrap; word-break: break-word; padding: 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); max-height: 180px; overflow: auto; font-size: 12.5px; min-height: 40px; }
+.t-ports { display: grid; gap: 2px; max-height: 236px; overflow: auto; }
+.t-port { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 8px; text-align: left; padding: 6px 8px; border: 0; border-radius: 8px; background: none; cursor: copy; font-size: 13px; }
+.t-port:nth-child(odd) { background: var(--surface-2); }
+.t-port:hover { background: rgba(var(--accent-rgb), .12); }
+.t-port .mono { color: var(--accent); }
+.t-tz { display: grid; gap: 3px; }
+.t-tzrow { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto 54px; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 8px; font-size: 13px; }
+.t-tzrow:nth-child(odd) { background: var(--surface-2); }
+.t-tzrow strong { font-size: 14px; }
+.t-now { display: flex; gap: 10px; align-items: center; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.t-json pre { font-family: var(--font-mono); font-size: 12px; margin: 4px 0 0; padding: 10px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); max-height: 220px; overflow: auto; }
+.t-file { cursor: pointer; }
+@media (max-width: 520px) { .tool-grid { column-width: auto; columns: 1; } .t-out { grid-template-columns: 1fr; gap: 2px; } }
+
 /* ===== 11. Links, Bookshelf, Terminal ===== */
 .link-wall h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 10px; }
 .links { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
@@ -921,6 +1049,8 @@ th { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size
     <div class="page-section" id="sec-terminal"></div>
     <div class="page-section" id="sec-reminders"></div>
     <div class="page-section" id="sec-games"></div>
+    <div class="page-section" id="sec-qa"></div>
+    <div class="page-section" id="sec-tools"></div>
     <div class="page-section" id="sec-morale"></div>
   </main>
 </div>
@@ -976,6 +1106,10 @@ const SITE = {
       { id: 'links', label: 'Link Wall', icon: 'link', badge: 'links' },
       { id: 'docs', label: 'Bookshelf', icon: 'book', badge: 'docs' },
       { id: 'terminal', label: 'Cheatsheet', icon: 'terminal', badge: 'commands' }
+    ]},
+    { group: 'QA & Tools', items: [
+      { id: 'qa', label: 'QA Lab', icon: 'bug', badge: 'qa' },
+      { id: 'tools', label: 'Tools', icon: 'wrench', badge: 'tools' }
     ]},
     { group: 'Utilities', items: [
       { id: 'reminders', label: 'Reminders', icon: 'bell', badge: 'reminders' },
@@ -1094,6 +1228,100 @@ const SITE = {
       { customer: 'Infinitum', env: 'Prod', region: 'chinaeast2', version: '1.8.7', k8s: '1.31', lastDeploy: '2026-10-28', status: 'Deploying', notes: 'AKS node image upgrade' }
     ]
   },
+  // QA Lab: fictional test identities, release checklist and bug tickets
+  qa: {
+    // # = random digit, @ = random capital letter
+    locales: {
+      US: { label: 'United States', country: 'United States', phone: '+1 (###) 555-01##', addr: '{n} {street}',
+        first: ['James', 'Olivia', 'Liam', 'Emma', 'Noah', 'Ava', 'Ethan', 'Mia', 'Lucas', 'Sophia', 'Mason', 'Harper'],
+        last: ['Carter', 'Brooks', 'Hayes', 'Morgan', 'Reed', 'Foster', 'Bennett', 'Coleman', 'Parker', 'Hughes', 'Price', 'Sullivan'],
+        streets: ['Maple Ave', 'Oak Street', 'Pine Road', 'Cedar Lane', 'Lakeview Drive', 'Sunset Blvd', 'Hillcrest Rd', 'Elm Court'],
+        cities: [['Austin, TX', '787##'], ['Denver, CO', '802##'], ['Seattle, WA', '981##'], ['Boston, MA', '021##'], ['Chicago, IL', '606##'], ['Portland, OR', '972##']] },
+      UK: { label: 'United Kingdom', country: 'United Kingdom', phone: '+44 7700 900###', addr: '{n} {street}',
+        first: ['Oliver', 'Amelia', 'George', 'Isla', 'Harry', 'Freya', 'Jack', 'Grace', 'Charlie', 'Poppy', 'Alfie', 'Evie'],
+        last: ['Smith', 'Taylor', 'Wright', 'Walker', 'Evans', 'Clarke', 'Turner', 'Hall', 'Wood', 'Ward', 'Baker', 'Hill'],
+        streets: ['High Street', 'Station Road', 'Church Lane', 'Victoria Road', 'Mill Lane', 'Park Avenue', 'Kings Road', 'Queens Walk'],
+        cities: [['Manchester', 'M# #@@'], ['Leeds', 'LS# #@@'], ['Bristol', 'BS# #@@'], ['Glasgow', 'G# #@@'], ['London', 'EC#A #@@'], ['Cardiff', 'CF# #@@']] },
+      IL: { label: 'Israel', country: 'Israel', phone: '+972 5#-555-0###', addr: '{street} {n}',
+        first: ['Noam', 'Maya', 'Itai', 'Noa', 'Yonatan', 'Tamar', 'Omer', 'Shira', 'Daniel', 'Yael', 'Ariel', 'Michal'],
+        last: ['Cohen', 'Levi', 'Mizrahi', 'Peretz', 'Biton', 'Friedman', 'Avraham', 'Dahan', 'Katz', 'Shapiro', 'Golan', 'Azulay'],
+        streets: ['Herzl St', 'Rothschild Blvd', 'Ben Yehuda St', 'Dizengoff St', 'HaNassi Ave', 'Weizmann St', 'Jabotinsky St', 'HaYarkon St'],
+        cities: [['Tel Aviv', '6######'], ['Haifa', '3######'], ['Jerusalem', '9######'], ['Beersheba', '8######'], ['Netanya', '42#####'], ['Ramat Gan', '52#####']] },
+      DE: { label: 'Germany', country: 'Germany', phone: '+49 30 5550 ####', addr: '{street} {n}',
+        first: ['Lukas', 'Emma', 'Leon', 'Mia', 'Finn', 'Hannah', 'Paul', 'Lea', 'Jonas', 'Lena', 'Felix', 'Clara'],
+        last: ['Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Wagner', 'Becker', 'Hoffmann', 'Koch', 'Richter', 'Wolf', 'Neumann'],
+        streets: ['Hauptstraße', 'Bahnhofstraße', 'Gartenweg', 'Schillerstraße', 'Lindenallee', 'Bergstraße', 'Goethestraße', 'Ringstraße'],
+        cities: [['Berlin', '101##'], ['München', '803##'], ['Hamburg', '200##'], ['Köln', '506##'], ['Frankfurt am Main', '603##'], ['Leipzig', '041##']] }
+    },
+    emailDomains: ['example.com', 'example.org', 'example.net', 'test.example'],
+    companies: ['Northwind Traders', 'Contoso Ltd', 'Fabrikam Inc', 'Adventure Works', 'Wide World Importers', 'Litware Systems', 'Proseware Labs', 'Woodgrove Bank'],
+    jobs: ['QA Engineer', 'Product Manager', 'Site Reliability Engineer', 'Support Specialist', 'Data Analyst', 'Frontend Developer', 'Account Executive', 'Network Engineer'],
+    // Published payment-gateway TEST numbers only — they never authorise real charges
+    testCards: [
+      { brand: 'Visa', number: '4242424242424242' }, { brand: 'Visa', number: '4000056655665556' },
+      { brand: 'Mastercard', number: '5555555555554444' }, { brand: 'Mastercard', number: '2223003122003222' },
+      { brand: 'American Express', number: '378282246310005' }, { brand: 'American Express', number: '371449635398431' },
+      { brand: 'Discover', number: '6011111111111117' }, { brand: 'Diners Club', number: '3056930009020004' }, { brand: 'JCB', number: '3566002020360505' }
+    ],
+    fields: [
+      ['name', 'Full name'], ['email', 'Email'], ['phone', 'Phone'], ['username', 'Username'], ['password', 'Password'],
+      ['dob', 'Date of birth'], ['address', 'Street address'], ['city', 'City'], ['zip', 'ZIP / postcode'], ['country', 'Country'],
+      ['company', 'Company'], ['job', 'Job title'], ['cardBrand', 'Card brand'], ['card', 'Card number (test)'], ['cardExp', 'Expiry'],
+      ['cvv', 'CVV'], ['ip', 'IPv4 (doc range)'], ['id', 'UUID']
+    ],
+    environments: ['QA', 'Staging', 'UAT', 'Production'],
+    platforms: ['Web', 'iOS', 'Android', 'API'],
+    checklist: [
+      { group: 'Smoke', items: ['App loads with no console errors', 'Login and logout work', 'Main navigation is reachable', 'Critical API endpoints return 2xx'] },
+      { group: 'Functional', items: ['Forms validate required fields', 'Create / edit / delete flows work', 'Search and filters return correct results', 'Emails and notifications are sent', 'Checkout succeeds with test cards'] },
+      { group: 'UI & Accessibility', items: ['Responsive at 375 / 768 / 1440 px', 'Dark and light themes render correctly', 'Keyboard navigation and focus states', 'Contrast and alt text checked'] },
+      { group: 'Regression', items: ['Previously fixed bugs stay fixed', 'Existing integrations unaffected', 'Data migrations verified'] },
+      { group: 'Security & Performance', items: ['No secrets in client bundle or logs', 'Protected routes require auth', 'Inputs sanitised against XSS / injection', 'Page load under 3 s on staging', 'Error rate and latency normal after deploy'] }
+    ],
+    severities: [
+      { id: 'blocker', label: 'Blocker', cls: 'bad' }, { id: 'critical', label: 'Critical', cls: 'bad' },
+      { id: 'major', label: 'Major', cls: 'warn' }, { id: 'minor', label: 'Minor', cls: 'info' }
+    ],
+    components: ['Login', 'Checkout', 'Dashboard', 'Search', 'Notifications', 'API', 'Mobile app', 'Reports'],
+    tickets: [
+      { id: 'QA-108', title: 'Checkout button stays disabled after valid card entry', severity: 'critical', component: 'Checkout', env: 'Staging', assignee: 'Alex M.', status: 'open', ageMin: 95, steps: '1. Add any item to the cart\n2. Pay with test card 4242 4242 4242 4242\n3. Button "Pay now" never enables' },
+      { id: 'QA-107', title: 'Search returns stale results after a filter is cleared', severity: 'major', component: 'Search', env: 'QA', assignee: 'Dana K.', status: 'open', ageMin: 240, steps: '1. Filter by "Region = EU"\n2. Clear the filter\n3. Results still show EU only until refresh' },
+      { id: 'QA-106', title: 'Password reset email arrives without the reset link', severity: 'blocker', component: 'Notifications', env: 'Staging', assignee: 'Alex M.', status: 'open', ageMin: 30, steps: '1. Request a password reset\n2. Open the email\n3. Body has no link' },
+      { id: 'QA-105', title: 'Dark mode: table header text unreadable', severity: 'minor', component: 'Dashboard', env: 'QA', assignee: 'Noa L.', status: 'open', ageMin: 1440, steps: 'Switch to dark mode and open Reports → header text is #333 on #222.' },
+      { id: 'QA-104', title: 'API returns 500 for empty pagination cursor', severity: 'major', component: 'API', env: 'UAT', assignee: 'Dana K.', status: 'closed', ageMin: 2880, steps: 'GET /v2/items?cursor= returns 500 instead of the first page.' },
+      { id: 'QA-103', title: 'Login rate limit message overlaps the form', severity: 'minor', component: 'Login', env: 'QA', assignee: 'Noa L.', status: 'closed', ageMin: 4320, steps: 'Fail login 5 times on a 375 px screen.' }
+    ]
+  },
+  // Engineering tools grid; bodies live in block 18d, this list drives order, categories and search
+  toolCategories: ['Security', 'Encoding', 'Network', 'Time', 'Calculators'],
+  tools: [
+    { id: 'password', title: 'Password generator', cat: 'Security', icon: 'key', desc: 'Strong random passwords with entropy meter' },
+    { id: 'token', title: 'Key & ID generator', cat: 'Security', icon: 'shuffle', desc: 'UUIDs, API keys, hex and base64 secrets' },
+    { id: 'hash', title: 'Hash generator', cat: 'Security', icon: 'hash', desc: 'SHA-1 / 256 / 384 / 512 for text or files, with verify' },
+    { id: 'aes', title: 'AES encrypt / decrypt', cat: 'Security', icon: 'lock', desc: 'AES-256-GCM with a passphrase (PBKDF2)' },
+    { id: 'jwt', title: 'JWT decoder', cat: 'Security', icon: 'shield', desc: 'Header, payload and expiry of a token' },
+    { id: 'encode', title: 'Encode / decode', cat: 'Encoding', icon: 'code', desc: 'Base64, Base64URL, URL, Hex and HTML entities' },
+    { id: 'json', title: 'JSON formatter', cat: 'Encoding', icon: 'braces', desc: 'Format, minify, validate, sort keys, convert to CSV' },
+    { id: 'regex', title: 'Regex tester', cat: 'Encoding', icon: 'regex', desc: 'Live matches, groups and flags' },
+    { id: 'subnet', title: 'Subnet calculator', cat: 'Network', icon: 'network', desc: 'CIDR breakdown and random IPs from a range' },
+    { id: 'ports', title: 'Port picker', cat: 'Network', icon: 'shuffle', desc: 'Random free ports and a common-ports lookup' },
+    { id: 'tz', title: 'Time zone converter', cat: 'Time', icon: 'globe', desc: 'One moment across all dashboard zones' },
+    { id: 'epoch', title: 'Unix timestamp', cat: 'Time', icon: 'clock', desc: 'Epoch ⇄ date, seconds or milliseconds' },
+    { id: 'duration', title: 'Duration calculator', cat: 'Time', icon: 'timer', desc: 'Time between two dates' },
+    { id: 'percent', title: 'Percentage calculator', cat: 'Calculators', icon: 'percent', desc: 'Percent of, ratio and change' },
+    { id: 'sla', title: 'SLA / uptime', cat: 'Calculators', icon: 'gauge', desc: 'Allowed downtime for an availability target' },
+    { id: 'transfer', title: 'Data transfer', cat: 'Calculators', icon: 'transfer', desc: 'Transfer time and data-size units' }
+  ],
+  commonPorts: [
+    [20, 'TCP', 'FTP data'], [21, 'TCP', 'FTP'], [22, 'TCP', 'SSH / SFTP'], [23, 'TCP', 'Telnet'], [25, 'TCP', 'SMTP'], [53, 'TCP/UDP', 'DNS'],
+    [67, 'UDP', 'DHCP server'], [69, 'UDP', 'TFTP'], [80, 'TCP', 'HTTP'], [110, 'TCP', 'POP3'], [123, 'UDP', 'NTP'], [143, 'TCP', 'IMAP'],
+    [161, 'UDP', 'SNMP'], [389, 'TCP', 'LDAP'], [443, 'TCP', 'HTTPS'], [445, 'TCP', 'SMB'], [465, 'TCP', 'SMTPS'], [514, 'UDP', 'Syslog'],
+    [587, 'TCP', 'SMTP submission'], [636, 'TCP', 'LDAPS'], [993, 'TCP', 'IMAPS'], [995, 'TCP', 'POP3S'], [1433, 'TCP', 'MS SQL'],
+    [1521, 'TCP', 'Oracle DB'], [2049, 'TCP', 'NFS'], [2379, 'TCP', 'etcd'], [3000, 'TCP', 'Dev servers / Grafana'], [3306, 'TCP', 'MySQL'],
+    [3389, 'TCP', 'RDP'], [5432, 'TCP', 'PostgreSQL'], [5672, 'TCP', 'RabbitMQ'], [5900, 'TCP', 'VNC'], [6379, 'TCP', 'Redis'],
+    [6443, 'TCP', 'Kubernetes API'], [8080, 'TCP', 'HTTP alt / proxies'], [8443, 'TCP', 'HTTPS alt'], [9090, 'TCP', 'Prometheus'],
+    [9092, 'TCP', 'Kafka'], [9200, 'TCP', 'Elasticsearch'], [10250, 'TCP', 'Kubelet'], [11211, 'TCP/UDP', 'Memcached'], [27017, 'TCP', 'MongoDB']
+  ],
   linkGroups: [ // brand = BRANDS key (logo), icon = line-icon key
     { group: 'Monitoring', items: [
       { name: 'Grafana', brand: 'grafana', url: 'https://grafana.com/', desc: 'Dashboards' },
@@ -1333,6 +1561,25 @@ const ICONS = {
   lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   route: '<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/>',
   trendDown: '<path d="M3 7l6 6 4-4 8 8"/><path d="M21 11v6h-6"/>',
+  bug: '<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M12 10v10M8 12H4M20 12h-4M8 17l-3 2M16 17l3 2M8 9L5 6M16 9l3-3M10 6a2 2 0 0 1 4 0"/>',
+  wrench: '<path d="M15 4a5 5 0 0 0-4.6 6.9L4 17.3V20h2.7l6.4-6.4A5 5 0 0 0 20 9l-3 1-2-2 1-3z"/>',
+  hash: '<path d="M5 9h15M4 15h15M10 3L8 21M16 3l-2 18"/>',
+  code: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
+  braces: '<path d="M8 4c-2 0-3 1-3 3v2c0 1.5-1 2.5-2 3 1 .5 2 1.5 2 3v2c0 2 1 3 3 3M16 4c2 0 3 1 3 3v2c0 1.5 1 2.5 2 3-1 .5-2 1.5-2 3v2c0 2-1 3-3 3"/>',
+  shield: '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  percent: '<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  network: '<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2h12v2"/>',
+  shuffle: '<path d="M3 7h3c5 0 7 10 12 10h3M3 17h3c2 0 3.5-1.6 4.8-3.5M14 8.5C15 7.6 16.3 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+  gauge: '<path d="M4 18a9 9 0 1 1 16 0"/><path d="M12 13l4-4"/><circle cx="12" cy="13" r="1"/>',
+  transfer: '<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
+  timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  refresh: '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  regex: '<path d="M17 3v10M12.7 5.5l8.6 5M12.7 10.5l8.6-5"/><rect x="3" y="15" width="6" height="6" rx="1"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>'
 };
 function icon(name) {
@@ -1464,7 +1711,9 @@ function updateBadges() {
     docs: SITE.docs.length,
     commands: SITE.commands.reduce((n, g) => n + g.items.length, 0),
     reminders: state.reminders.filter(r => !r.fired).length,
-    support: sdActiveCount()
+    support: sdActiveCount(),
+    qa: qaOpenCount(),
+    tools: SITE.tools.length
   };
   $$('[data-badge]').forEach(b => {
     const key = b.dataset.badge;
@@ -3317,6 +3566,895 @@ function tickSupport() {
   if (t) { sdPaintHead(t); sdPaintThread(t, true); }
 }
 
+// --- 18c. QA Lab (fake test identities, release checklist with message export, bug tickets) ---
+// Unbiased crypto-random integer in [0, max)
+function rndInt(max) {
+  if (max <= 1) return 0;
+  const lim = Math.floor(0x100000000 / max) * max, a = new Uint32Array(1);
+  do { crypto.getRandomValues(a); } while (a[0] >= lim);
+  return a[0] % max;
+}
+function pick(arr) { return arr[rndInt(arr.length)]; }
+function fillPattern(p) { return String(p).replace(/#/g, () => rndInt(10)).replace(/@/g, () => 'ABCDEFGHJKLMNPRSTUWXYZ'[rndInt(22)]); }
+function uuid4() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  const h = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+function randomFrom(chars, n) { let s = ''; for (let i = 0; i < n; i++) s += chars[rndInt(chars.length)]; return s; }
+function fmtCard(n) { return n.length === 15 ? `${n.slice(0, 4)} ${n.slice(4, 10)} ${n.slice(10)}` : n.replace(/(\d{4})(?=\d)/g, '$1 '); }
+const QA_PWD_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*';
+
+function fakePerson(locKey) {
+  const Q = SITE.qa, L = Q.locales[locKey] || Q.locales.US;
+  const first = pick(L.first), last = pick(L.last);
+  const [city, zipPat] = pick(L.cities);
+  const card = pick(Q.testCards);
+  const age = 18 + rndInt(58);
+  const dob = new Date(Date.UTC(new Date().getFullYear() - age, rndInt(12), 1 + rndInt(28)));
+  const exp = new Date(); exp.setMonth(exp.getMonth() + 6 + rndInt(48));
+  const handle = `${first}.${last}`.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z.]/g, '').toLowerCase();
+  return {
+    name: `${first} ${last}`,
+    email: `${handle}${rndInt(90) + 10}@${pick(Q.emailDomains)}`,
+    phone: fillPattern(L.phone),
+    username: `${handle.replace('.', '_')}${rndInt(900) + 100}`,
+    password: randomFrom(QA_PWD_CHARS, 14),
+    dob: dob.toISOString().slice(0, 10),
+    address: L.addr.replace('{n}', 1 + rndInt(240)).replace('{street}', pick(L.streets)),
+    city, zip: fillPattern(zipPat), country: L.country,
+    company: pick(Q.companies), job: pick(Q.jobs),
+    cardBrand: card.brand, card: fmtCard(card.number),
+    cardExp: `${pad(exp.getMonth() + 1)}/${String(exp.getFullYear()).slice(2)}`,
+    cvv: fillPattern(card.number.length === 15 ? '####' : '###'),
+    ip: `${pick(['192.0.2', '198.51.100', '203.0.113'])}.${1 + rndInt(254)}`,
+    id: uuid4()
+  };
+}
+
+const QA_MARKS = [
+  { cls: 'none', label: 'Not run', sym: '○', slack: '○', jira: '(?)' },
+  { cls: 'pass', label: 'Pass', sym: '✓', slack: '✓', jira: '(/)' },
+  { cls: 'fail', label: 'Fail', sym: '✕', slack: '✕', jira: '(x)' },
+  { cls: 'skip', label: 'Skipped', sym: '–', slack: '–', jira: '(-)' }
+];
+function qaSeedTickets() {
+  const now = Date.now();
+  return SITE.qa.tickets.map(t => ({ ...t, created: now - t.ageMin * 60000, closed: t.status === 'closed' ? now - Math.round(t.ageMin / 3) * 60000 : null }));
+}
+function qaLoad() {
+  return {
+    people: store.get('qaPeople', []),
+    gen: store.get('qaGen', { locale: 'US', count: 3 }),
+    checks: store.get('qaChecks', {}),
+    meta: store.get('qaMeta', { build: '', env: 'Staging', tester: '', platform: 'Web', notes: '' }),
+    format: store.get('qaFormat', 'slack'),
+    tickets: store.get('qaTickets', null) || qaSeedTickets(),
+    filter: store.get('qaFilter', 'open')
+  };
+}
+let qa = null;
+function qaOpenCount() { return qa ? qa.tickets.filter(t => t.status === 'open').length : 0; }
+function qaSaveTickets() { store.set('qaTickets', qa.tickets); paintQaTickets(); updateBadges(); }
+
+function renderQA() {
+  qa = qaLoad();
+  const Q = SITE.qa;
+  const opt = (list, cur) => list.map(v => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  $('#sec-qa').innerHTML = `
+    <div class="section-head">
+      <div><h2>QA Lab</h2><p>Fictional test identities, a release checklist you can post as a message, and the bug queue.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <h3>${icon('user')}Test data generator</h3>
+        <div class="row">
+          <select id="qaLocale" aria-label="Locale">${Object.entries(Q.locales).map(([k, l]) => `<option value="${esc(k)}" ${k === qa.gen.locale ? 'selected' : ''}>${esc(l.label)}</option>`).join('')}</select>
+          <select id="qaCount" aria-label="How many people">${[1, 3, 5, 10].map(n => `<option value="${n}" ${n === qa.gen.count ? 'selected' : ''}>${n} ${n === 1 ? 'person' : 'people'}</option>`).join('')}</select>
+          <button class="btn primary" type="button" id="qaGenerate">${icon('refresh')}Generate</button>
+          <button class="btn" type="button" id="qaCopyJson">Copy JSON</button>
+          <button class="btn" type="button" id="qaCopyCsv">Copy CSV</button>
+        </div>
+      </div>
+      <p class="small muted qa-note">${icon('shield')}Everything here is fake. Emails use reserved .example domains, IPs come from documentation ranges, and card numbers are the payment gateways' published test numbers that never charge. Click any value to copy it.</p>
+      <div class="qa-people" id="qaPeople"></div>
+    </div>
+    <div class="qa-split">
+      <div class="card">
+        <div class="card-title"><h3>${icon('checklist')}Release checklist</h3>
+          <div class="row"><span class="small muted" id="qaSummary"></span><button class="btn sm danger" type="button" id="qaReset">Reset</button></div></div>
+        <div class="form-grid qa-meta">
+          <div class="field"><label for="qaBuild">Build / version</label><input id="qaBuild" data-meta="build" placeholder="e.g. 5.4.2 (50402)" value="${esc(qa.meta.build)}"></div>
+          <div class="field"><label for="qaTester">Tester</label><input id="qaTester" data-meta="tester" placeholder="Your name" value="${esc(qa.meta.tester)}"></div>
+          <div class="field"><label for="qaEnv">Environment</label><select id="qaEnv" data-meta="env">${opt(Q.environments, qa.meta.env)}</select></div>
+          <div class="field"><label for="qaPlatform">Platform</label><select id="qaPlatform" data-meta="platform">${opt(Q.platforms, qa.meta.platform)}</select></div>
+        </div>
+        <div class="progress qa-progress"><span id="qaBar"></span></div>
+        <div id="qaGroups"></div>
+        <div class="field"><label for="qaNotes">Notes</label><textarea id="qaNotes" data-meta="notes" rows="2" placeholder="Anything the team should know">${esc(qa.meta.notes)}</textarea></div>
+        <div class="qa-export">
+          <div class="tabs" id="qaFormats" role="tablist">${[['slack', 'Slack / Teams'], ['jira', 'Jira'], ['plain', 'Plain text']].map(([k, l]) => `<button type="button" class="tab ${k === qa.format ? 'active' : ''}" data-fmt="${k}">${l}</button>`).join('')}</div>
+          <textarea class="output qa-msg" id="qaMsg" readonly aria-label="QA report message"></textarea>
+          <button class="btn primary" type="button" id="qaCopyMsg">${icon('copy')}Copy message</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>${icon('bug')}Bug tickets</h3><button class="btn primary sm" type="button" id="qaNewToggle">${icon('plus')}New ticket</button></div>
+        <form class="qa-new" id="qaNew" hidden>
+          <div class="field full"><label for="qaTTitle">Title</label><input id="qaTTitle" required maxlength="140" placeholder="What is broken?"></div>
+          <div class="form-grid">
+            <div class="field"><label for="qaTSev">Severity</label><select id="qaTSev">${Q.severities.map(s => `<option value="${esc(s.id)}" ${s.id === 'major' ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></div>
+            <div class="field"><label for="qaTComp">Component</label><select id="qaTComp">${opt(Q.components, Q.components[0])}</select></div>
+            <div class="field"><label for="qaTEnv">Environment</label><select id="qaTEnv">${opt(Q.environments, qa.meta.env)}</select></div>
+            <div class="field"><label for="qaTAssignee">Assignee</label><input id="qaTAssignee" placeholder="Unassigned" maxlength="40"></div>
+            <div class="field full"><label for="qaTSteps">Steps to reproduce</label><textarea id="qaTSteps" rows="3" placeholder="1. …&#10;2. …&#10;Expected / actual"></textarea></div>
+          </div>
+          <div class="row"><button class="btn primary" type="submit">Open ticket</button><button class="btn" type="button" id="qaNewCancel">Cancel</button></div>
+        </form>
+        <div class="row qa-ticket-bar">
+          <div class="tabs" id="qaTabs"></div>
+          <div class="search-box"><input id="qaSearch" type="search" placeholder="Search tickets…" aria-label="Search tickets" data-page-search></div>
+        </div>
+        <ul class="qa-tickets" id="qaTickets"></ul>
+      </div>
+    </div>`;
+
+  // generator
+  const regen = () => {
+    qa.gen = { locale: $('#qaLocale').value, count: +$('#qaCount').value };
+    store.set('qaGen', qa.gen);
+    qa.people = Array.from({ length: qa.gen.count }, () => fakePerson(qa.gen.locale));
+    store.set('qaPeople', qa.people);
+    paintPeople();
+  };
+  $('#qaGenerate').addEventListener('click', regen);
+  $('#qaLocale').addEventListener('change', regen);
+  $('#qaCount').addEventListener('change', regen);
+  $('#qaCopyJson').addEventListener('click', () => copyText(JSON.stringify(qa.people.length === 1 ? qa.people[0] : qa.people, null, 2), 'JSON copied'));
+  $('#qaCopyCsv').addEventListener('click', () => {
+    const keys = SITE.qa.fields.map(f => f[0]);
+    copyText([keys.join(','), ...qa.people.map(p => keys.map(k => `"${String(p[k] ?? '').replace(/"/g, '""')}"`).join(','))].join('\n'), 'CSV copied');
+  });
+  $('#qaPeople').addEventListener('click', e => {
+    const v = e.target.closest('[data-copy]');
+    if (v) copyText(v.dataset.copy, `${v.dataset.label} copied`);
+  });
+  if (!qa.people.length) regen(); else paintPeople();
+
+  // checklist
+  $('#qaGroups').addEventListener('click', e => {
+    const b = e.target.closest('[data-qa]');
+    if (!b) return;
+    const key = b.dataset.qa, v = +b.dataset.v;
+    if ((qa.checks[key] || 0) === v) delete qa.checks[key]; else qa.checks[key] = v;
+    store.set('qaChecks', qa.checks);
+    paintQaChecklist();
+  });
+  $$('#sec-qa [data-meta]').forEach(el => el.addEventListener('input', () => {
+    qa.meta[el.dataset.meta] = el.value;
+    store.set('qaMeta', qa.meta);
+    paintQaMessage();
+  }));
+  $('#qaFormats').addEventListener('click', e => {
+    const b = e.target.closest('[data-fmt]');
+    if (!b) return;
+    qa.format = b.dataset.fmt; store.set('qaFormat', qa.format);
+    $$('#qaFormats .tab').forEach(t => t.classList.toggle('active', t === b));
+    paintQaMessage();
+  });
+  $('#qaCopyMsg').addEventListener('click', () => copyText($('#qaMsg').value, 'QA report copied'));
+  $('#qaReset').addEventListener('click', () => { qa.checks = {}; store.set('qaChecks', {}); paintQaChecklist(); toast('Checklist reset', 'warn'); });
+  paintQaChecklist();
+
+  // tickets
+  const form = $('#qaNew');
+  $('#qaNewToggle').addEventListener('click', () => { form.hidden = !form.hidden; if (!form.hidden) $('#qaTTitle').focus(); });
+  $('#qaNewCancel').addEventListener('click', () => { form.hidden = true; form.reset(); });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const title = $('#qaTTitle').value.trim();
+    if (!title) return;
+    const next = Math.max(100, ...qa.tickets.map(t => parseInt(String(t.id).replace(/\D/g, ''), 10) || 0)) + 1;
+    const t = { id: `QA-${next}`, title, severity: $('#qaTSev').value, component: $('#qaTComp').value, env: $('#qaTEnv').value,
+      assignee: $('#qaTAssignee').value.trim() || 'Unassigned', status: 'open', steps: $('#qaTSteps').value.trim(), created: Date.now(), closed: null };
+    qa.tickets.unshift(t);
+    form.reset(); form.hidden = true;
+    qa.filter = 'open'; store.set('qaFilter', 'open');
+    qaSaveTickets(); paintQaMessage();
+    toast(`${t.id} opened`, 'ok');
+  });
+  $('#qaTabs').addEventListener('click', e => {
+    const b = e.target.closest('[data-qf]');
+    if (!b) return;
+    qa.filter = b.dataset.qf; store.set('qaFilter', qa.filter);
+    paintQaTickets();
+  });
+  $('#qaSearch').addEventListener('input', paintQaTickets);
+  $('#qaTickets').addEventListener('click', e => {
+    const act = e.target.closest('[data-qact]');
+    if (!act) return;
+    const t = qa.tickets.find(x => x.id === act.dataset.id);
+    if (!t) return;
+    const a = act.dataset.qact;
+    if (a === 'toggle') {
+      t.status = t.status === 'open' ? 'closed' : 'open';
+      t.closed = t.status === 'closed' ? Date.now() : null;
+      toast(`${t.id} ${t.status === 'closed' ? 'closed' : 'reopened'}`, t.status === 'closed' ? 'ok' : 'warn');
+    } else if (a === 'copy') {
+      const sev = SITE.qa.severities.find(s => s.id === t.severity);
+      copyText(`[${t.id}] ${t.title}\nSeverity: ${sev ? sev.label : t.severity} · Component: ${t.component} · Env: ${t.env} · Assignee: ${t.assignee}\nStatus: ${t.status}\n\nSteps:\n${t.steps || '—'}`, `${t.id} copied`);
+      return;
+    } else if (a === 'delete') {
+      qa.tickets = qa.tickets.filter(x => x !== t);
+      toast(`${t.id} deleted`, 'warn');
+    }
+    qaSaveTickets(); paintQaMessage();
+  });
+  paintQaTickets();
+}
+function paintPeople() {
+  const F = SITE.qa.fields;
+  $('#qaPeople').innerHTML = qa.people.map(p => `
+    <article class="qa-person">
+      <header><span class="qa-avatar">${esc(p.name.split(' ').map(w => w[0]).join('').slice(0, 2))}</span>
+        <div><strong>${esc(p.name)}</strong><div class="small muted">${esc(p.job)} · ${esc(p.company)}</div></div></header>
+      <dl>${F.filter(([k]) => k !== 'name').map(([k, label]) => `
+        <div><dt>${esc(label)}</dt><dd><button type="button" class="qa-val ${k === 'card' || k === 'id' || k === 'password' || k === 'ip' ? 'mono' : ''}" data-copy="${esc(k === 'card' ? String(p[k]).replace(/\s/g, '') : p[k])}" data-label="${esc(label)}" title="Copy ${esc(label)}">${esc(p[k])}</button></dd></div>`).join('')}
+      </dl>
+    </article>`).join('');
+}
+function qaTotals() {
+  let total = 0; const c = [0, 0, 0, 0];
+  SITE.qa.checklist.forEach((g, gi) => g.items.forEach((_, ii) => { total++; c[qa.checks[`${gi}-${ii}`] || 0]++; }));
+  return { total, none: c[0], pass: c[1], fail: c[2], skip: c[3] };
+}
+function paintQaChecklist() {
+  $('#qaGroups').innerHTML = SITE.qa.checklist.map((g, gi) => `
+    <div class="qa-group"><h4>${esc(g.group)}</h4>
+      ${g.items.map((it, ii) => {
+        const key = `${gi}-${ii}`, v = qa.checks[key] || 0;
+        return `<div class="qa-item s-${QA_MARKS[v].cls}"><span class="qa-item-text">${esc(it)}</span>
+          <span class="qa-seg" role="group" aria-label="${esc(it)}">${[1, 2, 3].map(n => `<button type="button" class="${v === n ? 'on' : ''} m-${QA_MARKS[n].cls}" data-qa="${key}" data-v="${n}" aria-pressed="${v === n}" title="${QA_MARKS[n].label}">${QA_MARKS[n].sym}</button>`).join('')}</span></div>`;
+      }).join('')}
+    </div>`).join('');
+  const t = qaTotals();
+  $('#qaBar').style.width = `${t.total ? Math.round((t.pass + t.fail + t.skip) / t.total * 100) : 0}%`;
+  $('#qaBar').className = t.fail ? 'bad' : '';
+  $('#qaSummary').textContent = `${t.pass} pass · ${t.fail} fail · ${t.skip} skipped · ${t.none} to run`;
+  paintQaMessage();
+}
+function qaVerdict(t) { return t.fail ? 'FAILED' : t.none ? 'IN PROGRESS' : 'PASSED'; }
+function qaMessage() {
+  const f = qa.format, m = qa.meta, t = qaTotals(), open = qa.tickets.filter(x => x.status === 'open');
+  const sevLabel = id => (SITE.qa.severities.find(s => s.id === id) || { label: id }).label;
+  const date = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  const head = m.build ? `QA report — ${m.build}` : 'QA report';
+  const stats = `${t.pass}/${t.total} passed · ${t.fail} failed · ${t.skip} skipped · ${t.none} not run`;
+  const lines = [];
+  if (f === 'jira') {
+    lines.push(`h3. ${head}`, `*Environment:* ${m.env} | *Platform:* ${m.platform} | *Tester:* ${m.tester || '—'} | *Date:* ${date}`, `*Result:* ${qaVerdict(t)} — ${stats}`, '');
+    SITE.qa.checklist.forEach((g, gi) => { lines.push(`h4. ${g.group}`); g.items.forEach((it, ii) => lines.push(`* ${QA_MARKS[qa.checks[`${gi}-${ii}`] || 0].jira} ${it}`)); });
+    if (open.length) { lines.push('', 'h4. Open bugs'); open.forEach(x => lines.push(`* *${x.id}* [${sevLabel(x.severity)}] ${x.title}`)); }
+    if (m.notes.trim()) lines.push('', `*Notes:* ${m.notes.trim()}`);
+  } else if (f === 'slack') {
+    lines.push(`*${head}*`, `Env: *${m.env}* · Platform: *${m.platform}* · Tester: ${m.tester || '—'} · ${date}`, `Result: *${qaVerdict(t)}* — ${stats}`, '');
+    SITE.qa.checklist.forEach((g, gi) => { lines.push(`*${g.group}*`); g.items.forEach((it, ii) => lines.push(`${QA_MARKS[qa.checks[`${gi}-${ii}`] || 0].slack} ${it}`)); lines.push(''); });
+    if (open.length) { lines.push(`*Open bugs (${open.length})*`); open.forEach(x => lines.push(`• \`${x.id}\` [${sevLabel(x.severity)}] ${x.title}`)); }
+    if (m.notes.trim()) lines.push('', `_Notes:_ ${m.notes.trim()}`);
+  } else {
+    lines.push(`=== ${head.toUpperCase()} ===`, `Environment: ${m.env} | Platform: ${m.platform} | Tester: ${m.tester || '—'} | ${date}`, `Result: ${qaVerdict(t)} — ${stats}`, '');
+    SITE.qa.checklist.forEach((g, gi) => { lines.push(`[${g.group}]`); g.items.forEach((it, ii) => lines.push(`  ${QA_MARKS[qa.checks[`${gi}-${ii}`] || 0].sym} ${it}`)); });
+    if (open.length) { lines.push('', `OPEN BUGS (${open.length})`); open.forEach(x => lines.push(`  - ${x.id} [${sevLabel(x.severity)}] ${x.title}`)); }
+    if (m.notes.trim()) lines.push('', `Notes: ${m.notes.trim()}`);
+  }
+  return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+function paintQaMessage() { const out = $('#qaMsg'); if (out) out.value = qaMessage(); }
+function paintQaTickets() {
+  const q = ($('#qaSearch')?.value || '').toLowerCase().trim();
+  const counts = { open: qaOpenCount(), closed: qa.tickets.length - qaOpenCount(), all: qa.tickets.length };
+  $('#qaTabs').innerHTML = [['open', 'Open'], ['closed', 'Closed'], ['all', 'All']].map(([k, l]) =>
+    `<button type="button" class="tab ${qa.filter === k ? 'active' : ''}" data-qf="${k}">${l} <span class="badge">${counts[k]}</span></button>`).join('');
+  const sevRank = Object.fromEntries(SITE.qa.severities.map((s, i) => [s.id, i]));
+  const list = qa.tickets
+    .filter(t => qa.filter === 'all' || t.status === qa.filter)
+    .filter(t => !q || `${t.id} ${t.title} ${t.component} ${t.assignee} ${t.env}`.toLowerCase().includes(q))
+    .sort((a, b) => (a.status === b.status ? 0 : a.status === 'open' ? -1 : 1) || (sevRank[a.severity] ?? 9) - (sevRank[b.severity] ?? 9) || b.created - a.created);
+  $('#qaTickets').innerHTML = list.length ? list.map(t => {
+    const sev = SITE.qa.severities.find(s => s.id === t.severity) || { label: t.severity, cls: 'info' };
+    return `<li class="qa-ticket ${t.status} sev-${esc(t.severity)}">
+      <details>
+        <summary>
+          <span class="qa-tid">${esc(t.id)}</span>
+          <span class="status ${esc(sev.cls)}">${esc(sev.label)}</span>
+          <span class="qa-ttitle">${esc(t.title)}</span>
+          <span class="qa-tmeta small muted">${esc(t.component)} · ${esc(t.env)} · ${esc(t.assignee)} · ${t.status === 'closed' && t.closed ? `closed ${esc(fmtAgo(t.closed))}` : `opened ${esc(fmtAgo(t.created))}`}</span>
+        </summary>
+        <pre class="qa-steps">${esc(t.steps || 'No steps recorded.')}</pre>
+      </details>
+      <div class="qa-tacts">
+        <button class="btn sm ${t.status === 'open' ? 'primary' : ''}" type="button" data-qact="toggle" data-id="${esc(t.id)}">${t.status === 'open' ? 'Close' : 'Reopen'}</button>
+        <button class="btn sm" type="button" data-qact="copy" data-id="${esc(t.id)}" aria-label="Copy ${esc(t.id)}">${icon('copy')}</button>
+        <button class="btn sm danger" type="button" data-qact="delete" data-id="${esc(t.id)}" aria-label="Delete ${esc(t.id)}">${icon('trash')}</button>
+      </div>
+    </li>`;
+  }).join('') : `<li class="empty">${q ? 'No tickets match.' : qa.filter === 'open' ? 'No open bugs. Ship it.' : 'Nothing here yet.'}</li>`;
+}
+function fmtAgo(ts) {
+  const m = Math.max(0, Math.round((Date.now() - ts) / 60000));
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  if (m < 1440) return `${Math.floor(m / 60)}h ago`;
+  return `${Math.floor(m / 1440)}d ago`;
+}
+
+// --- 18d. Engineering Tools (security, encoding, network, time, calculators) ---
+let toolCat = store.get('toolCat', 'All');
+let toolPrefs = store.get('toolPrefs', {});
+let epochTimer = null;
+const b64e = bytes => { let s = ''; bytes.forEach(b => { s += String.fromCharCode(b); }); return btoa(s); };
+const b64d = str => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+const toHex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+const utf8 = new TextEncoder(), utf8d = new TextDecoder();
+function outRow(label, value, mono = true) {
+  return `<div class="t-out"><span class="t-k">${esc(label)}</span><button type="button" class="t-v ${mono ? 'mono' : ''}" data-copy="${esc(value)}" title="Click to copy">${esc(value)}</button></div>`;
+}
+function fmtDur(sec) {
+  sec = Math.max(0, Math.round(sec));
+  const d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return [d && `${d}d`, (d || h) && `${h}h`, (d || h || m) && `${m}m`, `${s}s`].filter(Boolean).join(' ');
+}
+function fmtNum(n, max = 4) { return Number.isFinite(n) ? n.toLocaleString(undefined, { maximumFractionDigits: max }) : '—'; }
+
+// ---- tool bodies (markup) ----
+const TOOL_BODY = {
+  password: () => `
+    <div class="t-row"><label class="t-grow">Length <strong id="pwLenOut">20</strong><input type="range" id="pwLen" min="8" max="64" value="20" data-pref="pwLen"></label></div>
+    <div class="t-checks">
+      <label><input type="checkbox" id="pwUpper" checked data-pref="pwUpper"> A–Z</label>
+      <label><input type="checkbox" id="pwLower" checked data-pref="pwLower"> a–z</label>
+      <label><input type="checkbox" id="pwDigits" checked data-pref="pwDigits"> 0–9</label>
+      <label><input type="checkbox" id="pwSymbols" checked data-pref="pwSymbols"> !@#</label>
+      <label><input type="checkbox" id="pwAmbig" data-pref="pwAmbig"> No look-alikes</label>
+    </div>
+    <div class="t-result"><code id="pwOut" class="t-big"></code></div>
+    <div class="t-meter"><span id="pwMeter"></span></div>
+    <div class="row t-actions"><span class="small muted" id="pwInfo"></span><span class="t-grow"></span>
+      <button class="btn sm" type="button" id="pwNew">${icon('refresh')}New</button><button class="btn sm primary" type="button" id="pwCopy">${icon('copy')}Copy</button></div>`,
+  token: () => `
+    <div class="t-row">
+      <select id="tkType" data-pref="tkType" aria-label="Type">
+        <option value="uuid">UUID v4</option><option value="hex32">Hex secret (32 bytes)</option><option value="hex16">Hex secret (16 bytes)</option>
+        <option value="b64">Base64URL secret (32 bytes)</option><option value="api">API key (sk_test_…)</option><option value="pin">6-digit PIN</option>
+      </select>
+      <select id="tkCount" data-pref="tkCount" aria-label="Count"><option>1</option><option selected>5</option><option>10</option></select>
+      <button class="btn sm primary" type="button" id="tkGen">${icon('refresh')}Generate</button>
+    </div>
+    <div class="t-list" id="tkOut"></div>`,
+  hash: () => `
+    <textarea id="hInput" rows="3" placeholder="Text to hash…" aria-label="Text to hash"></textarea>
+    <div class="row t-row"><label class="btn sm t-file">${icon('download')}Hash a file<input type="file" id="hFile" hidden></label><span class="small muted" id="hFileName"></span></div>
+    <div id="hOut" class="t-outs"></div>
+    <input id="hVerify" placeholder="Paste an expected hash to verify…" aria-label="Expected hash" class="mono">
+    <div class="small" id="hVerifyOut"></div>
+    <p class="small muted">Hashes are one-way: they can be verified but not decoded back to the input.</p>`,
+  aes: () => `
+    <input id="aesPass" type="password" placeholder="Passphrase" autocomplete="new-password" aria-label="Passphrase">
+    <textarea id="aesIn" rows="3" placeholder="Plain text to encrypt, or a ciphertext to decrypt" aria-label="AES input"></textarea>
+    <div class="row t-actions"><button class="btn sm primary" type="button" id="aesEnc">${icon('lock')}Encrypt</button><button class="btn sm" type="button" id="aesDec">Decrypt</button><span class="t-grow"></span><button class="btn sm" type="button" id="aesCopy">${icon('copy')}Copy</button></div>
+    <textarea id="aesOut" rows="3" readonly class="mono" aria-label="AES output"></textarea>
+    <p class="small muted">AES-256-GCM, key derived with PBKDF2-SHA256 (210k rounds). Output = base64(salt | iv | ciphertext). Runs locally in your browser.</p>`,
+  jwt: () => `
+    <textarea id="jwtIn" rows="3" class="mono" placeholder="eyJhbGciOi…" aria-label="JWT"></textarea>
+    <div id="jwtOut"></div>
+    <p class="small muted">Decoded locally. The signature is not verified.</p>`,
+  encode: () => `
+    <div class="t-row"><select id="encMode" data-pref="encMode" aria-label="Encoding">
+      <option value="b64">Base64</option><option value="b64url">Base64URL</option><option value="url">URL (percent)</option><option value="hex">Hex</option><option value="html">HTML entities</option></select>
+      <button class="btn sm primary" type="button" id="encDo">Encode</button><button class="btn sm" type="button" id="decDo">Decode</button><button class="btn sm" type="button" id="encSwap" title="Use output as input">⇅</button></div>
+    <textarea id="encIn" rows="3" placeholder="Input" aria-label="Encode input"></textarea>
+    <textarea id="encOut" rows="3" readonly class="mono" placeholder="Output" aria-label="Encode output"></textarea>
+    <div class="small" id="encErr"></div>`,
+  json: () => `
+    <textarea id="jsIn" rows="6" class="mono" placeholder='{"paste": "JSON here"}' aria-label="JSON input"></textarea>
+    <div class="row t-actions">
+      <button class="btn sm primary" type="button" data-js="format">Format</button><button class="btn sm" type="button" data-js="minify">Minify</button>
+      <button class="btn sm" type="button" data-js="sort">Sort keys</button><button class="btn sm" type="button" data-js="csv">To CSV</button>
+      <span class="t-grow"></span><button class="btn sm" type="button" id="jsCopy">${icon('copy')}Copy</button></div>
+    <div class="small" id="jsStatus"></div>
+    <textarea id="jsOut" rows="6" readonly class="mono" aria-label="JSON output"></textarea>`,
+  regex: () => `
+    <div class="t-row t-regex"><span class="mono muted">/</span><input id="rxPat" class="mono t-grow" placeholder="pattern" data-pref="rxPat" aria-label="Pattern"><span class="mono muted">/</span><input id="rxFlags" class="mono t-flags" value="g" data-pref="rxFlags" aria-label="Flags"></div>
+    <textarea id="rxText" rows="4" placeholder="Test text…" aria-label="Test text" data-pref="rxText"></textarea>
+    <div class="small" id="rxInfo"></div>
+    <div class="t-hl mono" id="rxOut"></div>
+    <div id="rxGroups" class="t-list"></div>`,
+  subnet: () => `
+    <div class="t-row"><input id="snIn" class="mono t-grow" value="10.20.30.40/22" placeholder="192.168.1.10/24 or 10.0.0.1 255.255.0.0" data-pref="snIn" aria-label="IP and prefix"></div>
+    <div id="snOut" class="t-outs"></div>
+    <div class="row t-actions"><span class="small muted">Random IPs from</span>
+      <select id="snRandSrc" data-pref="snRandSrc" aria-label="Random IP source"><option value="subnet">this subnet</option><option value="10.0.0.0/8">10.0.0.0/8</option><option value="172.16.0.0/12">172.16.0.0/12</option><option value="192.168.0.0/16">192.168.0.0/16</option><option value="198.51.100.0/24">TEST-NET-2</option></select>
+      <button class="btn sm primary" type="button" id="snRand">${icon('shuffle')}Pick 5</button></div>
+    <div class="t-chips" id="snRandOut"></div>`,
+  ports: () => `
+    <div class="t-row"><select id="ptPreset" data-pref="ptPreset" aria-label="Range"><option value="49152-65535">Ephemeral 49152–65535</option><option value="1024-49151">Registered 1024–49151</option><option value="3000-9999">Dev-friendly 3000–9999</option><option value="custom">Custom…</option></select>
+      <input id="ptFrom" type="number" min="1" max="65535" value="20000" class="t-num" aria-label="From" data-pref="ptFrom"><input id="ptTo" type="number" min="1" max="65535" value="30000" class="t-num" aria-label="To" data-pref="ptTo">
+      <select id="ptCount" data-pref="ptCount" aria-label="Count"><option>1</option><option selected>5</option><option>10</option></select>
+      <button class="btn sm primary" type="button" id="ptGen">${icon('shuffle')}Pick</button></div>
+    <div class="t-chips" id="ptOut"></div>
+    <input id="ptSearch" placeholder="Look up a port or service (e.g. 5432, redis)…" aria-label="Port lookup">
+    <div class="t-ports" id="ptList"></div>`,
+  tz: () => `
+    <div class="t-row"><input id="tzWhen" type="datetime-local" aria-label="Date and time"><select id="tzFrom" data-pref="tzFrom" aria-label="Source time zone"></select><button class="btn sm" type="button" id="tzNow">Now</button></div>
+    <div id="tzOut" class="t-tz"></div>`,
+  epoch: () => `
+    <div class="t-now">Now <button type="button" class="t-v mono" id="epNow" data-copy="">—</button></div>
+    <div class="t-row"><input id="epIn" class="mono t-grow" placeholder="1767225600 or 1767225600000" aria-label="Unix timestamp"></div>
+    <div id="epOut" class="t-outs"></div>
+    <div class="t-row"><input id="epDate" type="datetime-local" aria-label="Date to convert"><select id="epDateTz" aria-label="Date is in"><option value="local">Local time</option><option value="UTC">UTC</option></select></div>
+    <div id="epDateOut" class="t-outs"></div>`,
+  duration: () => `
+    <div class="form-grid"><div class="field"><label for="duFrom">From</label><input id="duFrom" type="datetime-local"></div><div class="field"><label for="duTo">To</label><input id="duTo" type="datetime-local"></div></div>
+    <div id="duOut" class="t-outs"></div>`,
+  percent: () => `
+    <div class="t-calc"><span>What is</span><input id="pc1a" type="number" class="t-num" value="15" data-pref="pc1a" aria-label="Percent">%<span>of</span><input id="pc1b" type="number" class="t-num" value="240" data-pref="pc1b" aria-label="Value"><span>=</span><strong id="pc1">—</strong></div>
+    <div class="t-calc"><input id="pc2a" type="number" class="t-num" value="45" data-pref="pc2a" aria-label="Part"><span>is what % of</span><input id="pc2b" type="number" class="t-num" value="180" data-pref="pc2b" aria-label="Whole"><span>=</span><strong id="pc2">—</strong></div>
+    <div class="t-calc"><span>Change from</span><input id="pc3a" type="number" class="t-num" value="120" data-pref="pc3a" aria-label="From"><span>to</span><input id="pc3b" type="number" class="t-num" value="150" data-pref="pc3b" aria-label="To"><span>=</span><strong id="pc3">—</strong></div>
+    <div class="t-calc"><input id="pc4a" type="number" class="t-num" value="200" data-pref="pc4a" aria-label="Value"><span>±</span><input id="pc4b" type="number" class="t-num" value="18" data-pref="pc4b" aria-label="Percent">%<span>=</span><strong id="pc4">—</strong></div>`,
+  sla: () => `
+    <div class="t-row"><label class="t-grow">Availability target <input id="slaIn" type="number" step="0.001" min="0" max="100" value="99.9" class="t-num" data-pref="slaIn"> %</label></div>
+    <div class="t-chips">${['99', '99.5', '99.9', '99.95', '99.99', '99.999'].map(v => `<button type="button" class="t-chip" data-sla="${v}">${v}%</button>`).join('')}</div>
+    <div id="slaOut" class="t-outs"></div>
+    <div class="t-row"><label class="t-grow">Downtime this month <input id="slaDown" type="number" min="0" value="30" class="t-num" data-pref="slaDown"> min</label><strong id="slaAch"></strong></div>`,
+  transfer: () => `
+    <div class="t-calc"><input id="trSize" type="number" class="t-num" value="25" data-pref="trSize" aria-label="Size">
+      <select id="trSizeU" data-pref="trSizeU" aria-label="Size unit"><option value="1e6">MB</option><option value="1e9" selected>GB</option><option value="1e12">TB</option><option value="1048576">MiB</option><option value="1073741824">GiB</option></select>
+      <span>at</span><input id="trSpeed" type="number" class="t-num" value="100" data-pref="trSpeed" aria-label="Speed">
+      <select id="trSpeedU" data-pref="trSpeedU" aria-label="Speed unit"><option value="1e6" selected>Mbps</option><option value="1e9">Gbps</option><option value="8e6">MB/s</option></select></div>
+    <div class="t-result"><span class="small muted">Transfer time</span><strong class="t-big" id="trTime">—</strong></div>
+    <div id="trUnits" class="t-outs"></div>`
+};
+
+// ---- tool behaviour ----
+const TOOL_INIT = {
+  password(card) {
+    const gen = () => {
+      const sets = [];
+      const amb = $('#pwAmbig', card).checked;
+      const strip = s => amb ? s.replace(/[Il1O0o|]/g, '') : s;
+      if ($('#pwUpper', card).checked) sets.push(strip('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+      if ($('#pwLower', card).checked) sets.push(strip('abcdefghijklmnopqrstuvwxyz'));
+      if ($('#pwDigits', card).checked) sets.push(strip('0123456789'));
+      if ($('#pwSymbols', card).checked) sets.push('!@#$%^&*()-_=+[]{};:,.?/');
+      const len = +$('#pwLen', card).value;
+      $('#pwLenOut', card).textContent = len;
+      if (!sets.length) { $('#pwOut', card).textContent = 'Pick at least one character set'; return; }
+      const all = sets.join('');
+      // one from each set, rest from the pool, then crypto-shuffle
+      const chars = sets.map(s => s[rndInt(s.length)]);
+      while (chars.length < len) chars.push(all[rndInt(all.length)]);
+      for (let i = chars.length - 1; i > 0; i--) { const j = rndInt(i + 1); [chars[i], chars[j]] = [chars[j], chars[i]]; }
+      const pw = chars.join('');
+      const bits = Math.round(len * Math.log2(all.length));
+      const lvl = bits < 50 ? ['Weak', 'bad', 25] : bits < 80 ? ['Fair', 'warn', 55] : bits < 110 ? ['Strong', 'ok', 80] : ['Very strong', 'ok', 100];
+      $('#pwOut', card).textContent = pw;
+      $('#pwMeter', card).style.width = `${lvl[2]}%`;
+      $('#pwMeter', card).className = lvl[1];
+      $('#pwInfo', card).textContent = `${bits} bits of entropy · ${lvl[0]}`;
+    };
+    card.addEventListener('input', e => { if (e.target.matches('input')) gen(); });
+    $('#pwNew', card).addEventListener('click', gen);
+    $('#pwCopy', card).addEventListener('click', () => copyText($('#pwOut', card).textContent, 'Password copied'));
+    gen();
+  },
+  token(card) {
+    const one = t => {
+      const bytes = n => crypto.getRandomValues(new Uint8Array(n));
+      if (t === 'uuid') return uuid4();
+      if (t === 'hex32') return toHex(bytes(32));
+      if (t === 'hex16') return toHex(bytes(16));
+      if (t === 'b64') return b64e(bytes(32)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      if (t === 'api') return `sk_test_${randomFrom('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 32)}`;
+      return String(rndInt(1000000)).padStart(6, '0');
+    };
+    const gen = () => {
+      const t = $('#tkType', card).value, n = +$('#tkCount', card).value;
+      $('#tkOut', card).innerHTML = Array.from({ length: n }, () => one(t)).map(v => `<button type="button" class="t-v mono" data-copy="${esc(v)}">${esc(v)}</button>`).join('');
+    };
+    $('#tkGen', card).addEventListener('click', gen);
+    $('#tkType', card).addEventListener('change', gen);
+    $('#tkCount', card).addEventListener('change', gen);
+    gen();
+  },
+  hash(card) {
+    const algos = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
+    let last = {}, timer = null;
+    const verify = () => {
+      const want = $('#hVerify', card).value.trim().toLowerCase();
+      const hit = want && Object.entries(last).find(([, h]) => h === want);
+      $('#hVerifyOut', card).innerHTML = !want ? '' : hit
+        ? `<span class="status ok">Match · ${esc(hit[0])}</span>` : `<span class="status bad">No match</span>`;
+    };
+    const run = async data => {
+      if (!crypto.subtle) { $('#hOut', card).innerHTML = '<div class="small muted">Web Crypto needs HTTPS or localhost.</div>'; return; }
+      const out = {};
+      for (const a of algos) out[a] = toHex(await crypto.subtle.digest(a, data));
+      last = out;
+      $('#hOut', card).innerHTML = algos.map(a => outRow(a, out[a])).join('');
+      verify();
+    };
+    $('#hInput', card).addEventListener('input', () => {
+      clearTimeout(timer);
+      $('#hFileName', card).textContent = '';
+      timer = setTimeout(() => run(utf8.encode($('#hInput', card).value)), 150);
+    });
+    $('#hFile', card).addEventListener('change', async e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      $('#hFileName', card).textContent = `${f.name} · ${fmtNum(f.size / 1048576, 2)} MB`;
+      run(await f.arrayBuffer());
+    });
+    $('#hVerify', card).addEventListener('input', verify);
+    run(utf8.encode(''));
+  },
+  aes(card) {
+    const key = async (pass, salt) => {
+      const base = await crypto.subtle.importKey('raw', utf8.encode(pass), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    };
+    const pass = () => { const p = $('#aesPass', card).value; if (!p) toast('Enter a passphrase first', 'warn'); return p; };
+    $('#aesEnc', card).addEventListener('click', async () => {
+      const p = pass(); if (!p) return;
+      const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+      const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await key(p, salt), utf8.encode($('#aesIn', card).value)));
+      const all = new Uint8Array(28 + ct.length); all.set(salt); all.set(iv, 16); all.set(ct, 28);
+      $('#aesOut', card).value = b64e(all);
+    });
+    $('#aesDec', card).addEventListener('click', async () => {
+      const p = pass(); if (!p) return;
+      try {
+        const all = b64d($('#aesIn', card).value.trim());
+        const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: all.slice(16, 28) }, await key(p, all.slice(0, 16)), all.slice(28));
+        $('#aesOut', card).value = utf8d.decode(pt);
+      } catch { $('#aesOut', card).value = ''; toast('Could not decrypt — wrong passphrase or damaged text', 'warn'); }
+    });
+    $('#aesCopy', card).addEventListener('click', () => copyText($('#aesOut', card).value, 'Copied'));
+  },
+  jwt(card) {
+    const dec = part => JSON.parse(utf8d.decode(b64d(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '='))));
+    $('#jwtIn', card).addEventListener('input', () => {
+      const v = $('#jwtIn', card).value.trim(), out = $('#jwtOut', card);
+      if (!v) { out.innerHTML = ''; return; }
+      try {
+        const [h, p] = v.split('.');
+        const head = dec(h), body = dec(p);
+        const times = ['iat', 'nbf', 'exp'].filter(k => typeof body[k] === 'number')
+          .map(k => { const ms = body[k] * 1000, rel = ms > Date.now() ? `in ${fmtDur((ms - Date.now()) / 1000)}` : `${fmtDur((Date.now() - ms) / 1000)} ago`; return outRow(k, `${new Date(ms).toLocaleString()} (${rel})`, false); }).join('');
+        const expired = typeof body.exp === 'number' && body.exp * 1000 < Date.now();
+        out.innerHTML = `<div class="row">${typeof body.exp === 'number' ? `<span class="status ${expired ? 'bad' : 'ok'}">${expired ? 'Expired' : 'Valid time window'}</span>` : '<span class="status info">No exp claim</span>'}<span class="small muted">alg ${esc(head.alg || '—')}</span></div>
+          ${times}<div class="t-json"><span class="t-k">Header</span><pre>${esc(JSON.stringify(head, null, 2))}</pre></div><div class="t-json"><span class="t-k">Payload</span><pre>${esc(JSON.stringify(body, null, 2))}</pre></div>`;
+      } catch { out.innerHTML = '<span class="status bad">Not a valid JWT</span>'; }
+    });
+  },
+  encode(card) {
+    const run = dir => {
+      const mode = $('#encMode', card).value, v = $('#encIn', card).value;
+      $('#encErr', card).textContent = '';
+      try {
+        let r;
+        if (mode === 'b64') r = dir ? b64e(utf8.encode(v)) : utf8d.decode(b64d(v.trim()));
+        else if (mode === 'b64url') r = dir ? b64e(utf8.encode(v)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') : utf8d.decode(b64d(v.trim().replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(v.trim().length / 4) * 4, '=')));
+        else if (mode === 'url') r = dir ? encodeURIComponent(v) : decodeURIComponent(v);
+        else if (mode === 'hex') r = dir ? toHex(utf8.encode(v)) : utf8d.decode(Uint8Array.from(v.replace(/\s|0x/g, '').match(/.{1,2}/g) || [], h => { if (!/^[0-9a-f]{2}$/i.test(h)) throw new Error(); return parseInt(h, 16); }));
+        else r = dir ? v.replace(/[&<>"']/g, ch => ESC_MAP[ch]) : new DOMParser().parseFromString(`<!doctype html><body>${v.replace(/</g, '&lt;')}`, 'text/html').body.textContent;
+        $('#encOut', card).value = r;
+      } catch { $('#encOut', card).value = ''; $('#encErr', card).innerHTML = '<span class="status bad">Input is not valid for this decoder</span>'; }
+    };
+    $('#encDo', card).addEventListener('click', () => run(true));
+    $('#decDo', card).addEventListener('click', () => run(false));
+    $('#encSwap', card).addEventListener('click', () => { $('#encIn', card).value = $('#encOut', card).value; $('#encOut', card).value = ''; });
+  },
+  json(card) {
+    const sortDeep = v => Array.isArray(v) ? v.map(sortDeep) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, sortDeep(v[k])])) : v;
+    const toCsv = v => {
+      const rows = Array.isArray(v) ? v : [v];
+      const keys = [...new Set(rows.flatMap(r => r && typeof r === 'object' ? Object.keys(r) : ['value']))];
+      const cell = x => { const s = x === undefined || x === null ? '' : typeof x === 'object' ? JSON.stringify(x) : String(x); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+      return [keys.join(','), ...rows.map(r => keys.map(k => cell(r && typeof r === 'object' ? r[k] : r)).join(','))].join('\n');
+    };
+    card.addEventListener('click', e => {
+      const b = e.target.closest('[data-js]');
+      if (!b) return;
+      const st = $('#jsStatus', card);
+      try {
+        const v = JSON.parse($('#jsIn', card).value);
+        const a = b.dataset.js;
+        $('#jsOut', card).value = a === 'minify' ? JSON.stringify(v) : a === 'sort' ? JSON.stringify(sortDeep(v), null, 2) : a === 'csv' ? toCsv(v) : JSON.stringify(v, null, 2);
+        const n = Array.isArray(v) ? `array of ${v.length}` : typeof v === 'object' && v ? `object with ${Object.keys(v).length} keys` : typeof v;
+        st.innerHTML = `<span class="status ok">Valid JSON · ${esc(n)}</span>`;
+      } catch (err) {
+        const m = /position (\d+)/.exec(err.message);
+        let where = '';
+        if (m) { const before = $('#jsIn', card).value.slice(0, +m[1]).split('\n'); where = ` at line ${before.length}, column ${before[before.length - 1].length + 1}`; }
+        st.innerHTML = `<span class="status bad">Invalid JSON${esc(where)}</span> <span class="small muted">${esc(err.message)}</span>`;
+        $('#jsOut', card).value = '';
+      }
+    });
+    $('#jsCopy', card).addEventListener('click', () => copyText($('#jsOut', card).value, 'Copied'));
+  },
+  regex(card) {
+    const run = () => {
+      const pat = $('#rxPat', card).value, flags = $('#rxFlags', card).value, text = $('#rxText', card).value.slice(0, 20000);
+      const info = $('#rxInfo', card), out = $('#rxOut', card), groups = $('#rxGroups', card);
+      if (!pat) { info.textContent = 'Enter a pattern'; out.innerHTML = esc(text); groups.innerHTML = ''; return; }
+      let re;
+      try { re = new RegExp(pat, flags.includes('g') ? flags : flags + 'g'); } catch (err) { info.innerHTML = `<span class="status bad">${esc(err.message)}</span>`; out.innerHTML = esc(text); groups.innerHTML = ''; return; }
+      const ms = [];
+      let m, guard = 0;
+      while ((m = re.exec(text)) && guard++ < 500) { ms.push(m); if (m[0] === '') re.lastIndex++; }
+      let html = '', at = 0;
+      ms.forEach(x => { html += esc(text.slice(at, x.index)) + `<mark>${esc(x[0]) || '∅'}</mark>`; at = x.index + x[0].length; });
+      out.innerHTML = html + esc(text.slice(at));
+      info.innerHTML = ms.length ? `<span class="status ok">${ms.length} match${ms.length === 1 ? '' : 'es'}</span>` : '<span class="status warn">No matches</span>';
+      groups.innerHTML = ms.slice(0, 20).filter(x => x.length > 1).map((x, i) => `<div class="small mono">#${i + 1}: ${x.slice(1).map((g, gi) => `<span class="muted">$${gi + 1}</span>=${esc(g ?? '')}`).join(' · ')}</div>`).join('');
+    };
+    card.addEventListener('input', run);
+    run();
+  },
+  subnet(card) {
+    const ipToInt = s => { const p = s.split('.'); if (p.length !== 4 || p.some(x => !/^\d{1,3}$/.test(x) || +x > 255)) return null; return ((+p[0] << 24) >>> 0) + (+p[1] << 16) + (+p[2] << 8) + +p[3]; };
+    const intToIp = n => [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+    const maskOf = pre => pre === 0 ? 0 : (0xFFFFFFFF << (32 - pre)) >>> 0;
+    const parse = str => {
+      const s = str.trim().split(/[\s/]+/);
+      const ip = ipToInt(s[0] || '');
+      if (ip === null) return null;
+      let pre = 32;
+      if (s[1] !== undefined) {
+        if (/^\d{1,2}$/.test(s[1]) && +s[1] <= 32) pre = +s[1];
+        else { const mk = ipToInt(s[1]); if (mk === null) return null; pre = mk.toString(2).replace(/0+$/, '').length; if (maskOf(pre) !== mk) return null; }
+      }
+      return { ip, pre };
+    };
+    const kind = n => {
+      const inR = (cidr) => { const [b, p] = cidr.split('/'); const mk = maskOf(+p); return ((n & mk) >>> 0) === ((ipToInt(b) & mk) >>> 0); };
+      if (inR('10.0.0.0/8') || inR('172.16.0.0/12') || inR('192.168.0.0/16')) return 'Private (RFC 1918)';
+      if (inR('100.64.0.0/10')) return 'Carrier-grade NAT';
+      if (inR('127.0.0.0/8')) return 'Loopback';
+      if (inR('169.254.0.0/16')) return 'Link-local';
+      if (inR('224.0.0.0/4')) return 'Multicast';
+      if (inR('192.0.2.0/24') || inR('198.51.100.0/24') || inR('203.0.113.0/24')) return 'Documentation (TEST-NET)';
+      return 'Public';
+    };
+    let cur = null;
+    const calc = () => {
+      const r = parse($('#snIn', card).value), out = $('#snOut', card);
+      if (!r) { cur = null; out.innerHTML = '<span class="status bad">Enter an IPv4 address with /prefix or a dotted mask</span>'; return; }
+      const mk = maskOf(r.pre), net = (r.ip & mk) >>> 0, bc = (net | (~mk >>> 0)) >>> 0;
+      const hosts = r.pre >= 31 ? (r.pre === 32 ? 1 : 2) : bc - net - 1;
+      const first = r.pre >= 31 ? net : net + 1, last = r.pre >= 31 ? bc : bc - 1;
+      cur = { first, count: hosts };
+      out.innerHTML = [
+        ['Network', `${intToIp(net)}/${r.pre}`], ['Netmask', intToIp(mk)], ['Wildcard', intToIp(~mk >>> 0)], ['Broadcast', intToIp(bc)],
+        ['First host', intToIp(first)], ['Last host', intToIp(last)], ['Usable hosts', fmtNum(hosts, 0)], ['Type', kind(r.ip)]
+      ].map(([k, v]) => outRow(k, v)).join('');
+    };
+    $('#snIn', card).addEventListener('input', calc);
+    $('#snRand', card).addEventListener('click', () => {
+      const src = $('#snRandSrc', card).value;
+      let range = cur;
+      if (src !== 'subnet') { const [b, p] = src.split('/'); const mk = maskOf(+p), net = (ipToInt(b) & mk) >>> 0; range = { first: net + 1, count: ((net | (~mk >>> 0)) >>> 0) - net - 1 }; }
+      if (!range) { toast('Enter a valid subnet first', 'warn'); return; }
+      const set = new Set();
+      while (set.size < Math.min(5, range.count)) set.add(intToIp(range.first + rndInt(range.count)));
+      $('#snRandOut', card).innerHTML = [...set].map(ip => `<button type="button" class="t-chip mono" data-copy="${esc(ip)}">${esc(ip)}</button>`).join('');
+    });
+    calc();
+  },
+  ports(card) {
+    const common = new Set(SITE.commonPorts.map(p => p[0]));
+    const sync = () => { const c = $('#ptPreset', card).value === 'custom'; $('#ptFrom', card).hidden = !c; $('#ptTo', card).hidden = !c; };
+    const gen = () => {
+      let [a, b] = $('#ptPreset', card).value === 'custom' ? [+$('#ptFrom', card).value, +$('#ptTo', card).value] : $('#ptPreset', card).value.split('-').map(Number);
+      a = Math.max(1, Math.min(65535, a || 1)); b = Math.max(1, Math.min(65535, b || 65535)); if (a > b) [a, b] = [b, a];
+      const n = +$('#ptCount', card).value, set = new Set();
+      let guard = 0;
+      while (set.size < Math.min(n, b - a + 1) && guard++ < 5000) { const p = a + rndInt(b - a + 1); if (!common.has(p)) set.add(p); }
+      $('#ptOut', card).innerHTML = [...set].sort((x, y) => x - y).map(p => `<button type="button" class="t-chip mono" data-copy="${p}">${p}</button>`).join('');
+    };
+    const look = () => {
+      const q = $('#ptSearch', card).value.trim().toLowerCase();
+      const rows = SITE.commonPorts.filter(([p, pr, s]) => !q || String(p).startsWith(q) || s.toLowerCase().includes(q) || pr.toLowerCase() === q);
+      $('#ptList', card).innerHTML = rows.slice(0, q ? 12 : 8).map(([p, pr, s]) => `<button type="button" class="t-port" data-copy="${p}"><span class="mono">${p}</span><span>${esc(s)}</span><span class="muted small">${esc(pr)}</span></button>`).join('') || '<div class="small muted">No match</div>';
+    };
+    $('#ptPreset', card).addEventListener('change', () => { sync(); gen(); });
+    $('#ptGen', card).addEventListener('click', gen);
+    $('#ptSearch', card).addEventListener('input', look);
+    sync(); gen(); look();
+  },
+  tz(card) {
+    const zones = [{ label: 'UTC', tz: 'UTC' }, ...SITE.timezones];
+    const sel = $('#tzFrom', card);
+    sel.innerHTML = `<option value="local">Local (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone)})</option>` + zones.map(z => `<option value="${esc(z.tz)}">${esc(z.label)}</option>`).join('');
+    if (toolPrefs.tzFrom) sel.value = toolPrefs.tzFrom;
+    const calc = () => {
+      const v = $('#tzWhen', card).value;
+      if (!v) return;
+      const [d, t] = v.split('T'); const [y, mo, da] = d.split('-').map(Number); const [h, mi] = t.split(':').map(Number);
+      const src = sel.value;
+      const when = src === 'local' ? new Date(y, mo - 1, da, h, mi) : zonedToUtc(y, mo - 1, da, h, mi, src);
+      const srcDay = new Intl.DateTimeFormat('en-CA', { timeZone: src === 'local' ? undefined : src, year: 'numeric', month: '2-digit', day: '2-digit' }).format(when);
+      $('#tzOut', card).innerHTML = zones.map(z => {
+        const time = new Intl.DateTimeFormat([], { timeZone: z.tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(when);
+        const day = new Intl.DateTimeFormat('en-CA', { timeZone: z.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(when);
+        const hr = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: z.tz, hour: 'numeric', hourCycle: 'h23' }).format(when), 10) % 24;
+        const open = hr >= SITE.businessHours.start && hr < SITE.businessHours.end;
+        const shift = day > srcDay ? '+1 day' : day < srcDay ? '−1 day' : '';
+        return `<div class="t-tzrow"><span class="dot ${open ? 'on' : 'off'}" title="${open ? 'Business hours' : 'After hours'}"></span><span>${esc(z.label)}</span><strong class="mono">${esc(time)}</strong><span class="small muted">${esc(shift)}</span></div>`;
+      }).join('');
+    };
+    // "Now" = the current wall-clock time in the selected source zone
+    const now = () => {
+      const src = sel.value, n = new Date();
+      if (src === 'local') { $('#tzWhen', card).value = `${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}T${pad(n.getHours())}:${pad(n.getMinutes())}`; }
+      else {
+        const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: src, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(n).map(x => [x.type, x.value]));
+        $('#tzWhen', card).value = `${p.year}-${p.month}-${p.day}T${pad(+p.hour % 24)}:${p.minute}`;
+      }
+      calc();
+    };
+    card.addEventListener('input', calc);
+    card.addEventListener('change', calc);
+    $('#tzNow', card).addEventListener('click', now);
+    now();
+  },
+  epoch(card) {
+    const show = ms => [
+      ['UTC', new Date(ms).toISOString()], ['Local', new Date(ms).toLocaleString()],
+      ['Relative', ms > Date.now() ? `in ${fmtDur((ms - Date.now()) / 1000)}` : `${fmtDur((Date.now() - ms) / 1000)} ago`],
+      ['Seconds', String(Math.floor(ms / 1000))], ['Milliseconds', String(ms)]
+    ].map(([k, v]) => outRow(k, v, k === 'Seconds' || k === 'Milliseconds' || k === 'UTC')).join('');
+    $('#epIn', card).addEventListener('input', () => {
+      const v = $('#epIn', card).value.trim();
+      if (!/^-?\d+(\.\d+)?$/.test(v)) { $('#epOut', card).innerHTML = v ? '<span class="status bad">Digits only</span>' : ''; return; }
+      const n = Number(v), ms = Math.abs(n) >= 1e11 ? n : n * 1000;
+      $('#epOut', card).innerHTML = Number.isFinite(new Date(ms).getTime()) ? show(Math.round(ms)) : '<span class="status bad">Out of range</span>';
+    });
+    const fromDate = () => {
+      const v = $('#epDate', card).value;
+      if (!v) { $('#epDateOut', card).innerHTML = ''; return; }
+      const ms = $('#epDateTz', card).value === 'UTC' ? Date.parse(v + ':00Z') : new Date(v).getTime();
+      $('#epDateOut', card).innerHTML = outRow('Seconds', String(Math.floor(ms / 1000))) + outRow('Milliseconds', String(ms));
+    };
+    $('#epDate', card).addEventListener('input', fromDate);
+    $('#epDateTz', card).addEventListener('change', fromDate);
+    const tick = () => { const b = $('#epNow'); if (!b) return; const s = String(Math.floor(Date.now() / 1000)); b.textContent = s; b.dataset.copy = s; };
+    clearInterval(epochTimer); epochTimer = setInterval(tick, 1000); tick();
+  },
+  duration(card) {
+    const now = new Date(), later = new Date(now.getTime() + 36 * 3600000);
+    const f = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    $('#duFrom', card).value = f(now); $('#duTo', card).value = f(later);
+    const calc = () => {
+      const a = new Date($('#duFrom', card).value), b = new Date($('#duTo', card).value);
+      if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) { $('#duOut', card).innerHTML = ''; return; }
+      const sec = Math.abs(b - a) / 1000;
+      let wd = 0; for (let t = new Date(Math.min(a, b)); t < Math.max(a, b) && wd < 4000; t.setDate(t.getDate() + 1)) if (t.getDay() % 6) wd++;
+      $('#duOut', card).innerHTML = [
+        ['Duration', `${b < a ? '−' : ''}${fmtDur(sec)}`], ['Total hours', fmtNum(sec / 3600, 2)], ['Total minutes', fmtNum(sec / 60, 0)], ['Weekdays spanned', String(wd)]
+      ].map(([k, v]) => outRow(k, v, false)).join('');
+    };
+    card.addEventListener('input', calc);
+    calc();
+  },
+  percent(card) {
+    const v = id => parseFloat($(`#${id}`, card).value);
+    const calc = () => {
+      $('#pc1', card).textContent = fmtNum(v('pc1a') / 100 * v('pc1b'));
+      $('#pc2', card).textContent = v('pc2b') ? `${fmtNum(v('pc2a') / v('pc2b') * 100)}%` : '—';
+      const ch = v('pc3a') ? (v('pc3b') - v('pc3a')) / Math.abs(v('pc3a')) * 100 : NaN;
+      $('#pc3', card).textContent = Number.isFinite(ch) ? `${ch > 0 ? '+' : ''}${fmtNum(ch)}%` : '—';
+      const d = v('pc4a') * v('pc4b') / 100;
+      $('#pc4', card).textContent = Number.isFinite(d) ? `${fmtNum(v('pc4a') + d)} / ${fmtNum(v('pc4a') - d)}` : '—';
+    };
+    card.addEventListener('input', calc);
+    calc();
+  },
+  sla(card) {
+    const periods = [['Per day', 86400], ['Per week', 604800], ['Per month', 2629746], ['Per quarter', 7889238], ['Per year', 31556952]];
+    const calc = () => {
+      const p = Math.min(100, Math.max(0, parseFloat($('#slaIn', card).value) || 0));
+      $('#slaOut', card).innerHTML = periods.map(([k, s]) => outRow(k, fmtDur(s * (100 - p) / 100), false)).join('');
+      const down = Math.max(0, parseFloat($('#slaDown', card).value) || 0);
+      const ach = 100 - down * 60 / 2629746 * 100;
+      $('#slaAch', card).innerHTML = `<span class="status ${ach >= p ? 'ok' : 'bad'}">${fmtNum(Math.max(0, ach), 4)}% ${ach >= p ? 'within' : 'breaches'} SLA</span>`;
+      $$('[data-sla]', card).forEach(b => b.classList.toggle('on', parseFloat(b.dataset.sla) === p));
+    };
+    card.addEventListener('input', calc);
+    card.addEventListener('click', e => { const b = e.target.closest('[data-sla]'); if (b) { $('#slaIn', card).value = b.dataset.sla; saveToolPref($('#slaIn', card)); calc(); } });
+    calc();
+  },
+  transfer(card) {
+    const calc = () => {
+      const bytes = (parseFloat($('#trSize', card).value) || 0) * +$('#trSizeU', card).value;
+      const bps = (parseFloat($('#trSpeed', card).value) || 0) * +$('#trSpeedU', card).value;
+      $('#trTime', card).textContent = bps ? fmtDur(bytes * 8 / bps) : '—';
+      $('#trUnits', card).innerHTML = [['Bits', bytes * 8], ['MB', bytes / 1e6], ['GB', bytes / 1e9], ['MiB', bytes / 1048576], ['GiB', bytes / 1073741824]]
+        .map(([k, n]) => outRow(k, fmtNum(n, 3))).join('');
+    };
+    card.addEventListener('input', calc);
+    card.addEventListener('change', calc);
+    calc();
+  }
+};
+function tzOffsetMs(date, tz) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(date).map(x => [x.type, x.value]));
+  return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - Math.floor(date.getTime() / 1000) * 1000;
+}
+// Wall-clock time in a zone → UTC instant (second pass handles DST boundaries)
+function zonedToUtc(y, mo, d, h, mi, tz) {
+  const guess = Date.UTC(y, mo, d, h, mi);
+  const off = tzOffsetMs(new Date(guess), tz);
+  let t = guess - off;
+  const off2 = tzOffsetMs(new Date(t), tz);
+  if (off2 !== off) t = guess - off2;
+  return new Date(t);
+}
+function saveToolPref(el) {
+  toolPrefs[el.dataset.pref] = el.type === 'checkbox' ? el.checked : el.value;
+  store.set('toolPrefs', toolPrefs);
+}
+function renderTools() {
+  const cats = ['All', ...SITE.toolCategories];
+  $('#sec-tools').innerHTML = `
+    <div class="section-head">
+      <div><h2>Tools</h2><p>Everyday utilities for the shift. Everything runs locally in your browser; click any result to copy it.</p></div>
+      <div class="search-box"><input id="toolSearch" type="search" placeholder="Find a tool…" aria-label="Find a tool" data-page-search></div>
+    </div>
+    <div class="tabs" id="toolCats">${cats.map(c => `<button type="button" class="tab ${c === toolCat ? 'active' : ''}" data-tcat="${esc(c)}">${esc(c)} <span class="badge">${c === 'All' ? SITE.tools.length : SITE.tools.filter(t => t.cat === c).length}</span></button>`).join('')}</div>
+    <div class="tool-grid" id="toolGrid">${SITE.tools.map(t => `
+      <section class="card tool" data-tool="${esc(t.id)}" data-cat="${esc(t.cat)}" id="tool-${esc(t.id)}">
+        <header class="tool-head"><span class="tool-ico">${mark(t.icon)}</span><div><h3>${esc(t.title)}</h3><p class="small muted">${esc(t.desc)}</p></div><span class="tool-cat">${esc(t.cat)}</span></header>
+        <div class="tool-body">${TOOL_BODY[t.id] ? TOOL_BODY[t.id]() : ''}</div>
+      </section>`).join('')}</div>
+    <div class="empty" id="toolEmpty" hidden>No tool matches your search.</div>`;
+  const sec = $('#sec-tools');
+  $$('[data-pref]', sec).forEach(el => {
+    const v = toolPrefs[el.dataset.pref];
+    if (v !== undefined) { if (el.type === 'checkbox') el.checked = !!v; else el.value = v; }
+  });
+  sec.addEventListener('input', e => { if (e.target.dataset.pref) saveToolPref(e.target); });
+  sec.addEventListener('change', e => { if (e.target.dataset.pref) saveToolPref(e.target); });
+  sec.addEventListener('click', e => {
+    const c = e.target.closest('[data-copy]');
+    if (c && c.dataset.copy) copyText(c.dataset.copy, 'Copied');
+    const cat = e.target.closest('[data-tcat]');
+    if (cat) { toolCat = cat.dataset.tcat; store.set('toolCat', toolCat); $$('#toolCats .tab').forEach(t => t.classList.toggle('active', t === cat)); filterTools(); }
+  });
+  $('#toolSearch').addEventListener('input', filterTools);
+  SITE.tools.forEach(t => { const card = $(`#tool-${CSS.escape(t.id)}`); if (TOOL_INIT[t.id]) TOOL_INIT[t.id](card); });
+  filterTools();
+}
+function filterTools() {
+  const q = ($('#toolSearch')?.value || '').toLowerCase().trim();
+  let shown = 0;
+  SITE.tools.forEach(t => {
+    const ok = (toolCat === 'All' || t.cat === toolCat) && (!q || `${t.title} ${t.desc} ${t.cat}`.toLowerCase().includes(q));
+    $(`#tool-${CSS.escape(t.id)}`).hidden = !ok;
+    if (ok) shown++;
+  });
+  $('#toolEmpty').hidden = shown > 0;
+}
+function openTool(id) {
+  showSection('tools');
+  if (toolCat !== 'All') { toolCat = 'All'; store.set('toolCat', 'All'); $$('#toolCats .tab').forEach(t => t.classList.toggle('active', t.dataset.tcat === 'All')); }
+  $('#toolSearch').value = ''; filterTools();
+  const el = $(`#tool-${CSS.escape(id)}`);
+  if (el) setTimeout(() => { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1200); }, 250);
+}
+
 // --- 19. Command Palette (Ctrl+K) ---
 let palItems = [], palSel = 0, palIndex = null;
 function paletteIndex() {
@@ -3330,6 +4468,10 @@ function paletteIndex() {
   SITE.docs.forEach(d => items.push({ type: 'Doc', label: d.title, sub: d.cat, run: () => window.open(safeUrl(d.url), '_blank', 'noopener') }));
   SITE.commands.forEach(g => g.items.forEach(c => items.push({ type: 'Command', label: c.cmd, sub: g.group, mono: true, run: () => copyText(c.cmd, 'Command copied') })));
   Object.entries(SITE.themes).forEach(([id, label]) => items.push({ type: 'Theme', label: `Theme: ${label}`, sub: '', run: () => { $('#themeSelect').value = id; applyTheme(id); } }));
+  SITE.tools.forEach(t => items.push({ type: 'Tool', label: t.title, sub: `${t.cat} · ${t.desc}`, run: () => openTool(t.id) }));
+  (qa ? qa.tickets : []).forEach(t => items.push({ type: 'Bug', label: t.title, sub: `${t.id} · ${t.status}`, run: () => showSection('qa') }));
+  items.push({ type: 'Action', label: 'Generate test data', sub: 'QA Lab', run: () => { showSection('qa'); $('#qaGenerate').click(); } });
+  items.push({ type: 'Action', label: 'Copy QA report message', sub: 'QA Lab', run: () => copyText(qaMessage(), 'QA report copied') });
   items.push({ type: 'Action', label: 'Generate shift handoff', sub: '', run: () => { showSection('shifts'); $('#hoGen').click(); } });
   items.push({ type: 'Action', label: 'Generate checklist report', sub: '', run: () => { showSection('customers'); $('#mxReport').click(); } });
   items.push({ type: 'Action', label: 'Export environments to Excel', sub: '', run: exportExcel });
@@ -3562,6 +4704,8 @@ function boot() {
   renderTerminal();
   renderReminders();
   renderGames();
+  renderQA();
+  renderTools();
   renderMorale();
   initTheme();
   initPalette();

@@ -66,6 +66,28 @@ Runbooks and references shown as a real wooden bookcase. Each spine carries the 
 
 ![Bookshelf](docs/screenshots/bookshelf.jpg)
 
+### QA Lab
+A workbench for release testing:
+- **Test data generator:** realistic fictional people for 4 locales (US, UK, Israel, Germany) with name, email, phone, address, date of birth, company, password, IP and UUID. Card fields use only the payment gateways' published test numbers. Click any value to copy it, or copy the whole set as JSON or CSV.
+- **Release checklist:** Smoke, Functional, UI, Regression and Security groups, each item marked Pass, Fail or Skip. Build, tester, environment and platform are recorded, and the result exports as a ready-to-paste message for **Slack / Teams**, **Jira** (wiki markup) or plain text, including the open bugs.
+- **Bug tickets:** open a ticket with severity, component, environment, assignee and repro steps, then close, reopen, copy or delete it. Open / Closed / All views with search, and the open count shows in the sidebar badge.
+
+![QA Lab: test data](docs/screenshots/qa-generator.jpg)
+![QA Lab: checklist and tickets](docs/screenshots/qa-checklist.jpg)
+
+### Tools
+16 everyday utilities in a searchable, filterable masonry grid. Everything runs locally in the browser and every result copies on click.
+
+| Category | Tools |
+|---|---|
+| **Security** | Password generator with entropy meter · Key & ID generator (UUID, hex / Base64URL secrets, API keys, PINs) · Hash generator, SHA-1/256/384/512 for text or files, with verify · AES-256-GCM encrypt / decrypt (PBKDF2) · JWT decoder with expiry check |
+| **Encoding** | Base64 / Base64URL / URL / Hex / HTML encode-decode (UTF-8 safe) · JSON formatter (format, minify, sort keys, validate with line and column, JSON → CSV) · Regex tester with live highlights and groups |
+| **Network** | Subnet calculator (network, mask, wildcard, broadcast, host range and address type) with random IPs from the subnet or the private ranges · Random port picker that avoids well-known ports, plus a common-ports lookup |
+| **Time** | Time zone converter across all dashboard zones, DST-aware · Unix timestamp ⇄ date · Duration calculator |
+| **Calculators** | Percentage (of, ratio, change, ±) · SLA / uptime downtime budget · Data transfer time and size units |
+
+![Tools](docs/screenshots/tools.jpg)
+
 ### Link Wall and Cheatsheet
 The tools a shift lives in (Grafana, Prometheus, Jira, PagerDuty, Slack, Zoom, AWS Console, Azure Portal, GitHub, Confluence), each with its real logo. The terminal cheatsheet groups battle-tested commands by Network, Linux, Logs, Docker and Kubernetes, with live filtering and a copy button on every command.
 
@@ -76,7 +98,7 @@ The tools a shift lives in (Grafana, Prometheus, Jira, PagerDuty, Slack, Zoom, A
 - **Templates:** click-to-copy incident and maintenance messages with `{customer}`, `{service}`, `{ticket}` and `{time}` placeholders.
 - **Reminders:** one-off or repeating timers with a WebAudio triple beep, snooze, and countdowns in the sidebar.
 - **Break Room:** 2048 and a Memory Match game played with DevOps logos, both with saved best scores.
-- **Command palette (`Ctrl+K`):** searches sections, customers, tickets, links, docs, commands and templates.
+- **Command palette (`Ctrl+K`):** searches sections, customers, tickets, bugs, tools, links, docs, commands and templates.
 - **Scratchpad:** a draggable, resizable, autosaving notes window.
 - **Themes:** "Liquid Glass" frosted panels, 4 accent themes and a light mode.
 
@@ -92,6 +114,7 @@ The tools a shift lives in (Grafana, Prometheus, Jira, PagerDuty, Slack, Zoom, A
 | **Day/night terminator** | Computes the solar declination and sub-solar longitude, then draws the night polygon in an equirectangular projection. |
 | **Inline editing** | `contenteditable="plaintext-only"` with a fallback that strips pasted HTML. Enter saves, Esc reverts, and saves are debounced to `localStorage`. |
 | **Risk engine** | Compares semantic versions and computes deploy age to flag cells and update the KPIs live while you type. |
+| **Web Crypto everywhere** | Random values use `crypto.getRandomValues` with rejection sampling, so there is no modulo bias. Hashing and AES-GCM use `crypto.subtle`, and nothing leaves the browser. |
 | **Lazy dependencies** | SheetJS loads only on the first export and falls back to CSV. Map coastlines are fetched once and cached in memory. |
 | **Brand marks without emoji** | Logos are inline SVG paths from [Simple Icons](https://simpleicons.org) (CC0), stored in a `BRANDS` registry and referenced by key from the config. |
 | **Security** | Every dynamic string passes through `esc()` before it reaches `innerHTML`, and URLs go through a `safeUrl()` allow-list (`https:`, `mailto:`, `tel:`). |
@@ -124,6 +147,8 @@ linkGroups:  [{ group, items: [{ name, brand | icon, url, desc }] }]
 docs:        [{ title, cat, brand, color, url, desc }]        // brand = spine logo, color = spine leather
 commands:    [{ group, icon, items: [{ cmd, desc }] }]
 memoryIcons: ['jira', 'git', ...]                             // BRANDS keys used by Memory Match
+qa:          { locales, testCards, fields, checklist, severities, components, tickets }   // QA Lab data
+toolCategories / tools / commonPorts                          // Tools grid order, categories and port lookup
 themes / jokes / gallery / shortcuts
 ```
 
