@@ -133,18 +133,18 @@ kbd {
 }
 
 /* ===== 3b. Glass Material (shared by every panel) ===== */
-.sidebar, .card, .clocks, .hero, .stat, .tpl, .book, .link-tile, .term, .topbar, .palette, .toast, .scratch {
+.sidebar, .card, .clocks, .hero, .stat, .tpl, .link-tile, .term, .topbar, .palette, .toast, .scratch {
   background: var(--glass);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow);
 }
-.stat, .tpl, .book, .link-tile, .g-item {
+.stat, .tpl, .link-tile, .g-item {
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease),
               -webkit-backdrop-filter var(--dur) var(--ease), backdrop-filter var(--dur) var(--ease), opacity .2s, filter .2s;
 }
-.stat:hover, .tpl:hover, .book:hover, .link-tile:hover {
+.stat:hover, .tpl:hover, .link-tile:hover {
   transform: translateY(-2px);
   -webkit-backdrop-filter: var(--glass-filter-hover);
   backdrop-filter: var(--glass-filter-hover);
@@ -475,26 +475,87 @@ th.mx-head span { display: block; }
   background: var(--surface-2); border: 1px solid var(--border); color: var(--text); transition: border-color .15s, transform .15s;
 }
 .link-tile:hover { border-color: var(--accent); transform: translateY(-1px); }
-.link-ico { font-size: 18px; }
+.link-ico { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--surface-3); border: 1px solid var(--border); color: var(--muted); }
+.link-ico svg { width: 18px; height: 18px; }
+/* Brand marks & icon-in-text helpers */
+svg.brand-mark { display: inline-block; flex: none; }
+.plat svg.brand-mark { width: 12px; height: 12px; }
+.plat:has(svg)::before { display: none; }
+.th-brand { width: 13px; height: 13px; margin-right: 6px; vertical-align: -2px; }
+.term-mark { display: inline-grid; place-items: center; margin-left: 8px; }
+.term-mark svg { width: 14px; height: 14px; }
+.term-bar .term-mark + span { margin-left: 6px; }
+.chip svg, .btn svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 6px; }
+.shift-ico { display: inline-grid; vertical-align: -3px; margin-right: 7px; color: var(--accent); }
+.shift-ico svg { width: 18px; height: 18px; }
+.empty-ok svg { width: 18px; height: 18px; vertical-align: -4px; margin-right: 6px; color: var(--ok); }
+.mem-front svg { width: 46%; height: 46%; }
 .link-name { font-weight: 500; font-size: 13px; }
 .link-desc { font-size: 11px; color: var(--muted); }
 .search-box { position: relative; max-width: 360px; width: 100%; }
 .search-box input { width: 100%; padding-left: 34px; }
 .search-box::before { content: "⌕"; position: absolute; left: 12px; top: 50%; transform: translateY(-52%); color: var(--muted); font-size: 16px; }
-.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
-.book {
-  display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 14px 22px; border-radius: 6px var(--radius) var(--radius) 6px;
-  background: var(--surface); border: 1px solid var(--border); position: relative; color: var(--text); transition: transform .15s, box-shadow .15s;
+/* Bookcase: wood frame, planks repeat every row (slot 262px + plank 18px) */
+.bookcase { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+.shelf {
+  --wood: #6b4423; --wood-hi: #a8743f; --wood-dk: #3b2412;
+  padding: 18px 18px 0; border-radius: 14px; border: 10px solid var(--wood); border-bottom-width: 14px;
+  background: linear-gradient(90deg, rgba(0,0,0,.35), transparent 8%, transparent 92%, rgba(0,0,0,.35)),
+    repeating-linear-gradient(90deg, #2b1a0e 0 26px, #2f1d10 26px 27px, #281709 27px 61px), #2b1a0e;
+  box-shadow: inset 0 10px 24px rgba(0,0,0,.55), 0 18px 40px -18px rgba(0,0,0,.6);
 }
-.book::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; border-radius: 6px 0 0 6px; background: var(--spine, var(--accent)); }
-.book:hover { transform: translateY(-3px) rotate(-.4deg); box-shadow: var(--shadow); }
-.book-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
-.book-title { font-family: var(--font-display); font-weight: 600; }
-.book-desc { font-size: 12.5px; color: var(--muted); }
-mark { background: rgba(var(--accent-rgb),.3); color: inherit; border-radius: 3px; padding: 0 1px; }
-.book { transition: transform .15s, box-shadow .15s, opacity .2s, filter .2s; }
-.book.hit { border-color: rgba(var(--accent-rgb),.6); box-shadow: var(--glow-soft); }
-.book.dim { opacity: .25; filter: grayscale(.85); pointer-events: none; transform: none; }
+.shelf-books {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 3px; padding: 0 6px 18px; margin: 0 -18px; padding-inline: 24px;
+  background: repeating-linear-gradient(to bottom, transparent 0 262px, var(--wood-hi) 262px 264px, var(--wood) 264px 274px, var(--wood-dk) 274px 280px);
+}
+.book { height: 262px; display: flex; align-items: flex-end; color: inherit; border: 0; background: none; padding: 0; transition: transform .25s var(--ease), opacity .2s, filter .2s; }
+.book.tilt { transform: rotate(-5deg); transform-origin: bottom right; margin: 0 10px 0 8px; }
+.spine {
+  width: var(--w); height: var(--h); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 0 8px;
+  border-radius: 4px 4px 2px 2px; color: #f3e7cc; position: relative;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.45) 0, rgba(255,255,255,.14) 14%, rgba(255,255,255,0) 38%, rgba(0,0,0,.12) 80%, rgba(0,0,0,.5) 100%),
+    var(--spine);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 3px 0 4px -1px rgba(0,0,0,.45);
+}
+.spine-band { width: 100%; height: 5px; flex: none; border-block: 1px solid rgba(232,196,120,.75); opacity: .85; }
+.spine-logo { width: 26px; height: 26px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #f3e7cc; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.spine-logo svg { width: 15px; height: 15px; }
+.spine-logo .brand-mark[style*="currentColor"] { color: #1f2937 !important; }
+.spine-title {
+  flex: 1; min-height: 0; writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: .03em; text-shadow: 0 1px 1px rgba(0,0,0,.5);
+}
+.book.two .spine-title { white-space: normal; text-overflow: clip; line-height: 1.2; text-align: center; }
+.spine-title mark { background: rgba(255,214,10,.45); color: #fff; }
+.spine-cat { font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+.book:hover, .book:focus-visible, .book.active { transform: translateY(-12px); }
+.book.tilt:hover, .book.tilt:focus-visible, .book.tilt.active { transform: rotate(-5deg) translateY(-12px); }
+.book:focus-visible { outline: none; }
+.book:focus-visible .spine, .book.active .spine { box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 0 0 2px var(--accent), 0 10px 22px -6px rgba(var(--accent-rgb),.7); }
+.book.hit .spine { box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 0 0 2px rgba(255,214,10,.8), 0 0 18px rgba(255,214,10,.45); }
+.bookend { width: 16px; height: 120px; margin-left: 4px; align-self: flex-end; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, #6b7280, #d1d5db 40%, #9ca3af); box-shadow: -3px 0 5px rgba(0,0,0,.4); }
+.shelf-decor { display: flex; align-items: flex-end; gap: 22px; margin-left: 26px; }
+.flat-stack { display: flex; flex-direction: column; align-items: center; }
+.flat-stack i { display: block; width: var(--w); height: 17px; border-radius: 2px 4px 4px 2px; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(0,0,0,.3)), var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); border-left: 5px solid rgba(232,196,120,.6); }
+.plant { width: 58px; height: 88px; filter: drop-shadow(0 4px 4px rgba(0,0,0,.4)); }
+.book.dim { opacity: .22; filter: grayscale(.9); pointer-events: none; }
+.shelf-empty { width: 100%; height: 262px; display: grid; place-items: center; color: #d6c3a0; border: 0; }
+.book-desk { position: sticky; top: 18px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; margin: 0; }
+.desk-cover {
+  width: 100%; aspect-ratio: 4 / 3; border-radius: 6px 12px 12px 6px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; padding: 16px;
+  background: linear-gradient(90deg, rgba(0,0,0,.45) 0, rgba(0,0,0,0) 9%, rgba(255,255,255,.08) 10%, rgba(0,0,0,0) 30%), var(--spine);
+  color: #f3e7cc; text-align: center; box-shadow: var(--shadow);
+}
+.desk-cover::after { content: ""; position: absolute; inset: 10px 10px 10px 26px; border: 1px solid rgba(232,196,120,.55); border-radius: 4px; pointer-events: none; }
+.desk-logo { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: #f3e7cc; }
+.desk-logo svg { width: 30px; height: 30px; }
+.desk-logo .brand-mark[style*="currentColor"] { color: #1f2937 !important; }
+.desk-cover-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .03em; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.desk-title { margin: 0; }
+.desk-desc { margin: 0; color: var(--muted); font-size: 13.5px; }
+.desk-url { word-break: break-all; }
+@media (max-width: 1100px) { .bookcase { grid-template-columns: 1fr; } .book-desk { position: static; } .desk-cover { aspect-ratio: 16 / 7; } }
 .shelf-meta { font-size: 12.5px; color: var(--muted); margin: -4px 0 12px; }
 .term {
   background: var(--term-bg); color: var(--term-text); border-radius: var(--radius); border: 1px solid #1d2a3f;
@@ -604,16 +665,16 @@ body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,2
 @keyframes pulse { 50% { box-shadow: 0 0 0 3px rgba(251,191,36,.22); } }
 
 /* ===== 14. Games ===== */
-.g2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 8px; background: var(--surface-3); border-radius: var(--radius); aspect-ratio: 1; max-width: 360px; margin: 0 auto; touch-action: none; }
+.g2048 { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); width: 100%; gap: 8px; padding: 8px; background: var(--surface-3); border-radius: var(--radius); aspect-ratio: 1; max-width: 360px; margin: 0 auto; touch-action: none; }
 .g2048 div {
   border-radius: 9px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700;
   font-size: clamp(16px, 4vw, 28px); background: var(--surface-2); transition: background .12s;
 }
 .g2048 div.pop { animation: tilePop .15s ease; }
 @keyframes tilePop { 50% { transform: scale(1.1); } }
-.mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 360px; margin: 0 auto; }
-.mem-card { aspect-ratio: 1; border: 0; background: none; padding: 0; perspective: 600px; }
-.mem-inner { position: relative; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
+.mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 360px; margin: 0 auto; }
+.mem-card { display: block; width: 100%; aspect-ratio: 1; border: 0; background: none; padding: 0; perspective: 600px; }
+.mem-inner { display: block; position: relative; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
 .mem-card.flip .mem-inner, .mem-card.match .mem-inner { transform: rotateY(180deg); }
 .mem-face { position: absolute; inset: 0; border-radius: 10px; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; font-size: clamp(20px, 5vw, 30px); }
 .mem-back { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--on-accent); font-family: var(--font-display); font-weight: 700; }
@@ -770,11 +831,9 @@ body.light-mode .term { border-color: #1d2a3f; box-shadow: 0 10px 30px rgba(10,2
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
 
 /* ===== 17. Glass Refinements (component overrides — keep last) ===== */
-.tpl, .book, .link-tile { background: var(--glass); border-color: var(--glass-border); }
+.tpl, .link-tile { background: var(--glass); border-color: var(--glass-border); }
 .tpl { border-radius: var(--radius); padding: 18px; }
 .link-tile { border-radius: 16px; padding: 11px 13px; }
-.book { border-radius: 8px var(--radius) var(--radius) 8px; }
-.book.hit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-soft), var(--shadow); }
 .term { background: var(--term-bg); border-color: rgba(255, 255, 255, .08); }
 .term-bar { background: rgba(255, 255, 255, .03); border-bottom-color: rgba(255, 255, 255, .06); }
 .overlay { background: rgba(0, 0, 0, .28); -webkit-backdrop-filter: blur(8px) saturate(120%); backdrop-filter: blur(8px) saturate(120%); }
@@ -964,7 +1023,7 @@ const SITE = {
     { id: 'health', label: 'Health Check' }
   ],
   shifts: [
-    { id: 'morning', name: 'Morning', icon: '🌅', start: 7, end: 15, tasks: [
+    { id: 'morning', name: 'Morning', icon: 'sunrise', start: 7, end: 15, tasks: [
       { time: '07:00', text: 'Read previous shift handoff and acknowledge open incidents' },
       { time: '07:15', text: 'Review overnight alert queue and close resolved tickets' },
       { time: '08:00', text: 'Run customer health matrix sweep' },
@@ -972,19 +1031,19 @@ const SITE = {
       { time: '11:00', text: 'Check certificate expiry report (< 30 days)' },
       { time: '14:30', text: 'Prepare handoff for afternoon shift' }
     ]},
-    { id: 'afternoon', name: 'Afternoon', icon: '☀️', start: 15, end: 19, tasks: [
+    { id: 'afternoon', name: 'Afternoon', icon: 'sun', start: 15, end: 19, tasks: [
       { time: '15:00', text: 'Read morning handoff and sync with on-call engineer' },
       { time: '15:30', text: 'Review change calendar for tonight\'s maintenance windows' },
       { time: '16:30', text: 'Capacity check on edge clusters (CPU / bandwidth)' },
       { time: '18:30', text: 'Prepare handoff for evening shift' }
     ]},
-    { id: 'evening', name: 'Evening', icon: '🌆', start: 19, end: 23, tasks: [
+    { id: 'evening', name: 'Evening', icon: 'sunset', start: 19, end: 23, tasks: [
       { time: '19:00', text: 'Read afternoon handoff' },
       { time: '19:30', text: 'Confirm maintenance window owners are online' },
       { time: '21:00', text: 'Post-maintenance validation and customer notifications' },
       { time: '22:30', text: 'Prepare handoff for night shift' }
     ]},
-    { id: 'night', name: 'Night', icon: '🌙', start: 23, end: 7, tasks: [
+    { id: 'night', name: 'Night', icon: 'moon', start: 23, end: 7, tasks: [
       { time: '23:00', text: 'Read evening handoff' },
       { time: '00:30', text: 'Monitor APAC business-hours traffic peak' },
       { time: '03:00', text: 'Verify nightly backup jobs started' },
@@ -1007,7 +1066,7 @@ const SITE = {
     { key: 'env', label: 'Environment' },
     { key: 'region', label: 'Region', mono: true },
     { key: 'version', label: 'App Version', mono: true },
-    { key: 'k8s', label: 'Kubernetes', mono: true },
+    { key: 'k8s', label: 'Kubernetes', mono: true, brand: 'kubernetes' },
     { key: 'lastDeploy', label: 'Last Deploy' },
     { key: 'status', label: 'Status' },
     { key: 'notes', label: 'Notes' }
@@ -1035,38 +1094,51 @@ const SITE = {
       { customer: 'Infinitum', env: 'Prod', region: 'chinaeast2', version: '1.8.7', k8s: '1.31', lastDeploy: '2026-10-28', status: 'Deploying', notes: 'AKS node image upgrade' }
     ]
   },
-  linkGroups: [
+  linkGroups: [ // brand = BRANDS key (logo), icon = line-icon key
     { group: 'Monitoring', items: [
-      { name: 'Grafana', icon: '📈', url: 'https://grafana.com/', desc: 'Dashboards' },
-      { name: 'Prometheus', icon: '🔥', url: 'https://prometheus.io/', desc: 'Metrics' },
-      { name: 'Uptime Kuma', icon: '🟢', url: 'https://github.com/louislam/uptime-kuma', desc: 'Status checks' },
-      { name: 'Statuspage', icon: '📣', url: 'https://www.atlassian.com/software/statuspage', desc: 'Public status' }
+      { name: 'Grafana', brand: 'grafana', url: 'https://grafana.com/', desc: 'Dashboards' },
+      { name: 'Prometheus', brand: 'prometheus', url: 'https://prometheus.io/', desc: 'Metrics' },
+      { name: 'Uptime Kuma', brand: 'uptimekuma', url: 'https://github.com/louislam/uptime-kuma', desc: 'Status checks' },
+      { name: 'Statuspage', brand: 'statuspage', url: 'https://www.atlassian.com/software/statuspage', desc: 'Public status' }
     ]},
     { group: 'Ticketing & Comms', items: [
-      { name: 'Jira', icon: '🎫', url: 'https://www.atlassian.com/software/jira', desc: 'Tickets' },
-      { name: 'PagerDuty', icon: '🚨', url: 'https://www.pagerduty.com/', desc: 'On-call' },
-      { name: 'Slack', icon: '💬', url: 'https://slack.com/', desc: 'Team chat' },
-      { name: 'Zoom', icon: '🎥', url: 'https://zoom.us/', desc: 'Bridge calls' }
+      { name: 'Jira', brand: 'jira', url: 'https://www.atlassian.com/software/jira', desc: 'Tickets' },
+      { name: 'PagerDuty', brand: 'pagerduty', url: 'https://www.pagerduty.com/', desc: 'On-call' },
+      { name: 'Slack', brand: 'slack', url: 'https://slack.com/', desc: 'Team chat' },
+      { name: 'Zoom', brand: 'zoom', url: 'https://zoom.us/', desc: 'Bridge calls' }
+    ]},
+    { group: 'Cloud & Code', items: [
+      { name: 'AWS Console', brand: 'aws', url: 'https://console.aws.amazon.com/', desc: 'AWS accounts' },
+      { name: 'Azure Portal', brand: 'azure', url: 'https://portal.azure.com/', desc: 'Azure subscriptions' },
+      { name: 'GitHub', brand: 'github', url: 'https://github.com/', desc: 'Repos & PRs' },
+      { name: 'Confluence', brand: 'confluence', url: 'https://www.atlassian.com/software/confluence', desc: 'Team wiki' }
     ]},
     { group: 'Network Tools', items: [
-      { name: 'DNS Checker', icon: '🌐', url: 'https://dnschecker.org/', desc: 'Propagation' },
-      { name: 'SSL Labs', icon: '🔒', url: 'https://www.ssllabs.com/ssltest/', desc: 'TLS grading' },
-      { name: 'BGP.tools', icon: '🛰', url: 'https://bgp.tools/', desc: 'Routing' },
-      { name: 'Downdetector', icon: '📉', url: 'https://downdetector.com/', desc: 'Outage reports' }
+      { name: 'DNS Checker', icon: 'globe', url: 'https://dnschecker.org/', desc: 'Propagation' },
+      { name: 'SSL Labs', icon: 'lock', url: 'https://www.ssllabs.com/ssltest/', desc: 'TLS grading' },
+      { name: 'BGP.tools', icon: 'route', url: 'https://bgp.tools/', desc: 'Routing' },
+      { name: 'Downdetector', icon: 'trendDown', url: 'https://downdetector.com/', desc: 'Outage reports' }
     ]}
   ],
-  docs: [
-    { title: 'Incident Response Runbook', cat: 'Runbook', color: '#f87171', url: 'https://response.pagerduty.com/', desc: 'Severity matrix, roles, comms cadence and post-mortems.' },
-    { title: 'Google SRE Book', cat: 'Reference', color: '#60a5fa', url: 'https://sre.google/sre-book/table-of-contents/', desc: 'SLOs, error budgets, toil and on-call fundamentals.' },
-    { title: 'Linux Networking Guide', cat: 'Networking', color: '#34d399', url: 'https://wiki.archlinux.org/title/Network_configuration', desc: 'Interfaces, routing tables, DNS resolution.' },
-    { title: 'TLS Certificate Rotation', cat: 'Runbook', color: '#fbbf24', url: 'https://letsencrypt.org/docs/', desc: 'Renewal workflow, chain validation and rollback.' },
-    { title: 'Kubernetes Troubleshooting', cat: 'Platform', color: '#a78bfa', url: 'https://kubernetes.io/docs/tasks/debug/', desc: 'Pods, services, networking and cluster debugging.' },
-    { title: 'Escalation Matrix', cat: 'Process', color: '#22d3ee', url: 'https://www.atlassian.com/incident-management/on-call/escalation-policies', desc: 'Who to page, when, and how fast.' },
-    { title: 'BGP Fundamentals', cat: 'Networking', color: '#34d399', url: 'https://www.cloudflare.com/learning/security/glossary/what-is-bgp/', desc: 'Peering, route leaks and hijack detection.' },
-    { title: 'Post-Mortem Template', cat: 'Process', color: '#22d3ee', url: 'https://github.com/dastergon/postmortem-templates', desc: 'Blameless write-up structure and examples.' }
+  docs: [ // brand = logo on the spine; color = spine leather
+    { title: 'Incident Response Runbook', cat: 'Runbook', brand: 'pagerduty', color: '#8f1d1d', url: 'https://response.pagerduty.com/', desc: 'Severity matrix, roles, comms cadence and post-mortems.' },
+    { title: 'Google SRE Book', cat: 'Reference', brand: 'google', color: '#1e3a8a', url: 'https://sre.google/sre-book/table-of-contents/', desc: 'SLOs, error budgets, toil and on-call fundamentals.' },
+    { title: 'Pro Git', cat: 'Reference', brand: 'git', color: '#5b2333', url: 'https://git-scm.com/book/en/v2', desc: 'Branching, rebasing, bisect and recovering lost commits.' },
+    { title: 'Linux Networking Guide', cat: 'Networking', brand: 'linux', color: '#14532d', url: 'https://wiki.archlinux.org/title/Network_configuration', desc: 'Interfaces, routing tables, DNS resolution.' },
+    { title: 'BGP Fundamentals', cat: 'Networking', brand: 'cloudflare', color: '#7c2d12', url: 'https://www.cloudflare.com/learning/security/glossary/what-is-bgp/', desc: 'Peering, route leaks and hijack detection.' },
+    { title: 'TLS Certificate Rotation', cat: 'Runbook', brand: 'letsencrypt', color: '#713f12', url: 'https://letsencrypt.org/docs/', desc: 'Renewal workflow, chain validation and rollback.' },
+    { title: 'Kubernetes Troubleshooting', cat: 'Platform', brand: 'kubernetes', color: '#312e81', url: 'https://kubernetes.io/docs/tasks/debug/', desc: 'Pods, services, networking and cluster debugging.' },
+    { title: 'Docker Handbook', cat: 'Platform', brand: 'docker', color: '#0c4a6e', url: 'https://docs.docker.com/', desc: 'Images, volumes, networking and Compose.' },
+    { title: 'AWS Well-Architected', cat: 'Cloud', brand: 'aws', color: '#1f2937', url: 'https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html', desc: 'The six pillars: reliability, security, cost and more.' },
+    { title: 'Azure Architecture Center', cat: 'Cloud', brand: 'azure', color: '#172554', url: 'https://learn.microsoft.com/azure/architecture/', desc: 'Reference architectures and design patterns for Azure.' },
+    { title: 'Prometheus Alerting', cat: 'Monitoring', brand: 'prometheus', color: '#431407', url: 'https://prometheus.io/docs/alerting/latest/overview/', desc: 'Alert rules, Alertmanager routing and silences.' },
+    { title: 'Grafana Dashboards', cat: 'Monitoring', brand: 'grafana', color: '#3f2a14', url: 'https://grafana.com/docs/grafana/latest/dashboards/', desc: 'Panels, variables and dashboard best practices.' },
+    { title: 'Escalation Matrix', cat: 'Process', brand: 'atlassian', color: '#134e4a', url: 'https://www.atlassian.com/incident-management/on-call/escalation-policies', desc: 'Who to page, when, and how fast.' },
+    { title: 'Jira Service Management', cat: 'Process', brand: 'jira', color: '#1e40af', url: 'https://www.atlassian.com/software/jira/service-management/product-guide', desc: 'Queues, SLAs and request types for the service desk.' },
+    { title: 'Post-Mortem Template', cat: 'Process', brand: 'github', color: '#334155', url: 'https://github.com/dastergon/postmortem-templates', desc: 'Blameless write-up structure and examples.' }
   ],
   commands: [
-    { group: 'Network', items: [
+    { group: 'Network', icon: 'globe', items: [
       { cmd: 'ping -c 4 8.8.8.8', desc: 'Basic reachability test' },
       { cmd: 'mtr -rwc 50 example.com', desc: 'Combined traceroute + loss report' },
       { cmd: 'dig +short example.com A', desc: 'Quick DNS A-record lookup' },
@@ -1074,7 +1146,7 @@ const SITE = {
       { cmd: 'openssl s_client -connect example.com:443 -servername example.com </dev/null | openssl x509 -noout -dates', desc: 'Check certificate validity dates' },
       { cmd: 'ss -tulpn', desc: 'List listening sockets with owning process' }
     ]},
-    { group: 'System', items: [
+    { group: 'System', icon: 'linux', items: [
       { cmd: 'df -h', desc: 'Disk usage per filesystem' },
       { cmd: 'du -sh /var/log/* | sort -h | tail', desc: 'Largest log directories' },
       { cmd: 'journalctl -u nginx --since "1 hour ago"', desc: 'Service logs for the last hour' },
@@ -1082,20 +1154,20 @@ const SITE = {
       { cmd: 'sudo systemctl restart nginx && systemctl is-active nginx', desc: 'Restart a service and confirm it came back' },
       { cmd: 'top -b -n 1 | head -20', desc: 'One-shot process snapshot' }
     ]},
-    { group: 'Logs', items: [
+    { group: 'Logs', icon: 'terminal', items: [
       { cmd: 'tail -f /var/log/syslog', desc: 'Follow the system log live' },
       { cmd: 'grep -i "error" /var/log/nginx/error.log | tail -50', desc: 'Last 50 nginx errors' },
       { cmd: 'journalctl -p err -b --no-pager', desc: 'All error-level entries since boot' },
       { cmd: 'zgrep -c "timeout" /var/log/app/*.gz', desc: 'Count timeouts in rotated logs' }
     ]},
-    { group: 'Docker', items: [
+    { group: 'Docker', icon: 'docker', items: [
       { cmd: 'docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"', desc: 'Running containers, compact table' },
       { cmd: 'docker logs -f --tail 200 <container>', desc: 'Follow the last 200 container log lines' },
       { cmd: 'docker restart <container>', desc: 'Restart a container' },
       { cmd: 'docker stats --no-stream', desc: 'One-shot CPU / memory usage per container' },
       { cmd: 'docker compose up -d --force-recreate <service>', desc: 'Recreate a single compose service' }
     ]},
-    { group: 'Kubernetes', items: [
+    { group: 'Kubernetes', icon: 'kubernetes', items: [
       { cmd: 'kubectl get pods -A --field-selector=status.phase!=Running', desc: 'Pods not running, all namespaces' },
       { cmd: 'kubectl describe pod <pod> -n <ns>', desc: 'Events and status for a pod' },
       { cmd: 'kubectl logs -f deploy/<name> -n <ns> --tail=100', desc: 'Follow deployment logs' },
@@ -1191,7 +1263,7 @@ const SITE = {
     { keys: 'Alt+R', label: 'New reminder', action: 'reminder' },
     { keys: 'Alt+B', label: 'Test reminder beep', action: 'beep' }
   ],
-  memoryIcons: ['🖥', '📡', '🔒', '☕', '🚨', '🛰', '🔥', '🧯']
+  memoryIcons: ['jira', 'git', 'docker', 'kubernetes', 'slack', 'grafana', 'aws', 'azure'] // BRANDS keys
 };
 
 // --- 2. Core Helpers (esc, storage, DOM, clipboard) ---
@@ -1250,11 +1322,56 @@ const ICONS = {
   cloud: '<path d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.1 4.5 4.5 0 0 0 7 18z"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
   slack: '<rect x="10" y="3" width="4" height="8" rx="2"/><rect x="3" y="10" width="8" height="4" rx="2"/><rect x="10" y="13" width="4" height="8" rx="2"/><rect x="13" y="10" width="8" height="4" rx="2"/>',
+  sunrise: '<path d="M4 18h16M7 14a5 5 0 0 1 10 0"/><path d="M12 3v4M9.5 5.5L12 3l2.5 2.5M4.2 10.2l1.4 1.4M19.8 10.2l-1.4 1.4M3 21h18"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  sunset: '<path d="M4 18h16M7 14a5 5 0 0 1 10 0"/><path d="M12 7V3M9.5 4.5L12 7l2.5-2.5M4.2 10.2l1.4 1.4M19.8 10.2l-1.4 1.4M3 21h18"/>',
+  moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  next: '<path d="M5 5l9 7-9 7z"/><path d="M18 5v14"/>',
+  checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+  download: '<path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  route: '<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/>',
+  trendDown: '<path d="M3 7l6 6 4-4 8 8"/><path d="M21 11v6h-6"/>',
   smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>'
 };
 function icon(name) {
   const body = Object.prototype.hasOwnProperty.call(ICONS, name) ? ICONS[name] : ICONS.dashboard;
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+}
+// Brand marks (Simple Icons, CC0) — referenced by key from SITE, rendered with brand()
+const BRANDS = {
+  jira: { name: 'Jira', color: '#2684FF', d: 'M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.001 1.001 0 0 0 23.013 0Z' },
+  confluence: { name: 'Confluence', color: '#2684FF', d: 'M.87 18.257c-.248.382-.53.875-.763 1.245a.764.764 0 0 0 .255 1.04l4.965 3.054a.764.764 0 0 0 1.058-.26c.199-.332.454-.763.733-1.221 1.967-3.247 3.945-2.853 7.508-1.146l4.957 2.337a.764.764 0 0 0 1.028-.382l2.364-5.346a.764.764 0 0 0-.382-1 599.851 599.851 0 0 1-4.965-2.361C10.911 10.97 5.224 11.185.87 18.257zM23.131 5.743c.249-.405.531-.875.764-1.25a.764.764 0 0 0-.256-1.034L18.675.404a.764.764 0 0 0-1.058.26c-.195.335-.451.763-.734 1.225-1.966 3.246-3.945 2.85-7.508 1.146L4.437.694a.764.764 0 0 0-1.027.382L1.046 6.422a.764.764 0 0 0 .382 1c1.039.49 3.105 1.467 4.965 2.361 6.698 3.246 12.392 3.029 16.738-4.04z' },
+  atlassian: { name: 'Atlassian', color: '#2684FF', d: 'M7.12 11.084a.683.683 0 00-1.16.126L.075 22.974a.703.703 0 00.63 1.018h8.19a.678.678 0 00.63-.39c1.767-3.65.696-9.203-2.406-12.52zM11.434.386a15.515 15.515 0 00-.906 15.317l3.95 7.9a.703.703 0 00.628.388h8.19a.703.703 0 00.63-1.017L12.63.38a.664.664 0 00-1.196.006z' },
+  statuspage: { name: 'Statuspage', color: '#2684FF', d: 'M12.008 9.597a5.623 5.623 0 1 1 0 11.245 5.623 5.623 0 0 1 0-11.245zM.154 8.717l3.02 3.574a.639.639 0 0 0 .913.068c4.885-4.379 10.97-4.379 15.84 0a.642.642 0 0 0 .916-.068l3.006-3.574a.646.646 0 0 0-.075-.906c-7.1-6.204-16.462-6.204-23.555 0a.65.65 0 0 0-.065.906z' },
+  git: { name: 'Git', color: '#F05032', d: 'M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187' },
+  github: { name: 'GitHub', color: 'currentColor', d: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' },
+  slack: { name: 'Slack', color: '#E01E5A', d: 'M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z' },
+  zoom: { name: 'Zoom', color: '#2D8CFF', d: 'M5.033 14.649H.743a.74.74 0 0 1-.686-.458.74.74 0 0 1 .16-.808L3.19 10.41H1.06A1.06 1.06 0 0 1 0 9.35h3.957c.301 0 .57.18.686.458a.74.74 0 0 1-.161.808L1.51 13.59h2.464c.585 0 1.06.475 1.06 1.06zM24 11.338c0-1.14-.927-2.066-2.066-2.066-.61 0-1.158.265-1.537.686a2.061 2.061 0 0 0-1.536-.686c-1.14 0-2.066.926-2.066 2.066v3.311a1.06 1.06 0 0 0 1.06-1.06v-2.251a1.004 1.004 0 0 1 2.013 0v2.251c0 .586.474 1.06 1.06 1.06v-3.311a1.004 1.004 0 0 1 2.012 0v2.251c0 .586.475 1.06 1.06 1.06zM16.265 12a2.728 2.728 0 1 1-5.457 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0zm-4.82 0a2.728 2.728 0 1 1-5.458 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0z' },
+  pagerduty: { name: 'PagerDuty', color: '#06AC38', d: 'M16.965 1.18C15.085.164 13.769 0 10.683 0H3.73v14.55h6.926c2.743 0 4.8-.164 6.61-1.37 1.975-1.303 3.004-3.484 3.004-6.007 0-2.716-1.262-4.896-3.305-5.994zm-5.5 10.326h-4.21V3.113l3.977-.027c3.62-.028 5.43 1.234 5.43 4.128 0 3.113-2.248 4.292-5.197 4.292zM3.73 17.61h3.525V24H3.73Z' },
+  grafana: { name: 'Grafana', color: '#F46800', d: 'M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z' },
+  prometheus: { name: 'Prometheus', color: '#E6522C', d: 'M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z' },
+  uptimekuma: { name: 'Uptime Kuma', color: '#5CDD8B', d: 'M11.759.955c-4.071 0-7.93 2.265-10.06 5.774l-.16.263-.116.284c-1.81 4.44-2.188 9.118.621 12.459 2.67 3.174 6.221 3.328 9.477 3.308 3.256-.02 6.323-.482 8.995-2.032C22.75 19.714 24 16.917 24 14.53c0-2.388-.724-4.698-1.882-7.343l-.112-.257-.148-.238C19.683 3.2 15.83.955 11.758.955Zm0 3.868c2.919 0 5.19 1.305 6.816 3.914 2.076 4.747 2.076 7.724 0 8.929-3.116 1.808-11.234 2.359-13.57-.42-1.558-1.853-1.558-4.69 0-8.51 1.584-2.608 3.835-3.913 6.754-3.913z' },
+  kubernetes: { name: 'Kubernetes', color: '#4F82E8', d: 'M10.204 14.35l.007.01-.999 2.413a5.171 5.171 0 0 1-2.075-2.597l2.578-.437.004.005a.44.44 0 0 1 .484.606zm-.833-2.129a.44.44 0 0 0 .173-.756l.002-.011L7.585 9.7a5.143 5.143 0 0 0-.73 3.255l2.514-.725.002-.009zm1.145-1.98a.44.44 0 0 0 .699-.337l.01-.005.15-2.62a5.144 5.144 0 0 0-3.01 1.442l2.147 1.523.004-.002zm.76 2.75l.723.349.722-.347.18-.78-.5-.623h-.804l-.5.623.179.779zm1.5-3.095a.44.44 0 0 0 .7.336l.008.003 2.134-1.513a5.188 5.188 0 0 0-2.992-1.442l.148 2.615.002.001zm10.876 5.97l-5.773 7.181a1.6 1.6 0 0 1-1.248.594l-9.261.003a1.6 1.6 0 0 1-1.247-.596l-5.776-7.18a1.583 1.583 0 0 1-.307-1.34L2.1 5.573c.108-.47.425-.864.863-1.073L11.305.513a1.606 1.606 0 0 1 1.385 0l8.345 3.985c.438.209.755.604.863 1.073l2.062 8.955c.108.47-.005.963-.308 1.34zm-3.289-2.057c-.042-.01-.103-.026-.145-.034-.174-.033-.315-.025-.479-.038-.35-.037-.638-.067-.895-.148-.105-.04-.18-.165-.216-.216l-.201-.059a6.45 6.45 0 0 0-.105-2.332 6.465 6.465 0 0 0-.936-2.163c.052-.047.15-.133.177-.159.008-.09.001-.183.094-.282.197-.185.444-.338.743-.522.142-.084.273-.137.415-.242.032-.024.076-.062.11-.089.24-.191.295-.52.123-.736-.172-.216-.506-.236-.745-.045-.034.027-.08.062-.111.088-.134.116-.217.23-.33.35-.246.25-.45.458-.673.609-.097.056-.239.037-.303.033l-.19.135a6.545 6.545 0 0 0-4.146-2.003l-.012-.223c-.065-.062-.143-.115-.163-.25-.022-.268.015-.557.057-.905.023-.163.061-.298.068-.475.001-.04-.001-.099-.001-.142 0-.306-.224-.555-.5-.555-.275 0-.499.249-.499.555l.001.014c0 .041-.002.092 0 .128.006.177.044.312.067.475.042.348.078.637.056.906a.545.545 0 0 1-.162.258l-.012.211a6.424 6.424 0 0 0-4.166 2.003 8.373 8.373 0 0 1-.18-.128c-.09.012-.18.04-.297-.029-.223-.15-.427-.358-.673-.608-.113-.12-.195-.234-.329-.349-.03-.026-.077-.062-.111-.088a.594.594 0 0 0-.348-.132.481.481 0 0 0-.398.176c-.172.216-.117.546.123.737l.007.005.104.083c.142.105.272.159.414.242.299.185.546.338.743.522.076.082.09.226.1.288l.16.143a6.462 6.462 0 0 0-1.02 4.506l-.208.06c-.055.072-.133.184-.215.217-.257.081-.546.11-.895.147-.164.014-.305.006-.48.039-.037.007-.09.02-.133.03l-.004.002-.007.002c-.295.071-.484.342-.423.608.061.267.349.429.645.365l.007-.001.01-.003.129-.029c.17-.046.294-.113.448-.172.33-.118.604-.217.87-.256.112-.009.23.069.288.101l.217-.037a6.5 6.5 0 0 0 2.88 3.596l-.09.218c.033.084.069.199.044.282-.097.252-.263.517-.452.813-.091.136-.185.242-.268.399-.02.037-.045.095-.064.134-.128.275-.034.591.213.71.248.12.556-.007.69-.282v-.002c.02-.039.046-.09.062-.127.07-.162.094-.301.144-.458.132-.332.205-.68.387-.897.05-.06.13-.082.215-.105l.113-.205a6.453 6.453 0 0 0 4.609.012l.106.192c.086.028.18.042.256.155.136.232.229.507.342.84.05.156.074.295.145.457.016.037.043.09.062.129.133.276.442.402.69.282.247-.118.341-.435.213-.71-.02-.039-.045-.096-.065-.134-.083-.156-.177-.261-.268-.398-.19-.296-.346-.541-.443-.793-.04-.13.007-.21.038-.294-.018-.022-.059-.144-.083-.202a6.499 6.499 0 0 0 2.88-3.622c.064.01.176.03.213.038.075-.05.144-.114.28-.104.266.039.54.138.87.256.154.06.277.128.448.173.036.01.088.019.13.028l.009.003.007.001c.297.064.584-.098.645-.365.06-.266-.128-.537-.423-.608zM16.4 9.701l-1.95 1.746v.005a.44.44 0 0 0 .173.757l.003.01 2.526.728a5.199 5.199 0 0 0-.108-1.674A5.208 5.208 0 0 0 16.4 9.7zm-4.013 5.325a.437.437 0 0 0-.404-.232.44.44 0 0 0-.372.233h-.002l-1.268 2.292a5.164 5.164 0 0 0 3.326.003l-1.27-2.296h-.01zm1.888-1.293a.44.44 0 0 0-.27.036.44.44 0 0 0-.214.572l-.003.004 1.01 2.438a5.15 5.15 0 0 0 2.081-2.615l-2.6-.44-.004.005z' },
+  docker: { name: 'Docker', color: '#2496ED', d: 'M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z' },
+  aws: { name: 'AWS', color: '#FF9900', d: 'M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.183 0 .08-.048.16-.152.24l-.503.335a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.239-.112a2.47 2.47 0 0 1-.287-.375 6.18 6.18 0 0 1-.248-.471c-.622.734-1.405 1.101-2.347 1.101-.67 0-1.205-.191-1.596-.574-.391-.384-.59-.894-.59-1.533 0-.678.239-1.23.726-1.644.487-.415 1.133-.623 1.955-.623.272 0 .551.024.846.064.296.04.6.104.918.176v-.583c0-.607-.127-1.03-.375-1.277-.255-.248-.686-.367-1.3-.367-.28 0-.568.031-.863.103-.295.072-.583.16-.862.272a2.287 2.287 0 0 1-.28.104.488.488 0 0 1-.127.023c-.112 0-.168-.08-.168-.247v-.391c0-.128.016-.224.056-.28a.597.597 0 0 1 .224-.167c.279-.144.614-.264 1.005-.36a4.84 4.84 0 0 1 1.246-.151c.95 0 1.644.216 2.091.647.439.43.662 1.085.662 1.963v2.586zm-3.24 1.214c.263 0 .534-.048.822-.144.287-.096.543-.271.758-.51.128-.152.224-.32.272-.512.047-.191.08-.423.08-.694v-.335a6.66 6.66 0 0 0-.735-.136 6.02 6.02 0 0 0-.75-.048c-.535 0-.926.104-1.19.32-.263.215-.39.518-.39.917 0 .375.095.655.295.846.191.2.47.296.838.296zm6.41.862c-.144 0-.24-.024-.304-.08-.064-.048-.12-.16-.168-.311L7.586 5.55a1.398 1.398 0 0 1-.072-.32c0-.128.064-.2.191-.2h.783c.151 0 .255.025.31.08.065.048.113.16.16.312l1.342 5.284 1.245-5.284c.04-.16.088-.264.151-.312a.549.549 0 0 1 .32-.08h.638c.152 0 .256.025.32.08.063.048.12.16.151.312l1.261 5.348 1.381-5.348c.048-.16.104-.264.16-.312a.52.52 0 0 1 .311-.08h.743c.127 0 .2.065.2.2 0 .04-.009.08-.017.128a1.137 1.137 0 0 1-.056.2l-1.923 6.17c-.048.16-.104.263-.168.311a.51.51 0 0 1-.303.08h-.687c-.151 0-.255-.024-.32-.08-.063-.056-.119-.16-.15-.32l-1.238-5.148-1.23 5.14c-.04.16-.087.264-.15.32-.065.056-.177.08-.32.08zm10.256.215c-.415 0-.83-.048-1.229-.143-.399-.096-.71-.2-.918-.32-.128-.071-.215-.151-.247-.223a.563.563 0 0 1-.048-.224v-.407c0-.167.064-.247.183-.247.048 0 .096.008.144.024.048.016.12.048.2.08.271.12.566.215.878.279.319.064.63.096.95.096.502 0 .894-.088 1.165-.264a.86.86 0 0 0 .415-.758.777.777 0 0 0-.215-.559c-.144-.151-.416-.287-.807-.415l-1.157-.36c-.583-.183-1.014-.454-1.277-.813a1.902 1.902 0 0 1-.4-1.158c0-.335.073-.63.216-.886.144-.255.335-.479.575-.654.24-.184.51-.32.83-.415.32-.096.655-.136 1.006-.136.175 0 .359.008.535.032.183.024.35.056.518.088.16.04.312.08.455.127.144.048.256.096.336.144a.69.69 0 0 1 .24.2.43.43 0 0 1 .071.263v.375c0 .168-.064.256-.184.256a.83.83 0 0 1-.303-.096 3.652 3.652 0 0 0-1.532-.311c-.455 0-.815.071-1.062.223-.248.152-.375.383-.375.71 0 .224.08.416.24.567.159.152.454.304.877.44l1.134.358c.574.184.99.44 1.237.767.247.327.367.702.367 1.117 0 .343-.072.655-.207.926-.144.272-.336.511-.583.703-.248.2-.543.343-.886.447-.36.111-.734.167-1.142.167zM21.698 16.207c-2.626 1.94-6.442 2.969-9.722 2.969-4.598 0-8.74-1.7-11.87-4.526-.247-.223-.024-.527.272-.351 3.384 1.963 7.559 3.153 11.877 3.153 2.914 0 6.114-.607 9.06-1.852.439-.2.814.287.383.607zM22.792 14.961c-.336-.43-2.22-.207-3.074-.103-.255.032-.295-.192-.063-.36 1.5-1.053 3.967-.75 4.254-.399.287.36-.08 2.826-1.485 4.007-.215.184-.423.088-.327-.151.32-.79 1.03-2.57.695-2.994z' },
+  azure: { name: 'Azure', color: '#3EA8FF', d: 'M22.379 23.343a1.62 1.62 0 0 0 1.536-2.14v.002L17.35 1.76A1.62 1.62 0 0 0 15.816.657H8.184A1.62 1.62 0 0 0 6.65 1.76L.086 21.204a1.62 1.62 0 0 0 1.536 2.139h4.741a1.62 1.62 0 0 0 1.535-1.103l.977-2.892 4.947 3.675c.28.208.618.32.966.32m-3.084-12.531 3.624 10.739a.54.54 0 0 1-.51.713v-.001h-.03a.54.54 0 0 1-.322-.106l-9.287-6.9h4.853m6.313 7.006c.116-.326.13-.694.007-1.058L9.79 1.76a1.722 1.722 0 0 0-.007-.02h6.034a.54.54 0 0 1 .512.366l6.562 19.445a.54.54 0 0 1-.338.684' },
+  cloudflare: { name: 'Cloudflare', color: '#F38020', d: 'M16.5088 16.8447c.1475-.5068.0908-.9707-.1553-1.3154-.2246-.3164-.6045-.499-1.0615-.5205l-8.6592-.1123a.1559.1559 0 0 1-.1333-.0713c-.0283-.042-.0351-.0986-.021-.1553.0278-.084.1123-.1484.2036-.1562l8.7359-.1123c1.0351-.0489 2.1601-.8868 2.5537-1.9136l.499-1.3013c.0215-.0561.0293-.1128.0147-.168-.5625-2.5463-2.835-4.4453-5.5499-4.4453-2.5039 0-4.6284 1.6177-5.3876 3.8614-.4927-.3658-1.1187-.5625-1.794-.499-1.2026.119-2.1665 1.083-2.2861 2.2856-.0283.31-.0069.6128.0635.894C1.5683 13.171 0 14.7754 0 16.752c0 .1748.0142.3515.0352.5273.0141.083.0844.1475.1689.1475h15.9814c.0909 0 .1758-.0645.2032-.1553l.12-.4268zm2.7568-5.5634c-.0771 0-.1611 0-.2383.0112-.0566 0-.1054.0415-.127.0976l-.3378 1.1744c-.1475.5068-.0918.9707.1543 1.3164.2256.3164.6055.498 1.0625.5195l1.8437.1133c.0557 0 .1055.0263.1329.0703.0283.043.0351.1074.0214.1562-.0283.084-.1132.1485-.204.1553l-1.921.1123c-1.041.0488-2.1582.8867-2.5527 1.914l-.1406.3585c-.0283.0713.0215.1416.0986.1416h6.5977c.0771 0 .1474-.0489.169-.126.1122-.4082.1757-.837.1757-1.2803 0-2.6025-2.125-4.727-4.7344-4.727' },
+  letsencrypt: { name: "Let's Encrypt", color: '#F9A11F', d: 'M11.9914 0a.8829.8829 0 00-.8718.817v3.0209A.8829.8829 0 0012 4.7207a.8829.8829 0 00.8803-.8803V.817a.8829.8829 0 00-.889-.817zm7.7048 3.1089a.8804.8804 0 00-.5214.1742l-2.374 1.9482a.8804.8804 0 00.5592 1.5622.8794.8794 0 00.5592-.2001l2.3714-1.9506a.8804.8804 0 00-.5944-1.534zm-15.3763.0133a.8829.8829 0 00-.611 1.5206l2.37 1.9506a.876.876 0 00.5606.2001v-.002a.8804.8804 0 00.5597-1.5602L4.8277 3.2831a.8829.8829 0 00-.5078-.161zm7.6598 3.2275a5.0456 5.0456 0 00-5.0262 5.0455v1.4876H5.787a.9672.9672 0 00-.9647.9643v9.1887a.9672.9672 0 00.9647.9643H18.213a.9672.9672 0 00.9643-.9643v-9.1907a.9672.9672 0 00-.9643-.9623h-1.1684v-1.4876a5.0456 5.0456 0 00-5.0649-5.0455zm.0127 2.8933a2.1522 2.1522 0 012.1593 2.1522v1.4876H9.8473v-1.4876a2.1522 2.1522 0 012.145-2.1522zm7.3812.5033a.8829.8829 0 10.0705 1.7632h3.0267a.8829.8829 0 000-1.7609H19.444a.8829.8829 0 00-.0705-.0023zm-17.8444.0023a.8829.8829 0 000 1.7609h2.9983a.8829.8829 0 000-1.7609zm10.4596 6.7746a1.2792 1.2792 0 01.641 2.3926v1.2453a.6298.6298 0 01-1.2595 0v-1.2453a1.2792 1.2792 0 01.6185-2.3926z' },
+  linux: { name: 'Linux', color: '#FCC624', d: 'M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z' },
+  google: { name: 'Google', color: '#4285F4', d: 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z' }
+};
+function brand(key, cls = '') {
+  if (!Object.prototype.hasOwnProperty.call(BRANDS, key)) return '';
+  const b = BRANDS[key];
+  return `<svg class="brand-mark ${esc(cls)}" viewBox="0 0 24 24" style="color:${b.color}" aria-hidden="true"><path fill="currentColor" d="${b.d}"/></svg>`;
+}
+// Brand logo when one exists for the key, otherwise the line icon
+function mark(key, cls = '') { return Object.prototype.hasOwnProperty.call(BRANDS, key) ? brand(key, cls) : icon(key); }
+function platChip(p) {
+  const k = String(p).toLowerCase();
+  return `<span class="plat plat-${esc(k)}">${brand(k)}${esc(p)}</span>`;
 }
 
 // --- 3. Toast Notifications ---
@@ -1435,12 +1552,12 @@ function updateHero() {
   const g = $('#heroGreet');
   if (!g) return;
   g.textContent = `${greeting(now.getHours())}, team — you're on the ${s.name} shift.`;
-  $('#heroShift').textContent = `${s.icon} ${s.name} · ${pad(s.start)}:00–${pad(s.end)}:00`;
-  $('#heroDate').textContent = `📅 ${now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}`;
+  $('#heroShift').innerHTML = `${icon(s.icon)}${esc(`${s.name} · ${pad(s.start)}:00–${pad(s.end)}:00`)}`;
+  $('#heroDate').innerHTML = `${icon('calendar')}${esc(now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }))}`;
   const nextAt = new Date(now); nextAt.setHours(n.start, 0, 0, 0);
   if (nextAt <= now) nextAt.setDate(nextAt.getDate() + 1);
   const mins = Math.round((nextAt - now) / 60000);
-  $('#heroNext').textContent = `⏭ ${n.name} in ${Math.floor(mins / 60)}h ${mins % 60}m`;
+  $('#heroNext').innerHTML = `${icon('next')}${esc(`${n.name} in ${Math.floor(mins / 60)}h ${mins % 60}m`)}`;
 }
 function renderStats() {
   const el = $('#stats');
@@ -1470,7 +1587,7 @@ function renderStats() {
   const issues = statuses.filter(x => x.level === 'bad');
   att.innerHTML = issues.length
     ? `<ul class="check-list">${issues.map(x => `<li class="check-item" data-goto="customers"><span class="status bad">Issue</span><span class="ci-text"><strong>${esc(x.customer.name)}</strong> <span class="muted small">— ${esc(x.issues.join(', '))}</span></span></li>`).join('')}</ul>`
-    : `<div class="empty">✅ No open issues in the matrix.</div>`;
+    : `<div class="empty empty-ok">${icon('checkCircle')}No open issues in the matrix.</div>`;
 
   const rem = $('#dashReminders');
   const up = state.reminders.filter(r => !r.fired).sort((a, b) => a.at - b.at).slice(0, 4);
@@ -1652,7 +1769,7 @@ function linkCell(url, text) {
   return url ? `<a href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(text)} ↗</a>` : '<span class="muted">—</span>';
 }
 function iconLink(url, ic, text, cls = '') {
-  return `<a class="ilink ${esc(cls)}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${icon(ic)}<span>${esc(text)}</span></a>`;
+  return `<a class="ilink ${esc(cls)}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${mark(ic)}<span>${esc(text)}</span></a>`;
 }
 function customerUrls(c) {
   const tam = c.tam || {};
@@ -1669,7 +1786,7 @@ function customerUrls(c) {
 function tamActions(c) {
   const u = customerUrls(c), tam = c.tam || {};
   const btn = (url, ic, label, external) => url
-    ? `<a class="tam-btn" href="${esc(safeUrl(url))}" ${external ? 'target="_blank" rel="noopener noreferrer"' : ''} title="${esc(label)}" aria-label="${esc(`${c.manager}: ${label}`)}">${icon(ic)}</a>` : '';
+    ? `<a class="tam-btn" href="${esc(safeUrl(url))}" ${external ? 'target="_blank" rel="noopener noreferrer"' : ''} title="${esc(label)}" aria-label="${esc(`${c.manager}: ${label}`)}">${mark(ic)}</a>` : '';
   return `<span class="tam-acts">${btn(u.tamSlack, 'slack', `Slack @${tam.slack}`, true)}${btn(u.tamPhone, 'phone', `Call ${tam.phone}`)}${btn(u.tamEmail, 'mail', `Email ${tam.email}`)}</span>`;
 }
 function licenseState(c) {
@@ -1748,7 +1865,7 @@ function paintCustomers() {
     const lic = licenseState(c);
     return `<tr>
       <td><strong class="cust-name">${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span></td>
-      <td>${(c.platforms || []).map(p => `<span class="plat plat-${esc(p.toLowerCase())}">${esc(p)}</span>`).join(' ')}</td>
+      <td>${(c.platforms || []).map(platChip).join(' ')}</td>
       <td>${c.domain ? iconLink(customerUrls(c).domain, 'globe', c.domain) : none}</td>
       <td>${c.git ? iconLink(customerUrls(c).git, 'git', c.git) : none}</td>
       <td>${c.license ? `${iconLink(customerUrls(c).license, 'key', c.license, 'mono')}<span class="lic ${lic.cls}" title="Expires ${esc(c.licenseExpires || '—')}">${esc(lic.text)}</span>` : none}</td>
@@ -1788,7 +1905,7 @@ function matrixReport() {
   const s = currentShift();
   return [
     `=== ${SITE.name} — CHECKLIST HANDOFF ===`,
-    `Shift:     ${s.icon} ${s.name} → ${nextShift(s).name}`,
+    `Shift:     ${s.name} → ${nextShift(s).name}`,
     `Generated: ${new Date().toLocaleString()}`,
     '',
     ...matrixSummaryLines()
@@ -1810,7 +1927,7 @@ function renderShifts() {
       <div class="card-title"><h3>Handoff generator</h3><span class="small muted">Combines shift tasks, checklist matrix and your notes</span></div>
       <div class="form-grid">
         <div class="field"><label for="hoEngineer">Outgoing engineer</label><input id="hoEngineer" data-ho="engineer" placeholder="Your name"></div>
-        <div class="field"><label for="hoShift">Shift</label><select id="hoShift">${SITE.shifts.map(s => `<option value="${esc(s.id)}">${esc(s.icon + ' ' + s.name)}</option>`).join('')}</select></div>
+        <div class="field"><label for="hoShift">Shift</label><select id="hoShift">${SITE.shifts.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('')}</select></div>
         <div class="field full"><label for="hoIncidents">Open incidents</label><textarea id="hoIncidents" data-ho="incidents" rows="2" placeholder="INC-1234 — Apex push delays, monitoring"></textarea></div>
         <div class="field full"><label for="hoEsc">Escalations / waiting on</label><textarea id="hoEsc" data-ho="escalations" rows="2" placeholder="Vendor ticket #889 awaiting reply"></textarea></div>
         <div class="field full"><label for="hoNotes">Notes</label><textarea id="hoNotes" data-ho="notes" rows="2" placeholder="Anything the next shift should know"></textarea></div>
@@ -1864,7 +1981,7 @@ function paintShifts() {
     return `
     <div class="card shift-col ${s.id === cur.id ? 'current' : ''}">
       <div class="shift-head">
-        <div><h3>${esc(s.icon)} ${esc(s.name)} ${s.id === cur.id ? '<span class="now">NOW</span>' : ''}</h3>
+        <div><h3><span class="shift-ico">${icon(s.icon)}</span>${esc(s.name)} ${s.id === cur.id ? '<span class="now">NOW</span>' : ''}</h3>
           <span class="small muted">${pad(s.start)}:00 – ${pad(s.end)}:00 · ${done}/${s.tasks.length} done</span></div>
         <button class="btn sm" type="button" data-reset="${esc(s.id)}" aria-label="Reset ${esc(s.name)} tasks">Reset</button>
       </div>
@@ -2017,17 +2134,17 @@ function renderEnvironments() {
       <div><h2>Cloud Environments</h2><p>Per-customer deployments on AWS and Azure · click a cell to edit · <kbd>Enter</kbd> saves · <kbd>Esc</kbd> reverts.</p></div>
       <div class="row">
         <div class="search-box" style="max-width:240px"><input id="envFilter" type="search" placeholder="Filter rows…" aria-label="Filter environments" data-page-search></div>
-        <button class="btn primary" type="button" id="envExport">⬇ Export to Excel</button>
+        <button class="btn primary" type="button" id="envExport">${icon('download')}Export to Excel</button>
       </div>
     </div>
     <div class="stats env-kpis" id="envKpis"></div>
     ${SITE.envTables.map(t => `
     <div class="card">
       <div class="card-title">
-        <h3><span class="plat plat-${esc(t.id)}">${esc(t.label)}</span> environments</h3>
+        <h3>${platChip(t.label)} environments</h3>
         <div class="row"><span class="small muted" data-ecount="${esc(t.id)}"></span><button class="btn sm" type="button" data-eadd="${esc(t.id)}">+ Add environment</button></div>
       </div>
-      <div class="table-wrap"><table class="zebra ver-table env-table"><thead><tr>${SITE.envColumns.map(c => `<th>${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
+      <div class="table-wrap"><table class="zebra ver-table env-table"><thead><tr>${SITE.envColumns.map(c => `<th>${c.brand ? brand(c.brand, 'th-brand') : ''}${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
         <tbody data-ebody="${esc(t.id)}"></tbody></table></div>
     </div>`).join('')}
     <div class="legend env-legend"><span><span class="env-flag-key warn"></span>Kubernetes below ${esc(SITE.envRules.k8sMinSupported)}</span><span><span class="env-flag-key bad"></span>No deploy for &gt; ${esc(SITE.envRules.staleDays)} days</span></div>`;
@@ -2216,11 +2333,11 @@ function renderLinks() {
     <div class="grid">${SITE.linkGroups.map(g => `
       <div class="card link-wall"><h4>${esc(g.group)} <span class="badge">${g.items.length}</span></h4><div class="links">
         ${g.items.map(l => `<a class="link-tile" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener noreferrer" title="${esc(l.url)}">
-          <span class="link-ico" aria-hidden="true">${esc(l.icon)}</span><span><span class="link-name">${esc(l.name)}</span><br><span class="link-desc">${esc(l.desc)}</span></span></a>`).join('')}
+          <span class="link-ico">${l.brand ? brand(l.brand) : icon(l.icon)}</span><span><span class="link-name">${esc(l.name)}</span><br><span class="link-desc">${esc(l.desc)}</span></span></a>`).join('')}
       </div></div>`).join('')}</div>`;
 }
 
-// --- 14. Documentation Bookshelf (live search, dims non-matches) ---
+// --- 14. Documentation Bookshelf (wooden bookcase, live search, preview desk) ---
 function highlight(text, q) {
   const safe = esc(text);
   if (!q) return safe;
@@ -2228,16 +2345,34 @@ function highlight(text, q) {
   return safe.replace(new RegExp('(' + pattern + ')', 'gi'), '<mark>$1</mark>');
 }
 let docCat = 'All';
+let docPreview = 0;
+// Static shelf ornaments (bookend, a stack of flat books, a plant) — markup only, no user data
+const SHELF_DECOR = `<span class="bookend" aria-hidden="true"></span>
+  <span class="shelf-decor" aria-hidden="true">
+    <span class="flat-stack"><i style="--c:#7f1d1d;--w:118px"></i><i style="--c:#1e3a8a;--w:104px"></i><i style="--c:#14532d;--w:126px"></i></span>
+    <svg class="plant" viewBox="0 0 64 96"><path d="M32 60C30 44 22 34 10 30c4 12 12 22 22 30zM32 60c2-18 10-30 24-36-3 14-12 28-24 36zM32 62c-1-20 1-38 8-52 4 18 0 36-8 52z" fill="#3f8f4f"/><path d="M32 62c-6-12-14-18-26-20 6 10 14 16 26 20z" fill="#2f6f3c"/><path d="M16 62h32l-4 30H20z" fill="#b45f3c"/><path d="M14 60h36v7H14z" fill="#cf7a52"/></svg>
+  </span>`;
+// Deterministic spine size per title, so the shelf looks hand-stacked but never reshuffles
+function spineSize(title) {
+  let h = 0;
+  for (const ch of String(title)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const t = String(title), two = t.length > 17; // long titles wrap onto a second line on a wider spine
+  const run = two ? Math.max(Math.ceil(t.length / 2) + 2, ...t.split(' ').map(w => w.length)) : t.length;
+  return { w: two ? 56 + (h % 3) * 4 : 40 + (h % 5) * 5, h: Math.min(256, Math.max(196, 104 + run * 8 + ((h >>> 3) % 4) * 6)), tilt: (h >>> 7) % 9 === 0, two };
+}
 function renderDocs() {
   const cats = ['All', ...new Set(SITE.docs.map(d => d.cat))];
   $('#sec-docs').innerHTML = `
     <div class="section-head">
-      <div><h2>Bookshelf</h2><p>Runbooks, references and process docs. <kbd>Enter</kbd> opens the first match.</p></div>
+      <div><h2>Bookshelf</h2><p>Runbooks, references and process docs. Hover a spine to preview · <kbd>Enter</kbd> opens the first match.</p></div>
       <div class="search-box"><input id="docSearch" type="search" placeholder="Search docs…" aria-label="Search docs" data-page-search></div>
     </div>
     <div class="tabs" id="docCats">${cats.map(c => `<button type="button" class="tab ${c === docCat ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
     <div class="shelf-meta" id="docCount" aria-live="polite"></div>
-    <div class="shelf" id="shelf"></div>`;
+    <div class="bookcase">
+      <div class="shelf"><div class="shelf-books" id="shelf"></div></div>
+      <aside class="card book-desk" id="bookDesk" aria-live="polite"></aside>
+    </div>`;
   $('#docSearch').addEventListener('input', paintDocs);
   $('#docSearch').addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
@@ -2251,24 +2386,55 @@ function renderDocs() {
     $$('#docCats .tab').forEach(t => t.classList.toggle('active', t === b));
     paintDocs();
   });
+  const preview = e => {
+    const b = e.target.closest('.book[data-doc]');
+    if (b && +b.dataset.doc !== docPreview) { docPreview = +b.dataset.doc; paintDesk(); }
+  };
+  $('#shelf').addEventListener('mouseover', preview);
+  $('#shelf').addEventListener('focusin', preview);
   paintDocs();
 }
+function docMatches(d, ql) { return !ql || `${d.title} ${d.desc} ${d.cat}`.toLowerCase().includes(ql); }
 function paintDocs() {
   const q = $('#docSearch').value.trim();
   const ql = q.toLowerCase();
-  const list = SITE.docs.filter(d => docCat === 'All' || d.cat === docCat);
+  const list = SITE.docs.map((d, i) => ({ d, i })).filter(x => docCat === 'All' || x.d.cat === docCat);
   let hits = 0;
-  $('#shelf').innerHTML = list.map(d => {
-    const match = !ql || `${d.title} ${d.desc} ${d.cat}`.toLowerCase().includes(ql);
+  $('#shelf').innerHTML = list.map(({ d, i }) => {
+    const match = docMatches(d, ql);
     if (match) hits++;
-    return `<a class="book ${match ? (ql ? 'hit' : '') : 'dim'}" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer" style="--spine:${esc(d.color)}"
-      ${match ? '' : 'tabindex="-1" aria-hidden="true"'}>
-      <span class="book-cat">${esc(d.cat)}</span>
-      <span class="book-title">${highlight(d.title, q)}</span>
-      <span class="book-desc">${highlight(d.desc, q)}</span>
+    const s = spineSize(d.title);
+    return `<a class="book ${match ? (ql ? 'hit' : '') : 'dim'} ${s.tilt ? 'tilt' : ''} ${s.two ? 'two' : ''}" data-doc="${i}" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer"
+      style="--spine:${esc(d.color)};--w:${s.w}px;--h:${s.h}px" aria-label="${esc(`${d.title} (${d.cat})`)}" ${match ? '' : 'tabindex="-1" aria-hidden="true"'}>
+      <span class="spine">
+        <span class="spine-band"></span>
+        <span class="spine-logo">${d.brand ? brand(d.brand) : icon('book')}</span>
+        <span class="spine-title">${highlight(d.title, q)}</span>
+        <span class="spine-cat">${esc(d.cat.slice(0, 3))}</span>
+        <span class="spine-band"></span>
+      </span>
     </a>`;
-  }).join('');
-  $('#docCount').textContent = ql ? `${hits} of ${list.length} docs match “${q}”` : `${list.length} docs`;
+  }).join('') + SHELF_DECOR;
+  if (!list.length) $('#shelf').innerHTML = '<div class="empty shelf-empty">No books in this category.</div>';
+  const visible = list.filter(x => docMatches(x.d, ql));
+  if (!visible.some(x => x.i === docPreview)) docPreview = visible.length ? visible[0].i : (list[0] ? list[0].i : 0);
+  $('#docCount').textContent = ql ? `${hits} of ${list.length} docs match “${q}”` : `${list.length} docs on the shelf`;
+  paintDesk();
+}
+function paintDesk() {
+  const d = SITE.docs[docPreview];
+  const q = $('#docSearch') ? $('#docSearch').value.trim() : '';
+  $$('#shelf .book').forEach(b => b.classList.toggle('active', +b.dataset.doc === docPreview));
+  $('#bookDesk').innerHTML = d ? `
+    <div class="desk-cover" style="--spine:${esc(d.color)}">
+      <span class="desk-logo">${d.brand ? brand(d.brand) : icon('book')}</span>
+      <span class="desk-cover-title">${esc(d.title)}</span>
+    </div>
+    <span class="tpl-tag">${esc(d.cat)}</span>
+    <h3 class="desk-title">${highlight(d.title, q)}</h3>
+    <p class="desk-desc">${highlight(d.desc, q)}</p>
+    <a class="btn primary" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer">Open document ↗</a>
+    <span class="small muted desk-url">${esc(String(d.url).replace(/^https?:\/\//, '').replace(/\/$/, ''))}</span>` : '<div class="empty">Nothing to preview.</div>';
 }
 
 // --- 15. Terminal Cheatsheet ---
@@ -2298,7 +2464,7 @@ function paintTerminal() {
     .filter(g => g.items.length);
   $('#termGrid').innerHTML = groups.length ? groups.map(g => `
     <div class="term">
-      <div class="term-bar"><i></i><i></i><i></i><span>${esc(SITE.terminalUser)}:~/${esc(g.group.toLowerCase())}</span><span class="term-count">${g.items.length} cmd</span></div>
+      <div class="term-bar"><i></i><i></i><i></i>${g.icon ? `<span class="term-mark">${mark(g.icon)}</span>` : ''}<span>${esc(SITE.terminalUser)}:~/${esc(g.group.toLowerCase())}</span><span class="term-count">${g.items.length} cmd</span></div>
       <div class="term-body">
         ${g.items.map(c => `
         <div class="cmd">
@@ -2380,7 +2546,7 @@ function renderReminders() {
               <select id="remRepeat">${SITE.reminderRepeats.map(m => `<option value="${m}">${m ? `Every ${repeatLabel(m)}` : 'Once'}</option>`).join('')}</select></div>
           </div>
           <div class="row"><span class="small muted">Quick:</span>${[5, 15, 30, 60].map(m => `<button class="btn sm" type="button" data-quick="${m}">+${m}m</button>`).join('')}</div>
-          <div class="row"><button class="btn primary" type="submit">Add reminder</button><button class="btn" type="button" id="remTest">🔔 Test beep</button></div>
+          <div class="row"><button class="btn primary" type="submit">Add reminder</button><button class="btn" type="button" id="remTest">${icon('bell')}Test beep</button></div>
         </form>
       </div>
       <div class="card">
@@ -2408,7 +2574,7 @@ function renderReminders() {
     $('#remText').value = ''; $('#remIn').value = ''; $('#remAt').value = ''; $('#remRepeat').value = '0';
   });
   $$('[data-quick]').forEach(b => b.addEventListener('click', () => { $('#remIn').value = b.dataset.quick; $('#remAt').value = ''; }));
-  $('#remTest').addEventListener('click', () => { tripleBeep(); toast('🔔 This is what a reminder sounds like'); });
+  $('#remTest').addEventListener('click', () => { tripleBeep(); toast('This is what a reminder sounds like'); });
   $('#remClear').addEventListener('click', () => { state.reminders = state.reminders.filter(r => !r.fired); saveReminders(); });
   $('#remList').addEventListener('click', e => {
     const del = e.target.closest('[data-rdel]');
@@ -2461,7 +2627,7 @@ function paintSideTimers(force = false) {
 }
 function fireReminder(r) {
   tripleBeep();
-  toast(`⏰ ${r.text}`, 'warn', 0, [{ label: 'Snooze 5m', run: () => snoozeReminder(r.id, 5) }]);
+  toast(`Reminder: ${r.text}`, 'warn', 0, [{ label: 'Snooze 5m', run: () => snoozeReminder(r.id, 5) }]);
   if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
     try { new Notification(SITE.name, { body: r.text }); } catch { /* ignore */ }
   }
@@ -2521,7 +2687,7 @@ function move2048(dir) {
   const spawned = spawnTile();
   const best = Math.max(store.get('g2048best', 0), g2048.score);
   store.set('g2048best', best);
-  if (!g2048.won && g2048.cells.includes(2048)) { g2048.won = true; toast('🎉 2048! You absolute legend.', 'ok'); }
+  if (!g2048.won && g2048.cells.includes(2048)) { g2048.won = true; toast('2048! You absolute legend.', 'ok'); }
   if (!canMove()) { g2048.over = true; toast(`Game over — score ${g2048.score}`, 'bad'); }
   save2048(); render2048(spawned);
 }
@@ -2562,8 +2728,8 @@ function newMemory() {
 }
 function renderMemory() {
   $('#memBoard').innerHTML = mem.deck.map((c, i) => `
-    <button type="button" class="mem-card ${c.state === 'up' ? 'flip' : ''} ${c.state === 'match' ? 'match' : ''}" data-mem="${i}" aria-label="${c.state === 'down' ? 'Hidden card' : esc(c.icon)}">
-      <span class="mem-inner"><span class="mem-face mem-back">K</span><span class="mem-face mem-front">${esc(c.icon)}</span></span>
+    <button type="button" class="mem-card ${c.state === 'up' ? 'flip' : ''} ${c.state === 'match' ? 'match' : ''}" data-mem="${i}" aria-label="${c.state === 'down' ? 'Hidden card' : esc(BRANDS[c.icon] ? BRANDS[c.icon].name : c.icon)}">
+      <span class="mem-inner"><span class="mem-face mem-back">K</span><span class="mem-face mem-front">${mark(c.icon)}</span></span>
     </button>`).join('');
   $('#memMoves').textContent = mem.moves;
   $('#memPairs').textContent = `${mem.deck.filter(c => c.state === 'match').length / 2}/${SITE.memoryIcons.length}`;
@@ -2584,7 +2750,7 @@ function flipMemory(i) {
         const best = store.get('memBest', null);
         if (best === null || mem.moves < best) store.set('memBest', mem.moves);
         const secs = Math.round((Date.now() - mem.start) / 1000);
-        toast(`🧠 Cleared in ${mem.moves} moves (${secs}s)`, 'ok');
+        toast(`Cleared in ${mem.moves} moves (${secs}s)`, 'ok');
       }
     } else {
       memLock = true;
@@ -3324,7 +3490,7 @@ const ACTIONS = {
   scratch: () => toggleScratch(),
   light: () => applyLight(!document.body.classList.contains('light-mode')),
   reminder: () => { showSection('reminders'); setTimeout(() => { const t = $('#remText'); if (t) t.focus(); }, 60); },
-  beep: () => { tripleBeep(); toast('🔔 Test beep'); },
+  beep: () => { tripleBeep(); toast('Test beep'); },
   search: () => {
     const inp = $('.page-section.active [data-page-search]');
     if (inp) inp.focus(); else openPalette();
@@ -3424,7 +3590,7 @@ function boot() {
     if (now.getSeconds() === 0) {
       updateHero(); renderStats(); tickSupport(); tickWorldMap();
       const s = currentShift(now);
-      if (s.id !== lastShift) { lastShift = s.id; toast(`${s.icon} ${s.name} shift has started`, 'info', 6000); paintShifts(); updateBadges(); }
+      if (s.id !== lastShift) { lastShift = s.id; toast(`${s.name} shift has started`, 'info', 6000); paintShifts(); updateBadges(); }
     }
   }, 1000);
 }

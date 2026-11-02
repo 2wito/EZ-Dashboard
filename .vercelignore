@@ -1,3 +1,4 @@
 # Deploy only the single-file dashboard
 .claude/
 CLAUDE.md
+docs/

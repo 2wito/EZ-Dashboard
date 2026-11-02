@@ -1,60 +1,145 @@
-# (K) NOC (K) OUT — Team Operations Dashboard
+<div align="center">
 
-A single-file, zero-framework operations command center for NOC teams. One `index.html`, no build step, no runtime dependencies beyond Google Fonts and SheetJS (for Excel export, with a CSV fallback when offline).
+# (K) NOC (K) OUT
 
-## Features
+**A command center for Network Operations Center teams, built as one HTML file with no framework.**
 
-| Area | What it does |
+Shift handoffs, customer health, cloud environments, a ticket desk, runbooks and world clocks, all on one screen.
+
+![HTML5](https://img.shields.io/badge/HTML5-single%20file-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-custom%20properties-1572B6?logo=css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES2020%20vanilla-F7DF1E?logo=javascript&logoColor=black)
+![Dependencies](https://img.shields.io/badge/framework-none-success)
+![Build](https://img.shields.io/badge/build%20step-none-success)
+
+![Dashboard](docs/screenshots/dashboard.jpg)
+
+</div>
+
+---
+
+## Why this project exists
+
+A NOC engineer starting a shift usually has ten tabs open. There's Grafana for metrics, Jira for tickets, Slack for the customer channels, a spreadsheet of app versions, a wiki page of runbooks, a sticky note with the handoff, and a mental note that it's already 02:00 in Sydney. Context switching is where incidents get missed.
+
+**(K) NOC (K) OUT puts the whole shift in one place:**
+
+- **Who needs attention right now?** The customer health matrix, the world map and the dashboard KPIs answer this at a glance.
+- **What is running where?** The Cloud Environments tracker shows every AWS and Azure deployment, and flags outdated Kubernetes versions and stale deploys.
+- **Who do I call?** Every customer row links to their domain, Git repo and license, plus the TAM's Slack, phone and email, plus the customer's Slack channel.
+- **What did the last shift leave me?** Shift task lists and a handoff generator turn the shift into a report you can paste.
+- **How do I fix it?** The bookshelf of runbooks, the link wall and a terminal cheatsheet are one click or one `Ctrl+K` away.
+
+It is also a portfolio piece. It shows how far plain HTML, CSS and JavaScript can go without React, a bundler or a backend.
+
+> All customers, people, domains and tickets are fictional. Customer domains use the reserved `.example` TLD.
+
+---
+
+## Tour
+
+### Dashboard: the shift at a glance
+A greeting that knows your shift, a countdown to the next handoff, and live KPI cards. Below them is a list of customers with failed checks. Ten world clocks sit at the top of every page. Each clock shows its business-hours status and the customers based in that zone.
+
+### Customer world map
+Each customer region gets a pulsing pin. The pin color follows the health checklist (green: healthy, amber: in progress, red: failed checks) and the label shows the local time. Night is shaded and updates every minute. The coastlines come from a TopoJSON file that a ~25-line hand-written decoder parses. No d3 and no map library are used.
+
+![World map](docs/screenshots/world-map.jpg)
+
+### Customers: every account, every contact
+Platform tags with AWS and Azure logos, the customer domain, the Git repo, and the license key with an expiry badge (*Active*, *19d left*, *Expired*). The TAM column has one-click Slack, phone (`tel:`) and email (`mailto:`) buttons, and the Group column links to the customer's Slack channel. Below the table is a 3-state checklist matrix (None → ✓ → ✕) that feeds the dashboard, the map and the handoff report.
+
+![Customers](docs/screenshots/customers.jpg)
+
+### Support Desk
+A ticket workspace for the same customers. It has KPI cards with SVG sparklines, quick views (All / Mine / Urgent / Unassigned), live SLA countdowns, and a conversation view with agent replies, internal notes and quick-reply macros. The side panel shows the customer's region, platforms, TAM contacts and current checklist health.
+
+![Support Desk](docs/screenshots/support-desk.jpg)
+
+### Cloud Environments
+Per-customer deployment tables for AWS and Azure: environment, region, app version, Kubernetes version, last deploy, status and notes. Every cell can be edited inline and saved. Risky cells are flagged automatically: Kubernetes below the supported minor version shows amber, and no deploy in more than 30 days shows red. The **Export to Excel** button lazy-loads SheetJS and writes one sheet per cloud, with a Risks column. If SheetJS can't load, the page exports a CSV instead.
+
+![Cloud Environments](docs/screenshots/environments.jpg)
+
+### Bookshelf
+Runbooks and references shown as a real wooden bookcase. Each spine carries the brand logo of its topic: Kubernetes, Docker, AWS, Azure, Git, Jira, Grafana, Prometheus and others. Spine heights come from the title length, so the shelf looks hand-stacked but never reshuffles. Hovering a spine pulls the book out and previews it on the reading desk. Search dims the books that don't match and highlights the ones that do.
+
+![Bookshelf](docs/screenshots/bookshelf.jpg)
+
+### Link Wall and Cheatsheet
+The tools a shift lives in (Grafana, Prometheus, Jira, PagerDuty, Slack, Zoom, AWS Console, Azure Portal, GitHub, Confluence), each with its real logo. The terminal cheatsheet groups battle-tested commands by Network, Linux, Logs, Docker and Kubernetes, with live filtering and a copy button on every command.
+
+![Link Wall](docs/screenshots/link-wall.jpg)
+
+### Also included
+- **Shift Tasks:** four shift columns. Checking a task records when it was done, and a handoff generator combines tasks, the matrix and your notes.
+- **Templates:** click-to-copy incident and maintenance messages with `{customer}`, `{service}`, `{ticket}` and `{time}` placeholders.
+- **Reminders:** one-off or repeating timers with a WebAudio triple beep, snooze, and countdowns in the sidebar.
+- **Break Room:** 2048 and a Memory Match game played with DevOps logos, both with saved best scores.
+- **Command palette (`Ctrl+K`):** searches sections, customers, tickets, links, docs, commands and templates.
+- **Scratchpad:** a draggable, resizable, autosaving notes window.
+- **Themes:** "Liquid Glass" frosted panels, 4 accent themes and a light mode.
+
+---
+
+## Technical highlights
+
+| | |
 |---|---|
-| **Dashboard** | Glowing hero banner, greeting that changes with the time of day and current shift, countdown to the next shift, live KPI cards |
-| **World clocks** | 10 clocks (Israel, UK, Germany, US East/West, Brazil, India, China, Japan, Australia) updated every second, each showing its business-hours state and the customers based there |
-| **Customer world map** | Bottom of the Dashboard: coastlines decoded from a TopoJSON file by a ~25-line vanilla decoder (no d3), a live day/night terminator, and a pulsing pin per customer region whose colour follows checklist health (green / amber / red) with the local time |
-| **Customers** | Summary table (AWS/Azure platform tags, customer domain, Git repo, license key with expiry status, TAM with Slack / phone / email shortcuts, customer Slack channel) with zebra striping, plus a 3-state checklist matrix (None → ✓ → ✕) saved by row/column index, with column "✓ all" controls, Clear all, a live % badge in the sidebar and a copyable handoff report |
-| **Support Desk** | A ticket workspace for the same customers. It has 4 KPI cards with inline SVG sparklines (open tickets, first response, CSAT, escalations) and a queue with quick views (All / Mine / Urgent / Unassigned), status filter, search and sort. Each ticket shows a priority bar and a live SLA countdown. The conversation view holds customer messages, agent replies, internal notes and system events, plus quick-reply macros (`{name}`, `{customer}`, `{agent}`) and one saved draft per ticket. The customer panel shows tier, platforms, TAM, shift-checklist health and links. A toast fires when an SLA is breached, the sidebar badge turns red, and tickets are searchable from `Ctrl+K` |
-| **Shift tasks** | Four shift columns side by side; checked tasks show the time they were done and get struck through; a handoff generator combines tasks, the matrix and your notes |
-| **Templates** | Message cards you click to copy, with `{customer}`, `{service}`, `{ticket}` and `{time}` variable substitution and usage counters |
-| **Cloud Environments** | Per-customer AWS and Azure deployment tables (environment, region, app version, Kubernetes, last deploy, status, notes) with editable (`contenteditable`) cells and a status dropdown. 4 live KPI cards, and cells are flagged automatically when Kubernetes is below the supported minor or a deploy is older than `envRules.staleDays`. SheetJS loads only on the first export and produces a 3-sheet `.xlsx` with a Risks column (CSV if it can't load) |
-| **Knowledge** | Link wall grouped by `SITE.linkGroups` (links open in a new tab); bookshelf of docs styled as book spines, where search dims the docs that don't match; terminal cheatsheet (logs, Docker, Kubernetes…) with a prompt, a copy button on every command and live filtering. The terminal stays dark in light mode |
-| **Utilities** | `Ctrl+K` command palette that searches sections, links, docs, commands, templates and shortcuts (arrow keys, Enter, Esc); a scratchpad you can drag, resize and that autosaves; one-off or repeating timers with a WebAudio triple beep, toasts with a snooze button, and live countdowns in the sidebar |
-| **Break room** | 2048 (keyboard and swipe) and Memory Match, both with saved best scores |
-| **Morale** | Joke generator and a lightbox gallery whose images are generated as SVG, so no image files are needed |
-| **Design** | iOS/macOS "Liquid Glass" look: frosted panels (`backdrop-filter: blur(20px) saturate(180%)`) over slowly drifting coloured light, pill buttons, 20px glass cards, a floating sidebar, a single glass clock bar and hover lift. 4 accent themes (`body.theme-*`) plus a frosted-white light mode (`body.light-mode`). Browsers without `backdrop-filter` get solid panels instead |
+| **Zero framework** | Plain ES2020 and native DOM APIs. One `index.html` file with no `node_modules` and no build. |
+| **Config-driven UI** | Every row, card, link, clock and book is rendered from the `SITE` object. The HTML contains only empty section shells. |
+| **Hand-written TopoJSON decoder** | Decodes delta-encoded, quantized arcs into SVG paths, and splits rings that cross the antimeridian so Russia and Fiji don't streak across the map. |
+| **Day/night terminator** | Computes the solar declination and sub-solar longitude, then draws the night polygon in an equirectangular projection. |
+| **Inline editing** | `contenteditable="plaintext-only"` with a fallback that strips pasted HTML. Enter saves, Esc reverts, and saves are debounced to `localStorage`. |
+| **Risk engine** | Compares semantic versions and computes deploy age to flag cells and update the KPIs live while you type. |
+| **Lazy dependencies** | SheetJS loads only on the first export and falls back to CSV. Map coastlines are fetched once and cached in memory. |
+| **Brand marks without emoji** | Logos are inline SVG paths from [Simple Icons](https://simpleicons.org) (CC0), stored in a `BRANDS` registry and referenced by key from the config. |
+| **Security** | Every dynamic string passes through `esc()` before it reaches `innerHTML`, and URLs go through a `safeUrl()` allow-list (`https:`, `mailto:`, `tel:`). |
+| **Persistence** | All state (matrix, tasks, environments, tickets, reminders, notes, theme) is stored in `localStorage` under one prefix. |
 
 ## Architecture
 
-- **Config-driven:** everything you see is rendered from the `SITE` object at the top of the script. The HTML holds only empty section shells.
-- **Numbered modules:** the script is split into `// --- N. Name ---` blocks (config, helpers, toasts, theme engine, routing, state, and one block per feature).
-- **State:** every user action is saved to `localStorage` under `SITE.storagePrefix` (`noc_glass_` by default).
-- **Security:** all dynamic strings go through `esc()` before they reach `innerHTML`.
-- **Theme engine:** each theme is a `body.theme-*` CSS class that redefines the colour tokens. Light mode overrides only the surface and text tokens on `body`.
+- **Numbered modules:** the script is split into `// --- N. Name ---` blocks: config, helpers, toasts, theme engine, routing, state, then one block per feature.
+- **State:** saved to `localStorage` under `SITE.storagePrefix` (`noc_glass_` by default).
+- **Theme engine:** each theme is a `body.theme-*` class that redefines the color tokens. Light mode overrides only the surface and text tokens.
+- **Icons:** `icon(key)` draws line icons and `brand(key)` draws logos. `mark(key)` uses the logo when one exists and falls back to the line icon.
 
 ## Customization
 
-Edit `SITE` in `index.html`:
+Edit `SITE` at the top of the script in `index.html`:
 
-customers:    [{ id, name, persona, tier, platforms /* AWS | Azure */, domain, zone /* timezones id */, git, license, licenseExpires, manager /* TAM */, tam: { slack, phone, email }, group /* Slack channel */ }]
-customers:    [{ id, name, hero, persona, tier, platforms, vectors, link, git, manager /* TAM */, group }]
-gitBase / licenseBase / slackBase       // prefixes that turn git, license, group (Slack channel) and tam.slack into links
-worldMapUrl                              // TopoJSON land file for the world map (fetched once)
+```js
+customers:   [{ id, name, persona, tier, platforms /* 'AWS' | 'Azure' */, domain, zone /* timezones id */,
+                git, license, licenseExpires, manager /* TAM */, tam: { slack, phone, email }, group /* Slack channel */ }]
+timezones:   [{ id, label, tz, lat, lon, pos, primary }]      // lat/lon place the map pin, pos = label side
+gitBase / licenseBase / slackBase                             // prefixes that turn repo, license and Slack handles into links
+worldMapUrl                                                   // TopoJSON land file for the world map
 checklistColumns: [{ id, label }]
-envTables / envColumns / envStatuses / environments   // cloud environment tables + seed rows
-envRules: { k8sMinSupported, staleDays }            // risk-flag thresholds
-shifts:       [{ id, name, icon, start, end, tasks: [{ time, text }] }]
-support: { agent, macros: [{ id, label, body }], kpi, tickets: [{ id, customer /* SITE.customers id */, subject, priority, status, channel, tags, assignee, ageMin, slaInMin, thread }] }
-templates:    [{ id, title, tag, body }]   // use {customer} {service} {ticket} {time}
-timezones: [{ id, label, tz, lat, lon, pos, primary }]   // primary = HQ clock; lat/lon place the map pin, pos = label side
-themes: { id: label }                    // each id maps to a body.theme-<id> CSS block
-linkGroups / docs / commands / jokes / gallery
-shortcuts: [{ keys: 'Alt+N', label, action, global }]   // actions map to ACTIONS in block 21
+envTables / envColumns / envStatuses / environments          // cloud environment tables + seed rows
+envRules:    { k8sMinSupported, staleDays }                   // risk-flag thresholds
+shifts:      [{ id, name, icon, start, end, tasks: [{ time, text }] }]
+support:     { agent, macros, kpi, tickets: [{ id, customer, subject, priority, status, channel, tags, assignee, ageMin, slaInMin, thread }] }
+templates:   [{ id, title, tag, body }]                       // {customer} {service} {ticket} {time}
+linkGroups:  [{ group, items: [{ name, brand | icon, url, desc }] }]
+docs:        [{ title, cat, brand, color, url, desc }]        // brand = spine logo, color = spine leather
+commands:    [{ group, icon, items: [{ cmd, desc }] }]
+memoryIcons: ['jira', 'git', ...]                             // BRANDS keys used by Memory Match
+themes / jokes / gallery / shortcuts
 ```
 
-## Run / Deploy
+## Run and deploy
 
 Open `index.html` in a browser. There is no build step.
 
-- **Vercel:** import the repo at [vercel.com/new](https://vercel.com/new), set **Framework Preset = Other** and leave Build Command and Output Directory empty, then click **Deploy**. `.vercelignore` keeps the deployment to the dashboard only. Alternatively run `vercel --prod` from the repo root.
-- **GitHub Pages:** deploy from branch, root. The page uses no absolute paths, so it also works from a sub-path.
+- **Vercel:** import the repo at [vercel.com/new](https://vercel.com/new), set **Framework Preset = Other**, leave Build Command and Output Directory empty, and click **Deploy**. `.vercelignore` limits the deployment to the dashboard itself.
+- **GitHub Pages:** deploy from the branch root. All paths are relative, so it also works from a sub-path.
 
 ## Keyboard shortcuts
 
-`Ctrl/⌘+K` command palette · `Esc` close overlays · `Alt+N` scratchpad · `/` focus the search box on the current page · `Alt+L` light mode · `Alt+R` new reminder · `Alt+B` test beep · arrow keys or `WASD` play 2048 · `←` `→` move through the gallery lightbox · `J` / `K` move through the Support Desk queue and `R` focuses the reply box. All of these are configured in `SITE.shortcuts`.
+`Ctrl/⌘+K` command palette · `Esc` close overlays · `Alt+N` scratchpad · `/` search the current page · `Alt+L` light mode · `Alt+R` new reminder · `Alt+B` test beep · arrows or `WASD` play 2048 · `←` `→` gallery · `J` / `K` move through the Support Desk queue and `R` replies. All shortcuts are configured in `SITE.shortcuts`.
+
+## Credits
+
+- Brand logos: [Simple Icons](https://simpleicons.org) (CC0). The logos are trademarks of their respective owners and are used here only to identify each tool.
+- Coastlines: [world-atlas](https://github.com/topojson/world-atlas) (Natural Earth, public domain).
+- Excel export: [SheetJS](https://sheetjs.com).
