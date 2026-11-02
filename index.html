@@ -214,19 +214,19 @@ kbd {
 
 /* ===== 5. Glass World Clocks Bar ===== */
 .clocks {
-  display: flex; overflow-x: auto; padding: 6px; margin-bottom: 18px; border-radius: var(--radius); scrollbar-width: thin;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; padding: 6px; margin-bottom: 18px; border-radius: var(--radius);
 }
+@media (max-width: 1100px) { .clocks { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
 .clock {
-  flex: 1 0 150px; padding: 9px 14px; display: flex; flex-direction: column; border-radius: 14px; position: relative;
+  min-width: 0; padding: 9px 14px; display: flex; flex-direction: column; border-radius: 14px; position: relative;
   transition: background var(--dur) var(--ease);
 }
-.clock + .clock::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 1px; background: var(--border); }
 .clock:hover { background: var(--surface-2); }
 .clock-label { font-size: 11px; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
 .clock-time { font-family: var(--font-display); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.clock-day { font-size: 11px; color: var(--muted); }
+.clock-day { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clock-cust { color: var(--accent); font-weight: 600; }
 .clock.local { background: rgba(var(--accent-rgb), .14); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), .25); }
-.clock.local::before, .clock.local + .clock::before { display: none; }
 .clock.local .clock-time { color: var(--accent); }
 .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; align-self: center; }
 .dot.on { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
@@ -339,6 +339,53 @@ table.zebra tbody tr:hover td { background: rgba(var(--accent-rgb),.08); }
 .plat::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .plat-android { color: #3ddc84; background: rgba(61,220,132,.1); border-color: rgba(61,220,132,.3); }
 .plat-ios { color: var(--text); background: var(--surface-3); }
+.plat-aws { color: #ff9900; background: rgba(255,153,0,.1); border-color: rgba(255,153,0,.35); }
+.plat-azure { color: #3ea8ff; background: rgba(0,120,212,.12); border-color: rgba(62,168,255,.35); }
+.cust-name { letter-spacing: .02em; }
+.cust-table th, .cust-table td { padding-left: 10px; padding-right: 10px; }
+.ilink { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ilink svg { width: 14px; height: 14px; flex: none; opacity: .8; }
+.ilink.mono span { font-family: var(--font-mono, ui-monospace, monospace); font-size: 12px; }
+.lic { display: inline-block; margin-left: 8px; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; border: 1px solid currentColor; opacity: .9; }
+.lic.ok { color: var(--ok); } .lic.warn { color: var(--warn); } .lic.bad { color: var(--bad); }
+.tam { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.tam-acts { display: inline-flex; gap: 4px; }
+.tam-btn { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease), background var(--dur) var(--ease); }
+.tam-btn svg { width: 14px; height: 14px; }
+.tam-btn:hover, .tam-btn:focus-visible { color: var(--accent); border-color: rgba(var(--accent-rgb),.5); background: rgba(var(--accent-rgb),.1); }
+
+/* ===== 8c. Customer World Map ===== */
+.world-map { position: relative; width: 100%; aspect-ratio: 1000 / 394; border-radius: 14px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 40%, rgba(var(--accent-rgb),.10), transparent 70%), var(--surface-2); border: 1px solid var(--border); }
+.map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.map-grid { fill: none; stroke: var(--border); stroke-width: .6; stroke-dasharray: 2 4; }
+.map-land { fill: rgba(var(--accent-rgb),.22); stroke: rgba(var(--accent-rgb),.55); stroke-width: .5; stroke-linejoin: round; }
+.map-night { fill: rgba(0,0,0,.28); pointer-events: none; }
+body.light-mode .map-night { fill: rgba(15,23,42,.12); }
+.map-pin { position: absolute; transform: translate(-50%, -50%); width: 14px; height: 14px; padding: 0; border: 0; background: none; cursor: pointer; z-index: 1; }
+.map-pin:hover, .map-pin:focus-visible { z-index: 3; }
+.pin-dot { --c: var(--accent); position: relative; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px rgba(255,255,255,.85), 0 0 10px var(--c); }
+.map-pin .pin-dot { position: absolute; left: 2px; top: 2px; }
+.map-pin .pin-dot::before, .map-pin .pin-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--c); animation: pinPulse 2s var(--ease) infinite; }
+.map-pin .pin-dot::after { animation-delay: 1s; }
+.pin-dot.ok, .map-pin.ok .pin-dot { --c: var(--ok); }
+.pin-dot.warn, .map-pin.warn .pin-dot { --c: var(--warn); }
+.pin-dot.bad, .map-pin.bad .pin-dot { --c: var(--bad); }
+.map-pin.bad .pin-dot::before, .map-pin.bad .pin-dot::after { animation-duration: 1.1s; }
+@keyframes pinPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(4.2); opacity: 0; } }
+.pin-label { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; line-height: 1.15; padding: 3px 8px; border-radius: 8px; white-space: nowrap; text-align: left;
+  font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--surface) 85%, transparent); border: 1px solid var(--border); backdrop-filter: blur(6px); }
+.pin-label strong { color: var(--text); font-size: 11.5px; }
+.pin-label span { font-variant-numeric: tabular-nums; }
+.map-pin.right .pin-label { left: 20px; }
+.map-pin.left .pin-label { right: 20px; text-align: right; }
+.map-pin:hover .pin-label, .map-pin:focus-visible .pin-label { border-color: var(--c, var(--accent)); color: var(--text); }
+.map-legend { margin-top: 12px; }
+.map-legend .pin-dot { width: 8px; height: 8px; box-shadow: 0 0 6px var(--c); }
+@media (max-width: 760px) {
+  .pin-label { display: none; }
+  .map-pin:hover .pin-label, .map-pin:focus-visible .pin-label { display: flex; }
+}
 .vchip { display: inline-block; font-size: 11px; padding: 2px 8px; margin: 1px 0; border-radius: 99px; background: rgba(var(--accent-rgb),.12); color: var(--accent); border: 1px solid rgba(var(--accent-rgb),.25); }
 th.mx-head { text-align: center; }
 th.mx-head span { display: block; }
@@ -861,26 +908,36 @@ const SITE = {
       { id: 'morale', label: 'Morale', icon: 'smile' }
     ]}
   ],
+  // 10 world clocks; lat/lon place each zone's pulse on the world map, pos = label side
   timezones: [
-    { label: 'HQ · Jerusalem', tz: 'Asia/Jerusalem', primary: true },
-    { label: 'UTC', tz: 'UTC' },
-    { label: 'EST · New York', tz: 'America/New_York' },
-    { label: 'PST · Los Angeles', tz: 'America/Los_Angeles' }
+    { id: 'jlm', label: 'Israel · Jerusalem', tz: 'Asia/Jerusalem',      lat: 31.77,  lon: 35.21,   primary: true, pos: 'right' },
+    { id: 'lon', label: 'UK · London',        tz: 'Europe/London',       lat: 51.51,  lon: -0.13,   pos: 'left' },
+    { id: 'ber', label: 'Germany · Berlin',   tz: 'Europe/Berlin',       lat: 52.52,  lon: 13.40,   pos: 'right' },
+    { id: 'nyc', label: 'USA · New York',     tz: 'America/New_York',    lat: 40.71,  lon: -74.01,  pos: 'right' },
+    { id: 'lax', label: 'USA · Los Angeles',  tz: 'America/Los_Angeles', lat: 34.05,  lon: -118.24, pos: 'left' },
+    { id: 'sao', label: 'Brazil · São Paulo', tz: 'America/Sao_Paulo',   lat: -23.55, lon: -46.63,  pos: 'right' },
+    { id: 'bom', label: 'India · Mumbai',     tz: 'Asia/Kolkata',        lat: 19.08,  lon: 72.88,   pos: 'left' },
+    { id: 'sha', label: 'China · Shanghai',   tz: 'Asia/Shanghai',       lat: 31.23,  lon: 121.47,  pos: 'left' },
+    { id: 'tyo', label: 'Japan · Tokyo',      tz: 'Asia/Tokyo',          lat: 35.68,  lon: 139.69,  pos: 'right' },
+    { id: 'syd', label: 'Australia · Sydney', tz: 'Australia/Sydney',    lat: -33.87, lon: 151.21,  pos: 'left' }
   ],
   businessHours: { start: 9, end: 18 },
-  gitBase: 'https://git.internal/',
-  chatBase: 'https://chat.internal/channels/',
+  gitBase: 'https://git.noc-demo.example/',
+  licenseBase: 'https://licenses.noc-demo.example/keys/',
+  slackBase: 'https://noc-demo.slack.com/',
+  worldMapUrl: 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json',
+  // Fictional accounts: domains use the reserved .example TLD; zone = SITE.timezones id; group = Slack channel
   customers: [
-    { id: 'apex',       name: 'Apex',       hero: 'Batman',           persona: 'Bruce Wayne',    tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Prod-K8s'],     link: 'https://apex.internal',       git: 'git/apex',       manager: 'Bruce W.',   group: '#ops-apex' },
-    { id: 'beacon',     name: 'Beacon',     hero: 'Captain America',  persona: 'Steve Rogers',   tier: 'Silver',   platforms: ['iOS'],            vectors: ['Legacy-VM'],    link: 'https://beacon.internal',     git: 'git/beacon',     manager: 'Steve R.',   group: '#ops-beacon' },
-    { id: 'citadel',    name: 'Citadel',    hero: 'Doctor Strange',   persona: 'Stephen Strange', tier: 'Gold',    platforms: ['Android', 'iOS'], vectors: ['Cloud-Native'], link: 'https://citadel.internal',    git: 'git/citadel',    manager: 'Stephen S.', group: '#ops-citadel' },
-    { id: 'dominion',   name: 'Dominion',   hero: 'Iron Man',         persona: 'Tony Stark',     tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Edge-Node'],    link: 'https://dominion.internal',   git: 'git/dominion',   manager: 'Tony S.',    group: '#ops-dominion' },
-    { id: 'eclipse',    name: 'Eclipse',    hero: 'Spider-Man',       persona: 'Peter Parker',   tier: 'Silver',   platforms: ['Android'],        vectors: ['Serverless'],   link: 'https://eclipse.internal',    git: 'git/eclipse',    manager: 'Peter P.',   group: '#ops-eclipse' },
-    { id: 'falcon',     name: 'Falcon',     hero: 'Thor',             persona: 'Thor Odinson',   tier: 'Gold',     platforms: ['iOS'],            vectors: ['Prod-K8s'],     link: 'https://falcon.internal',     git: 'git/falcon',     manager: 'Thor O.',    group: '#ops-falcon' },
-    { id: 'guardian',   name: 'Guardian',   hero: 'Wolverine',        persona: 'Logan',          tier: 'Gold',     platforms: ['Android', 'iOS'], vectors: ['On-Prem'],      link: 'https://guardian.internal',   git: 'git/guardian',   manager: 'Logan X.',   group: '#ops-guardian' },
-    { id: 'hyperion',   name: 'Hyperion',   hero: 'Superman',         persona: 'Clark Kent',     tier: 'Platinum', platforms: ['Android', 'iOS'], vectors: ['Cloud-Native'], link: 'https://hyperion.internal',   git: 'git/hyperion',   manager: 'Clark K.',   group: '#ops-hyperion' },
-    { id: 'infinitum',  name: 'Infinitum',  hero: 'Wonder Woman',     persona: 'Diana Prince',   tier: 'Gold',     platforms: ['iOS'],            vectors: ['Prod-K8s'],     link: 'https://infinitum.internal',  git: 'git/infinitum',  manager: 'Diana P.',   group: '#ops-infinitum' },
-    { id: 'juggernaut', name: 'Juggernaut', hero: 'Flash',            persona: 'Barry Allen',    tier: 'Silver',   platforms: ['Android'],        vectors: ['Serverless'],   link: 'https://juggernaut.internal', git: 'git/juggernaut', manager: 'Barry A.',   group: '#ops-juggernaut' }
+    { id: 'apex',       name: 'Apex',       persona: 'Bruce Wayne',     tier: 'Platinum', platforms: ['AWS', 'Azure'], domain: 'apex-dynamics.example',     zone: 'nyc', git: 'apex',                license: 'APX-7Q2K-2026', licenseExpires: '2027-03-31', manager: 'Bruce W.',   tam: { slack: 'bruce.w',   phone: '+1-212-555-0142',  email: 'bruce.w@noc-demo.example' },   group: 'ops-apex' },
+    { id: 'beacon',     name: 'Beacon',     persona: 'Steve Rogers',    tier: 'Silver',   platforms: ['Azure'],        domain: 'beacon-retail.example',     zone: 'lon', git: 'beacon',              license: 'BCN-4M8T-2026', licenseExpires: '2026-11-20', manager: 'Steve R.',   tam: { slack: 'steve.r',   phone: '+44-20-7946-0381', email: 'steve.r@noc-demo.example' },   group: 'ops-beacon' },
+    { id: 'citadel',    name: 'Citadel',    persona: 'Stephen Strange', tier: 'Gold',     platforms: ['AWS', 'Azure'], domain: 'citadel-bank.example',      zone: 'ber', git: 'citadel',             license: 'CTD-9R1X-2026', licenseExpires: '2027-06-30', manager: 'Stephen S.', tam: { slack: 'stephen.s', phone: '+49-30-555-0187',  email: 'stephen.s@noc-demo.example' }, group: 'ops-citadel' },
+    { id: 'dominion',   name: 'Dominion',   persona: 'Tony Stark',      tier: 'Platinum', platforms: ['AWS'],          domain: 'dominion-labs.example',     zone: 'lax', git: 'dominion',            license: 'DMN-2F6W-2026', licenseExpires: '2027-01-15', manager: 'Tony S.',    tam: { slack: 'tony.s',    phone: '+1-310-555-0119',  email: 'tony.s@noc-demo.example' },    group: 'ops-dominion' },
+    { id: 'eclipse',    name: 'Eclipse',    persona: 'Peter Parker',    tier: 'Silver',   platforms: ['Azure'],        domain: 'eclipse-media.example',     zone: 'sao', git: 'eclipse',             license: 'ECL-5H3N-2026', licenseExpires: '2026-12-01', manager: 'Peter P.',   tam: { slack: 'peter.p',   phone: '+55-11-5555-0164', email: 'peter.p@noc-demo.example' },   group: 'ops-eclipse' },
+    { id: 'falcon',     name: 'Falcon',     persona: 'Thor Odinson',    tier: 'Gold',     platforms: ['AWS'],          domain: 'falcon-air.example',        zone: 'tyo', git: 'falcon',              license: 'FLC-8D4P-2026', licenseExpires: '2027-04-30', manager: 'Thor O.',    tam: { slack: 'thor.o',    phone: '+81-3-5555-0172',  email: 'thor.o@noc-demo.example' },    group: 'ops-falcon' },
+    { id: 'guardian',   name: 'Guardian',   persona: 'Logan Howlett',   tier: 'Gold',     platforms: ['AWS', 'Azure'], domain: 'guardian-secure.example',   zone: 'jlm', git: 'guardian',            license: 'GRD-3K7V-2026', licenseExpires: '2027-02-28', manager: 'Logan H.',   tam: { slack: 'logan.h',   phone: '+972-2-555-0133',  email: 'logan.h@noc-demo.example' },   group: 'ops-guardian' },
+    { id: 'hyperion',   name: 'Hyperion',   persona: 'Clark Kent',      tier: 'Platinum', platforms: ['AWS', 'Azure'], domain: 'hyperion-telco.example',    zone: 'bom', git: 'hyperion',            license: 'HYP-6B9Z-2026', licenseExpires: '2027-08-31', manager: 'Clark K.',   tam: { slack: 'clark.k',   phone: '+91-22-5555-0158', email: 'clark.k@noc-demo.example' },   group: 'ops-hyperion' },
+    { id: 'infinitum',  name: 'Infinitum',  persona: 'Diana Prince',    tier: 'Gold',     platforms: ['Azure'],        domain: 'infinitum-health.example',  zone: 'sha', git: 'infinitum',           license: 'INF-1C5L-2026', licenseExpires: '2027-05-31', manager: 'Diana P.',   tam: { slack: 'diana.p',   phone: '+86-21-5555-0126', email: 'diana.p@noc-demo.example' },   group: 'ops-infinitum' },
+    { id: 'juggernaut', name: 'Juggernaut', persona: 'Barry Allen',     tier: 'Silver',   platforms: ['AWS'],          domain: 'juggernaut-energy.example', zone: 'syd', git: 'juggernaut',          license: 'JGN-0E2Y-2026', licenseExpires: '2026-11-10', manager: 'Barry A.',   tam: { slack: 'barry.a',   phone: '+61-2-5555-0197',  email: 'barry.a@noc-demo.example' },   group: 'ops-juggernaut' }
   ],
   checklistColumns: [
     { id: 'sdk', label: 'SDK Init' },
@@ -1136,7 +1193,7 @@ const store = {
   }
 };
 
-function safeUrl(u) { const v = String(u ?? '').trim(); return /^(https?:|mailto:)/i.test(v) ? v : '#'; }
+function safeUrl(u) { const v = String(u ?? '').trim(); return /^(https?:|mailto:|tel:)/i.test(v) ? v : '#'; }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function pad(n) { return String(n).padStart(2, '0'); }
 function todayISO() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
@@ -1169,6 +1226,10 @@ const ICONS = {
   headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20a3 3 0 0 1-3 2h-3"/>',
   chat: '<path d="M4 5h16v11H9l-5 4z"/>',
   phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  git: '<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 8v8M8 6h3a5 5 0 0 1 5 5"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  slack: '<rect x="10" y="3" width="4" height="8" rx="2"/><rect x="3" y="10" width="8" height="4" rx="2"/><rect x="10" y="13" width="4" height="8" rx="2"/><rect x="13" y="10" width="8" height="4" rx="2"/>',
   smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>'
 };
 function icon(name) {
@@ -1334,12 +1395,18 @@ function renderDashboard() {
         <div class="card-title"><h3>Upcoming reminders</h3><button class="btn sm" type="button" data-goto="reminders">Manage</button></div>
         <div id="dashReminders"></div>
       </div>
+    </div>
+    <div class="card map-card">
+      <div class="card-title"><h3>Customer world map</h3><span class="small muted" id="mapNote">Live local time · pulse colour = checklist health · shaded = night</span></div>
+      <div class="world-map" id="worldMap"></div>
+      <div class="legend map-legend"><span><span class="pin-dot ok"></span>Healthy</span><span><span class="pin-dot warn"></span>In progress</span><span><span class="pin-dot bad"></span>Failed checks</span></div>
     </div>`;
   $('#sec-dashboard').addEventListener('click', e => {
     const go = e.target.closest('[data-goto]');
     if (go) showSection(go.dataset.goto);
   });
   updateHero();
+  renderWorldMap();
 }
 function updateHero() {
   const now = new Date();
@@ -1392,20 +1459,29 @@ function renderStats() {
     : `<div class="empty">No reminders scheduled.</div>`;
 }
 
-// --- 8. World Clocks ---
+// --- 8. World Clocks & Customer World Map ---
 const clockFormatters = SITE.timezones.map(c => ({
   time: new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, ...(c.tz ? { timeZone: c.tz } : {}) }),
+  short: new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', hour12: false, ...(c.tz ? { timeZone: c.tz } : {}) }),
   day: new Intl.DateTimeFormat([], { weekday: 'short', day: 'numeric', month: 'short', ...(c.tz ? { timeZone: c.tz } : {}) }),
   hour: new Intl.DateTimeFormat('en-US', { hour: 'numeric', hourCycle: 'h23', ...(c.tz ? { timeZone: c.tz } : {}) })
 }));
+function zoneCustomers(zoneId) { return SITE.customers.filter(c => c.zone === zoneId); }
 function renderClocks() {
-  $('#clocks').innerHTML = SITE.timezones.map((c, i) => `
+  $('#clocks').innerHTML = SITE.timezones.map((c, i) => {
+    const names = zoneCustomers(c.id).map(x => x.name).join(', ');
+    return `
     <div class="clock ${c.primary ? 'local' : ''}">
       <div class="clock-label"><span>${esc(c.label)}</span><span class="dot" data-clock-dot="${i}" title="Business hours"></span></div>
       <div class="clock-time" data-clock-time="${i}">--:--:--</div>
-      <div class="clock-day" data-clock-day="${i}"></div>
-    </div>`).join('');
+      <div class="clock-day"><span data-clock-day="${i}"></span>${names ? ` · <span class="clock-cust">${esc(names)}</span>` : ''}</div>
+    </div>`;
+  }).join('');
   tickClocks();
+}
+function zoneOpen(i, now) {
+  const h = parseInt(clockFormatters[i].hour.format(now), 10) % 24;
+  return h >= SITE.businessHours.start && h < SITE.businessHours.end;
 }
 function tickClocks() {
   const now = new Date();
@@ -1413,12 +1489,117 @@ function tickClocks() {
     const t = $(`[data-clock-time="${i}"]`); if (!t) return;
     t.textContent = f.time.format(now);
     $(`[data-clock-day="${i}"]`).textContent = f.day.format(now);
-    const h = parseInt(f.hour.format(now), 10) % 24;
-    const open = h >= SITE.businessHours.start && h < SITE.businessHours.end;
+    const open = zoneOpen(i, now);
     const dot = $(`[data-clock-dot="${i}"]`);
     dot.className = `dot ${open ? 'on' : 'off'}`;
     dot.title = open ? 'Business hours' : 'After hours';
+    const mt = $(`[data-map-time="${i}"]`);
+    if (mt) mt.textContent = f.short.format(now);
   });
+}
+
+// Equirectangular projection cropped to lat 84°N … 58°S (1000 × 394 viewBox)
+const MAP = { w: 1000, top: 84, bottom: -58 };
+MAP.h = Math.round((MAP.top - MAP.bottom) / 360 * MAP.w);
+function mapX(lon) { return (lon + 180) / 360 * MAP.w; }
+function mapY(lat) { return (MAP.top - lat) / 360 * MAP.w; }
+
+// Minimal TopoJSON → SVG path decoder (quantized, delta-encoded arcs) — no d3/topojson dependency
+function topoToPath(topo, objectName) {
+  const [sx, sy] = topo.transform.scale, [tx, ty] = topo.transform.translate;
+  const arcs = topo.arcs.map(arc => {
+    let x = 0, y = 0;
+    return arc.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; });
+  });
+  const ring = ids => {
+    const pts = [];
+    ids.forEach(id => {
+      const a = id < 0 ? arcs[~id].slice().reverse() : arcs[id];
+      a.forEach((p, k) => { if (k || !pts.length) pts.push(p); });
+    });
+    // Unwrap longitudes so rings crossing the antimeridian stay continuous, then draw a ±360° copy for the wrapped part
+    let shift = 0, min = Infinity, max = -Infinity;
+    const out = [];
+    pts.forEach(([lon, lat], k) => {
+      if (k) {
+        const d = lon - pts[k - 1][0];
+        if (d > 180) shift -= 360; else if (d < -180) shift += 360;
+      }
+      const L = lon + shift; min = Math.min(min, L); max = Math.max(max, L);
+      out.push([L, lat]);
+    });
+    const draw = off => 'M' + out.map(([lon, lat]) => `${mapX(lon + off).toFixed(1)},${mapY(lat).toFixed(1)}`).join('L') + 'Z';
+    return draw(0) + (max > 180 ? draw(-360) : '') + (min < -180 ? draw(360) : '');
+  };
+  const geoms = topo.objects[objectName].geometries || [topo.objects[objectName]];
+  return geoms.map(g =>
+    g.type === 'Polygon' ? g.arcs.map(ring).join('') :
+    g.type === 'MultiPolygon' ? g.arcs.map(poly => poly.map(ring).join('')).join('') : ''
+  ).join('');
+}
+
+// Night-side polygon from the sub-solar point (approximate, ignores equation of time)
+function nightPath(date = new Date()) {
+  const rad = Math.PI / 180;
+  const doy = Math.floor((date - Date.UTC(date.getUTCFullYear(), 0, 0)) / 86400000);
+  let decl = -23.44 * Math.cos(2 * Math.PI / 365 * (doy + 10));
+  if (Math.abs(decl) < 0.1) decl = decl < 0 ? -0.1 : 0.1;
+  const utcH = date.getUTCHours() + date.getUTCMinutes() / 60;
+  const sunLon = -(utcH - 12) * 15;
+  const pts = [];
+  for (let lon = -180; lon <= 180; lon += 4) {
+    const lat = Math.atan(-Math.cos((lon - sunLon) * rad) / Math.tan(decl * rad)) / rad;
+    pts.push(`${mapX(lon).toFixed(1)},${mapY(lat).toFixed(1)}`);
+  }
+  const edge = decl > 0 ? MAP.h + 40 : -40; // night wraps the pole in winter darkness
+  return `M0,${edge}L${pts.join('L')}L${MAP.w},${edge}Z`;
+}
+
+function renderWorldMap() {
+  const host = $('#worldMap');
+  if (!host) return;
+  const grid = [];
+  for (let lon = -150; lon <= 150; lon += 30) grid.push(`M${mapX(lon)},0V${MAP.h}`);
+  for (let lat = -30; lat <= 60; lat += 30) grid.push(`M0,${mapY(lat)}H${MAP.w}`);
+  const health = Object.fromEntries(customerStatuses().map(s => [s.customer.id, s.level]));
+  host.innerHTML = `
+    <svg class="map-svg" viewBox="0 0 ${MAP.w} ${MAP.h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <path class="map-grid" d="${grid.join('')}"/>
+      <path class="map-land" id="mapLand" d=""/>
+      <path class="map-night" id="mapNight" d="${nightPath()}"/>
+    </svg>
+    ${SITE.timezones.map((z, i) => {
+      const custs = zoneCustomers(z.id);
+      if (!custs.length) return '';
+      const level = custs.some(c => health[c.id] === 'bad') ? 'bad' : custs.every(c => health[c.id] === 'ok') ? 'ok' : 'warn';
+      const names = custs.map(c => c.name).join(', ');
+      return `<button type="button" class="map-pin ${level} ${esc(z.pos || 'right')}" data-goto="customers"
+          style="left:${(mapX(z.lon) / MAP.w * 100).toFixed(2)}%;top:${(mapY(z.lat) / MAP.h * 100).toFixed(2)}%"
+          title="${esc(`${names} — ${z.label} · ${LEVEL_TEXT[level]}`)}" aria-label="${esc(`${names}, ${z.label}, ${LEVEL_TEXT[level]}`)}">
+        <span class="pin-dot"></span>
+        <span class="pin-label"><strong>${esc(names)}</strong><span data-map-time="${i}">--:--</span></span>
+      </button>`;
+    }).join('')}`;
+  loadLand();
+  tickClocks();
+}
+let landPathCache = null;
+function loadLand() {
+  const el = $('#mapLand');
+  if (!el) return;
+  if (landPathCache) { el.setAttribute('d', landPathCache); return; }
+  fetch(SITE.worldMapUrl)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(topo => {
+      landPathCache = topoToPath(topo, 'land');
+      const cur = $('#mapLand');
+      if (cur) cur.setAttribute('d', landPathCache);
+    })
+    .catch(() => { const n = $('#mapNote'); if (n) n.textContent = 'Coastlines unavailable offline — pins and clocks still live.'; });
+}
+function tickWorldMap() {
+  const n = $('#mapNight');
+  if (n) n.setAttribute('d', nightPath());
 }
 
 // --- 9. Customers: Summary Table & 3-State Checklist Matrix ---
@@ -1450,14 +1631,42 @@ function customerStatuses() {
 function linkCell(url, text) {
   return url ? `<a href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(text)} ↗</a>` : '<span class="muted">—</span>';
 }
+function iconLink(url, ic, text, cls = '') {
+  return `<a class="ilink ${esc(cls)}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${icon(ic)}<span>${esc(text)}</span></a>`;
+}
+function customerUrls(c) {
+  const tam = c.tam || {};
+  return {
+    domain: c.domain ? `https://${c.domain}` : '',
+    git: c.git ? SITE.gitBase + c.git : '',
+    license: c.license ? SITE.licenseBase + encodeURIComponent(c.license) : '',
+    group: c.group ? `${SITE.slackBase}app_redirect?channel=${encodeURIComponent(c.group)}` : '',
+    tamSlack: tam.slack ? `${SITE.slackBase}team/${encodeURIComponent(tam.slack)}` : '',
+    tamPhone: tam.phone ? `tel:${String(tam.phone).replace(/[^\d+]/g, '')}` : '',
+    tamEmail: tam.email ? `mailto:${tam.email}` : ''
+  };
+}
+function tamActions(c) {
+  const u = customerUrls(c), tam = c.tam || {};
+  const btn = (url, ic, label, external) => url
+    ? `<a class="tam-btn" href="${esc(safeUrl(url))}" ${external ? 'target="_blank" rel="noopener noreferrer"' : ''} title="${esc(label)}" aria-label="${esc(`${c.manager}: ${label}`)}">${icon(ic)}</a>` : '';
+  return `<span class="tam-acts">${btn(u.tamSlack, 'slack', `Slack @${tam.slack}`, true)}${btn(u.tamPhone, 'phone', `Call ${tam.phone}`)}${btn(u.tamEmail, 'mail', `Email ${tam.email}`)}</span>`;
+}
+function licenseState(c) {
+  if (!c.licenseExpires) return { cls: 'ok', text: 'Active' };
+  const days = Math.ceil((new Date(c.licenseExpires + 'T23:59:59') - new Date()) / 86400000);
+  if (days < 0) return { cls: 'bad', text: 'Expired' };
+  if (days <= 30) return { cls: 'warn', text: `${days}d left` };
+  return { cls: 'ok', text: 'Active' };
+}
 function renderCustomers() {
   const cols = SITE.checklistColumns;
   $('#sec-customers').innerHTML = `
     <div class="section-head"><div><h2>Customers</h2><p>Environment overview and the per-shift health checklist.</p></div></div>
     <div class="card">
       <div class="card-title"><h3>Customer summary</h3><span class="small muted">${SITE.customers.length} accounts</span></div>
-      <div class="table-wrap"><table class="zebra"><thead><tr>
-        <th>Customer</th><th>Platforms</th><th>Vector</th><th>Link</th><th>Git</th><th>TAM</th><th>Group</th><th>Checklist</th>
+      <div class="table-wrap"><table class="zebra cust-table"><thead><tr>
+        <th>Customer</th><th>Platforms</th><th>Domain</th><th>Git</th><th>License</th><th>TAM</th><th>Group</th>
       </tr></thead><tbody id="custBody"></tbody></table></div>
     </div>
     <div class="card">
@@ -1510,20 +1719,21 @@ function saveMatrix() {
   store.set('matrixV2', state.matrix);
   store.set('matrixStamp', Date.now());
   paintCustomers();
+  renderWorldMap();
   updateBadges();
 }
 function paintCustomers() {
-  $('#custBody').innerHTML = customerStatuses().map(s => {
-    const c = s.customer;
+  const none = '<span class="muted">—</span>';
+  $('#custBody').innerHTML = SITE.customers.map(c => {
+    const lic = licenseState(c);
     return `<tr>
-      <td><strong>${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span><span class="cust-persona">${esc(c.hero)} · ${esc(c.persona)}</span></td>
+      <td><strong class="cust-name">${esc(c.name)}</strong> <span class="tier ${esc(c.tier)}">${esc(c.tier)}</span></td>
       <td>${(c.platforms || []).map(p => `<span class="plat plat-${esc(p.toLowerCase())}">${esc(p)}</span>`).join(' ')}</td>
-      <td>${(c.vectors || []).map(v => `<span class="vchip">${esc(v)}</span>`).join(' ')}</td>
-      <td>${linkCell(c.link, String(c.link || '').replace(/^https?:\/\//, ''))}</td>
-      <td>${c.git ? linkCell(SITE.gitBase + c.git, c.git) : '<span class="muted">—</span>'}</td>
-      <td>${esc(c.manager)}</td>
-      <td>${c.group ? linkCell(SITE.chatBase + encodeURIComponent(c.group.replace(/^#/, '')), c.group) : '<span class="muted">—</span>'}</td>
-      <td><span class="status ${s.level}" title="${esc(LEVEL_TEXT[s.level] + (s.issues.length ? ': ' + s.issues.join(', ') : ''))}">${s.issues.length ? `${s.issues.length} failed` : `${s.done}/${s.total}`}</span></td>
+      <td>${c.domain ? iconLink(customerUrls(c).domain, 'globe', c.domain) : none}</td>
+      <td>${c.git ? iconLink(customerUrls(c).git, 'git', c.git) : none}</td>
+      <td>${c.license ? `${iconLink(customerUrls(c).license, 'key', c.license, 'mono')}<span class="lic ${lic.cls}" title="Expires ${esc(c.licenseExpires || '—')}">${esc(lic.text)}</span>` : none}</td>
+      <td><div class="tam"><span>${esc(c.manager)}</span>${tamActions(c)}</div></td>
+      <td>${c.group ? iconLink(customerUrls(c).group, 'slack', '#' + c.group) : none}</td>
     </tr>`;
   }).join('');
   $('#mxBody').innerHTML = SITE.customers.map((c, r) => `
@@ -1864,7 +2074,7 @@ async function exportExcel() {
   const cols = SITE.versionColumns;
   const versionRows = id => (state.versions[id] || []).map(r => Object.fromEntries(cols.map(c => [c.label, r[c.key] ?? ''])));
   const matrixRows = customerStatuses().map(s => {
-    const row = { Customer: s.customer.name, Hero: s.customer.hero, Tier: s.customer.tier, TAM: s.customer.manager };
+    const row = { Customer: s.customer.name, Domain: s.customer.domain, Platforms: s.customer.platforms.join(' / '), Tier: s.customer.tier, TAM: s.customer.manager };
     SITE.checklistColumns.forEach((k, ci) => { row[k.label] = MX[mxGet(s.index, ci)].label; });
     row.Status = LEVEL_TEXT[s.level];
     return row;
@@ -2409,7 +2619,7 @@ function sdValid(v) {
 }
 function sdSave() { store.set('supportV1', state.support); }
 function sdCustomer(id) {
-  return SITE.customers.find(c => c.id === id) || { id, name: id, persona: id, tier: '—', platforms: [], vectors: [], manager: '—' };
+  return SITE.customers.find(c => c.id === id) || { id, name: id, persona: id, tier: '—', platforms: [], manager: '—' };
 }
 function sdTicket(id) { return state.support ? state.support.tickets.find(t => t.id === id) || null : null; }
 function sdLast(t) { return t.thread.length ? t.thread[t.thread.length - 1].at : t.createdAt; }
@@ -2713,18 +2923,21 @@ function sdPaintCust(t) {
   const healthLabel = health ? ({ ok: 'All checks green', warn: 'Checks in progress', bad: `Issues: ${health.issues.join(', ')}` })[health.level] : '—';
   const others = state.support.tickets.filter(x => x.customer === t.customer && x.id !== t.id && x.status !== 'resolved');
   const history = state.support.tickets.filter(x => x.customer === t.customer && x.id !== t.id && x.status === 'resolved');
+  const u = typeof customerUrls === 'function' ? customerUrls(c) : {};
+  const zone = SITE.timezones.find(z => z.id === c.zone);
   const links = [
-    c.link ? linkCell(c.link, 'Portal') : '',
-    c.git ? linkCell(SITE.gitBase + c.git, 'Git') : '',
-    c.group ? linkCell(SITE.chatBase + encodeURIComponent(c.group.replace(/^#/, '')), c.group) : ''
+    u.domain ? linkCell(u.domain, 'Domain') : '',
+    u.git ? linkCell(u.git, 'Git') : '',
+    u.license ? linkCell(u.license, 'License') : '',
+    u.group ? linkCell(u.group, '#' + c.group) : ''
   ].filter(Boolean);
   $('#sdCust').innerHTML = `
-    <div class="sd-cust-head">${sdAvatar(c.persona)}<div><strong>${esc(c.persona)}</strong><div class="small muted">${esc(c.name)}${c.hero ? ` · ${esc(c.hero)}` : ''}</div></div></div>
+    <div class="sd-cust-head">${sdAvatar(c.persona)}<div><strong>${esc(c.persona)}</strong><div class="small muted">${esc(c.name)}${c.domain ? ` · ${esc(c.domain)}` : ''}</div></div></div>
     <dl class="sd-facts">
       <div><dt>Tier</dt><dd>${esc(c.tier)}</dd></div>
       <div><dt>Platforms</dt><dd>${esc((c.platforms || []).join(' / ') || '—')}</dd></div>
-      <div><dt>Vectors</dt><dd>${esc((c.vectors || []).join(', ') || '—')}</dd></div>
-      <div><dt>TAM</dt><dd>${esc(c.manager || '—')}</dd></div>
+      <div><dt>Region</dt><dd>${esc(zone ? zone.label : '—')}</dd></div>
+      <div><dt>TAM</dt><dd>${esc(c.manager || '—')}${c.tam ? ` ${tamActions(c)}` : ''}</dd></div>
     </dl>
     ${health ? `<div><h4>Shift checklist</h4><span class="status ${esc(health.level)}">${esc(healthLabel)}</span></div>` : ''}
     ${links.length ? `<div class="row small">${links.join('')}</div>` : ''}
@@ -2840,7 +3053,7 @@ function paletteIndex() {
   const items = [];
   ALL_SECTIONS.forEach(s => items.push({ type: 'Section', label: s.label, sub: 'go to', run: () => showSection(s.id) }));
   SITE.shortcuts.forEach(sc => items.push({ type: 'Shortcut', label: sc.label, sub: sc.keys, kbd: true, run: () => ACTIONS[sc.action] && ACTIONS[sc.action]() }));
-  SITE.customers.forEach(c => items.push({ type: 'Customer', label: c.name, sub: `${c.hero} (${c.persona}) · ${c.platforms.join(' / ')} · TAM ${c.manager}`, run: () => showSection('customers') }));
+  SITE.customers.forEach(c => items.push({ type: 'Customer', label: c.name, sub: `${c.domain} · ${c.platforms.join(' / ')} · TAM ${c.manager}`, run: () => showSection('customers') }));
   (state.support ? state.support.tickets : []).forEach(t => items.push({ type: 'Ticket', label: t.subject, sub: `${t.id} · ${sdCustomer(t.customer).name} · ${SD_STATUS[t.status].label}`, run: () => { showSection('support'); sdSelect(t.id); } }));
   SITE.templates.forEach(t => items.push({ type: 'Template', label: t.title, sub: 'copy', run: () => copyTemplate(t.id) }));
   SITE.linkGroups.forEach(g => g.items.forEach(l => items.push({ type: 'Link', label: l.name, sub: `${g.group} · ${l.desc}`, run: () => window.open(safeUrl(l.url), '_blank', 'noopener') })));
@@ -3105,7 +3318,7 @@ function boot() {
     checkReminders();
     const now = new Date();
     if (now.getSeconds() === 0) {
-      updateHero(); renderStats(); tickSupport();
+      updateHero(); renderStats(); tickSupport(); tickWorldMap();
       const s = currentShift(now);
       if (s.id !== lastShift) { lastShift = s.id; toast(`${s.icon} ${s.name} shift has started`, 'info', 6000); paintShifts(); updateBadges(); }
     }

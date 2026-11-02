@@ -7,8 +7,9 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 | Area | What it does |
 |---|---|
 | **Dashboard** | Glowing hero banner, greeting that changes with the time of day and current shift, countdown to the next shift, live KPI cards |
-| **World clocks** | Clocks for each configured time zone, updated every second, with a business-hours indicator |
-| **Customers** | Summary table (platform tags, vector chips, license/Git/chat links, account manager) with zebra striping, plus a 3-state checklist matrix (None → ✓ → ✕) saved by row/column index, with column "✓ all" controls, Clear all, a live % badge in the sidebar and a copyable handoff report |
+| **World clocks** | 10 clocks (Israel, UK, Germany, US East/West, Brazil, India, China, Japan, Australia) updated every second, each showing its business-hours state and the customers based there |
+| **Customer world map** | Bottom of the Dashboard: coastlines decoded from a TopoJSON file by a ~25-line vanilla decoder (no d3), a live day/night terminator, and a pulsing pin per customer region whose colour follows checklist health (green / amber / red) with the local time |
+| **Customers** | Summary table (AWS/Azure platform tags, customer domain, Git repo, license key with expiry status, TAM with Slack / phone / email shortcuts, customer Slack channel) with zebra striping, plus a 3-state checklist matrix (None → ✓ → ✕) saved by row/column index, with column "✓ all" controls, Clear all, a live % badge in the sidebar and a copyable handoff report |
 | **Support Desk** | A ticket workspace for the same customers. It has 4 KPI cards with inline SVG sparklines (open tickets, first response, CSAT, escalations) and a queue with quick views (All / Mine / Urgent / Unassigned), status filter, search and sort. Each ticket shows a priority bar and a live SLA countdown. The conversation view holds customer messages, agent replies, internal notes and system events, plus quick-reply macros (`{name}`, `{customer}`, `{agent}`) and one saved draft per ticket. The customer panel shows tier, platforms, TAM, shift-checklist health and links. A toast fires when an SLA is breached, the sidebar badge turns red, and tickets are searchable from `Ctrl+K` |
 | **Shift tasks** | Four shift columns side by side; checked tasks show the time they were done and get struck through; a handoff generator combines tasks, the matrix and your notes |
 | **Templates** | Message cards you click to copy, with `{customer}`, `{service}`, `{ticket}` and `{time}` variable substitution and usage counters |
@@ -31,15 +32,16 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 
 Edit `SITE` in `index.html`:
 
-```js
+customers:    [{ id, name, persona, tier, platforms /* AWS | Azure */, domain, zone /* timezones id */, git, license, licenseExpires, manager /* TAM */, tam: { slack, phone, email }, group /* Slack channel */ }]
 customers:    [{ id, name, hero, persona, tier, platforms, vectors, link, git, manager /* TAM */, group }]
-gitBase / chatBase                       // prefixes that turn git: 'git/apex' and group: '#ops-apex' into links
+gitBase / licenseBase / slackBase       // prefixes that turn git, license, group (Slack channel) and tam.slack into links
+worldMapUrl                              // TopoJSON land file for the world map (fetched once)
 checklistColumns: [{ id, label }]
 versionTables / versionColumns / versions   // version-tracking tables + seed rows
 shifts:       [{ id, name, icon, start, end, tasks: [{ time, text }] }]
 support: { agent, macros: [{ id, label, body }], kpi, tickets: [{ id, customer /* SITE.customers id */, subject, priority, status, channel, tags, assignee, ageMin, slaInMin, thread }] }
 templates:    [{ id, title, tag, body }]   // use {customer} {service} {ticket} {time}
-timezones: [{ label, tz, primary }]      // primary = highlighted HQ clock
+timezones: [{ id, label, tz, lat, lon, pos, primary }]   // primary = HQ clock; lat/lon place the map pin, pos = label side
 themes: { id: label }                    // each id maps to a body.theme-<id> CSS block
 linkGroups / docs / commands / jokes / gallery
 shortcuts: [{ keys: 'Alt+N', label, action, global }]   // actions map to ACTIONS in block 21
