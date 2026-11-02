@@ -13,7 +13,7 @@ A single-file, zero-framework operations command center for NOC teams. One `inde
 | **Support Desk** | A ticket workspace for the same customers. It has 4 KPI cards with inline SVG sparklines (open tickets, first response, CSAT, escalations) and a queue with quick views (All / Mine / Urgent / Unassigned), status filter, search and sort. Each ticket shows a priority bar and a live SLA countdown. The conversation view holds customer messages, agent replies, internal notes and system events, plus quick-reply macros (`{name}`, `{customer}`, `{agent}`) and one saved draft per ticket. The customer panel shows tier, platforms, TAM, shift-checklist health and links. A toast fires when an SLA is breached, the sidebar badge turns red, and tickets are searchable from `Ctrl+K` |
 | **Shift tasks** | Four shift columns side by side; checked tasks show the time they were done and get struck through; a handoff generator combines tasks, the matrix and your notes |
 | **Templates** | Message cards you click to copy, with `{customer}`, `{service}`, `{ticket}` and `{time}` variable substitution and usage counters |
-| **Versions** | Android and iOS release tables with editable (`contenteditable`) cells; SheetJS loads only on the first export and produces a 3-sheet `.xlsx` (CSV if it can't load) |
+| **Cloud Environments** | Per-customer AWS and Azure deployment tables (environment, region, app version, Kubernetes, last deploy, status, notes) with editable (`contenteditable`) cells and a status dropdown. 4 live KPI cards, and cells are flagged automatically when Kubernetes is below the supported minor or a deploy is older than `envRules.staleDays`. SheetJS loads only on the first export and produces a 3-sheet `.xlsx` with a Risks column (CSV if it can't load) |
 | **Knowledge** | Link wall grouped by `SITE.linkGroups` (links open in a new tab); bookshelf of docs styled as book spines, where search dims the docs that don't match; terminal cheatsheet (logs, Docker, Kubernetes…) with a prompt, a copy button on every command and live filtering. The terminal stays dark in light mode |
 | **Utilities** | `Ctrl+K` command palette that searches sections, links, docs, commands, templates and shortcuts (arrow keys, Enter, Esc); a scratchpad you can drag, resize and that autosaves; one-off or repeating timers with a WebAudio triple beep, toasts with a snooze button, and live countdowns in the sidebar |
 | **Break room** | 2048 (keyboard and swipe) and Memory Match, both with saved best scores |
@@ -37,7 +37,8 @@ customers:    [{ id, name, hero, persona, tier, platforms, vectors, link, git, m
 gitBase / licenseBase / slackBase       // prefixes that turn git, license, group (Slack channel) and tam.slack into links
 worldMapUrl                              // TopoJSON land file for the world map (fetched once)
 checklistColumns: [{ id, label }]
-versionTables / versionColumns / versions   // version-tracking tables + seed rows
+envTables / envColumns / envStatuses / environments   // cloud environment tables + seed rows
+envRules: { k8sMinSupported, staleDays }            // risk-flag thresholds
 shifts:       [{ id, name, icon, start, end, tasks: [{ time, text }] }]
 support: { agent, macros: [{ id, label, body }], kpi, tickets: [{ id, customer /* SITE.customers id */, subject, priority, status, channel, tags, assignee, ageMin, slaInMin, thread }] }
 templates:    [{ id, title, tag, body }]   // use {customer} {service} {ticket} {time}

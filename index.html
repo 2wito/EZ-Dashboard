@@ -433,7 +433,7 @@ th.mx-head span { display: block; }
   width: 100%; min-height: 240px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; background: var(--surface-2);
 }
 
-/* ===== 10. Templates & Versions ===== */
+/* ===== 10. Templates & Cloud Environments ===== */
 .tpl {
   text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: transform .15s, border-color .15s; position: relative;
@@ -450,6 +450,22 @@ th.mx-head span { display: block; }
 .ver-table td[contenteditable]:hover { box-shadow: inset 0 0 0 1px var(--border); }
 .ver-table td[contenteditable]:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: rgba(var(--accent-rgb),.07); box-shadow: none; }
 .ver-table td[contenteditable]:empty::before { content: attr(data-placeholder); color: var(--muted); opacity: .45; }
+.env-table td.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.env-table td.env-flag { position: relative; font-weight: 600; }
+.env-table td.env-flag.warn { --flag: var(--warn); color: var(--warn); background: rgba(251,191,36,.10) !important; }
+.env-table td.env-flag.bad { --flag: var(--bad); color: var(--bad); background: rgba(248,113,113,.10) !important; }
+.env-table td.env-flag::after { content: "!"; display: inline-grid; place-items: center; width: 15px; height: 15px; margin-left: 6px; border-radius: 50%; font-size: 10.5px; font-weight: 800; color: #0b0d14; background: var(--flag); vertical-align: 1px; }
+.env-status { appearance: none; -webkit-appearance: none; border: 0; cursor: pointer; padding: 4px 12px; font: inherit; font-size: 12px; font-weight: 600; }
+.env-status:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.env-kpis .stat { cursor: default; }
+.env-kpi.ok .stat-value { color: var(--ok); }
+.env-kpi.warn .stat-value { color: var(--warn); }
+.env-kpi.bad .stat-value { color: var(--bad); }
+.env-kpi.info .stat-value { color: var(--accent); }
+.env-legend { margin-top: 4px; }
+.env-flag-key { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.env-flag-key.warn { background: var(--warn); }
+.env-flag-key.bad { background: var(--bad); }
 
 /* ===== 11. Links, Bookshelf, Terminal ===== */
 .link-wall h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 10px; }
@@ -840,7 +856,7 @@ th { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size
     <div class="page-section" id="sec-support"></div>
     <div class="page-section" id="sec-shifts"></div>
     <div class="page-section" id="sec-templates"></div>
-    <div class="page-section" id="sec-versions"></div>
+    <div class="page-section" id="sec-environments"></div>
     <div class="page-section" id="sec-links"></div>
     <div class="page-section" id="sec-docs"></div>
     <div class="page-section" id="sec-terminal"></div>
@@ -895,7 +911,7 @@ const SITE = {
       { id: 'support', label: 'Support Desk', icon: 'headset', badge: 'support' },
       { id: 'shifts', label: 'Shift Tasks', icon: 'checklist', badge: 'tasks' },
       { id: 'templates', label: 'Templates', icon: 'mail', badge: 'templates' },
-      { id: 'versions', label: 'Versions', icon: 'branch', badge: 'versions' }
+      { id: 'environments', label: 'Environments', icon: 'cloud', badge: 'envs' }
     ]},
     { group: 'Knowledge', items: [
       { id: 'links', label: 'Link Wall', icon: 'link', badge: 'links' },
@@ -985,35 +1001,38 @@ const SITE = {
     { id: 'ack', title: 'Ticket Acknowledged', tag: 'Support', body: 'Hello {customer},\n\nThank you for contacting us. Your request {ticket} has been received and assigned.\nWe will follow up shortly.\n\n— NOC Team' }
   ],
   sheetJsUrl: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
-  versionTables: [ { id: 'android', label: 'Android' }, { id: 'ios', label: 'iOS' } ],
-  versionColumns: [
+  envTables: [ { id: 'aws', label: 'AWS' }, { id: 'azure', label: 'Azure' } ],
+  envColumns: [
     { key: 'customer', label: 'Customer' },
-    { key: 'version', label: 'Version' },
-    { key: 'build', label: 'Build' },
-    { key: 'minOS', label: 'Min OS' },
-    { key: 'released', label: 'Released' },
+    { key: 'env', label: 'Environment' },
+    { key: 'region', label: 'Region', mono: true },
+    { key: 'version', label: 'App Version', mono: true },
+    { key: 'k8s', label: 'Kubernetes', mono: true },
+    { key: 'lastDeploy', label: 'Last Deploy' },
     { key: 'status', label: 'Status' },
     { key: 'notes', label: 'Notes' }
   ],
-  versions: {
-    android: [
-      { customer: 'Apex', version: '5.4.2', build: '50402', minOS: 'Android 9', released: '2026-10-20', status: 'Live', notes: 'Push token refresh fix' },
-      { customer: 'Citadel', version: '3.1.0', build: '31007', minOS: 'Android 10', released: '2026-10-02', status: 'Live', notes: '' },
-      { customer: 'Dominion', version: '7.0.0-rc2', build: '70002', minOS: 'Android 11', released: '2026-10-28', status: 'Staged rollout 20%', notes: 'Watch crash-free rate' },
-      { customer: 'Eclipse', version: '2.9.5', build: '29050', minOS: 'Android 9', released: '2026-09-15', status: 'Live', notes: '' },
-      { customer: 'Guardian', version: '4.2.1', build: '42010', minOS: 'Android 10', released: '2026-10-09', status: 'Live', notes: 'On-prem push relay' },
-      { customer: 'Hyperion', version: '6.0.3', build: '60030', minOS: 'Android 10', released: '2026-10-25', status: 'Live', notes: '' },
-      { customer: 'Juggernaut', version: '1.12.3', build: '11203', minOS: 'Android 8', released: '2026-08-30', status: 'Deprecated', notes: 'Force-update in December' }
+  envStatuses: ['Healthy', 'Deploying', 'Degraded', 'Maintenance'],
+  envRules: { k8sMinSupported: '1.31', staleDays: 30 }, // risk flags: older Kubernetes minor / no deploy for N days
+  environments: {
+    aws: [
+      { customer: 'Apex', env: 'Prod', region: 'us-east-1', version: '5.4.2', k8s: '1.33', lastDeploy: '2026-10-29', status: 'Healthy', notes: 'Primary · multi-AZ' },
+      { customer: 'Citadel', env: 'Prod', region: 'eu-central-1', version: '3.1.0', k8s: '1.32', lastDeploy: '2026-10-21', status: 'Healthy', notes: '' },
+      { customer: 'Dominion', env: 'Prod', region: 'us-west-2', version: '6.9.4', k8s: '1.32', lastDeploy: '2026-10-14', status: 'Healthy', notes: '' },
+      { customer: 'Dominion', env: 'Staging', region: 'us-west-2', version: '7.0.0-rc2', k8s: '1.33', lastDeploy: '2026-11-02', status: 'Deploying', notes: 'Canary 20% · watch error rate' },
+      { customer: 'Falcon', env: 'Prod', region: 'ap-northeast-1', version: '4.0.3', k8s: '1.30', lastDeploy: '2026-10-11', status: 'Healthy', notes: 'EKS upgrade planned' },
+      { customer: 'Guardian', env: 'Prod', region: 'il-central-1', version: '4.2.1', k8s: '1.32', lastDeploy: '2026-10-09', status: 'Healthy', notes: '' },
+      { customer: 'Hyperion', env: 'Prod', region: 'ap-south-1', version: '6.0.3', k8s: '1.33', lastDeploy: '2026-10-25', status: 'Healthy', notes: '' },
+      { customer: 'Juggernaut', env: 'Prod', region: 'ap-southeast-2', version: '1.12.3', k8s: '1.29', lastDeploy: '2026-08-30', status: 'Maintenance', notes: 'Legacy stack · migration in December' }
     ],
-    ios: [
-      { customer: 'Apex', version: '5.4.1', build: '1204', minOS: 'iOS 16', released: '2026-10-18', status: 'Live', notes: '' },
-      { customer: 'Beacon', version: '2.3.0', build: '512', minOS: 'iOS 15', released: '2026-09-21', status: 'Live', notes: 'Legacy-VM backend' },
-      { customer: 'Citadel', version: '3.1.0', build: '977', minOS: 'iOS 16', released: '2026-10-04', status: 'Live', notes: '' },
-      { customer: 'Dominion', version: '6.9.4', build: '2210', minOS: 'iOS 16', released: '2026-10-01', status: 'Live', notes: '' },
-      { customer: 'Falcon', version: '4.0.3', build: '881', minOS: 'iOS 17', released: '2026-10-11', status: 'In review', notes: 'App Store review pending' },
-      { customer: 'Guardian', version: '4.2.0', build: '734', minOS: 'iOS 16', released: '2026-10-07', status: 'Live', notes: '' },
-      { customer: 'Hyperion', version: '6.0.2', build: '1650', minOS: 'iOS 16', released: '2026-10-22', status: 'Live', notes: '' },
-      { customer: 'Infinitum', version: '1.8.7', build: '402', minOS: 'iOS 15', released: '2026-09-28', status: 'Live', notes: 'Parity with Android pending' }
+    azure: [
+      { customer: 'Apex', env: 'DR', region: 'eastus2', version: '5.4.2', k8s: '1.33', lastDeploy: '2026-10-29', status: 'Healthy', notes: 'Warm standby' },
+      { customer: 'Beacon', env: 'Prod', region: 'uksouth', version: '2.3.0', k8s: '1.31', lastDeploy: '2026-09-21', status: 'Degraded', notes: 'Node pool memory pressure' },
+      { customer: 'Citadel', env: 'DR', region: 'germanywestcentral', version: '3.1.0', k8s: '1.32', lastDeploy: '2026-10-21', status: 'Healthy', notes: '' },
+      { customer: 'Eclipse', env: 'Prod', region: 'brazilsouth', version: '2.9.5', k8s: '1.30', lastDeploy: '2026-09-15', status: 'Healthy', notes: '' },
+      { customer: 'Guardian', env: 'Staging', region: 'israelcentral', version: '4.3.0-beta', k8s: '1.33', lastDeploy: '2026-10-31', status: 'Healthy', notes: '' },
+      { customer: 'Hyperion', env: 'Prod', region: 'centralindia', version: '6.0.3', k8s: '1.33', lastDeploy: '2026-10-25', status: 'Healthy', notes: 'Active-active with AWS' },
+      { customer: 'Infinitum', env: 'Prod', region: 'chinaeast2', version: '1.8.7', k8s: '1.31', lastDeploy: '2026-10-28', status: 'Deploying', notes: 'AKS node image upgrade' }
     ]
   },
   linkGroups: [
@@ -1228,6 +1247,7 @@ const ICONS = {
   phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
   git: '<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 8v8M8 6h3a5 5 0 0 1 5 5"/>',
   key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+  cloud: '<path d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.1 4.5 4.5 0 0 0 7 18z"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
   slack: '<rect x="10" y="3" width="4" height="8" rx="2"/><rect x="3" y="10" width="8" height="4" rx="2"/><rect x="10" y="13" width="4" height="8" rx="2"/><rect x="13" y="10" width="8" height="4" rx="2"/>',
   smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>'
@@ -1322,7 +1342,7 @@ function updateBadges() {
     progress: `${mt.pct}%`,
     tasks: shiftRemaining(currentShift().id),
     templates: SITE.templates.length,
-    versions: versionCount(),
+    envs: envCount(),
     links: SITE.linkGroups.reduce((n, g) => n + g.items.length, 0),
     docs: SITE.docs.length,
     commands: SITE.commands.reduce((n, g) => n + g.items.length, 0),
@@ -1353,7 +1373,7 @@ const state = {
   matrix: store.get('matrixV2', {}), // keyed by "row-col" index
   shiftChecks: store.get('shiftChecks', {}),
   handoff: store.get('handoff', { engineer: '', incidents: '', escalations: '', notes: '' }),
-  versions: store.get('versionsV2', null) || seedVersions(),
+  envs: store.get('envsV1', null) || seedEnvs(),
   reminders: store.get('reminders', []),
   scratch: store.get('scratch', ''),
   tplVars: store.get('tplVars', { customer: '', service: '', ticket: '', time: '' })
@@ -1944,61 +1964,93 @@ function copyTemplate(id, card) {
   if (fresh) { fresh.classList.add('copied'); setTimeout(() => fresh.classList.remove('copied'), 900); }
 }
 
-// --- 12. App Version Tracking (contenteditable) & SheetJS Export ---
+// --- 12. Cloud Environments (contenteditable tracker, risk flags) & SheetJS Export ---
 const CE_MODE = (() => {
   const d = document.createElement('div');
   try { d.contentEditable = 'plaintext-only'; } catch { return 'true'; }
   return d.contentEditable === 'plaintext-only' ? 'plaintext-only' : 'true';
 })();
-let verSaveTimer = null;
+const ENV_STATUS_CLS = { Healthy: 'ok', Deploying: 'info', Degraded: 'bad', Maintenance: 'warn' };
+let envSaveTimer = null;
 let sheetJsPromise = null;
-function seedVersions() {
+function seedEnvs() {
   const out = {};
-  SITE.versionTables.forEach(t => { out[t.id] = (SITE.versions[t.id] || []).map(r => ({ id: uid(), ...r })); });
+  SITE.envTables.forEach(t => { out[t.id] = (SITE.environments[t.id] || []).map(r => ({ id: uid(), ...r })); });
   return out;
 }
-function versionCount() { return SITE.versionTables.reduce((n, t) => n + (state.versions[t.id] || []).length, 0); }
-function findVersion(plat, id) { return (state.versions[plat] || []).find(r => r.id === id); }
-function saveVersions() { clearTimeout(verSaveTimer); store.set('versionsV2', state.versions); updateBadges(); }
-function renderVersions() {
-  SITE.versionTables.forEach(t => { if (!Array.isArray(state.versions[t.id])) state.versions[t.id] = []; });
-  $('#sec-versions').innerHTML = `
+function allEnvRows() { return SITE.envTables.flatMap(t => (state.envs[t.id] || []).map(r => ({ cloud: t, row: r }))); }
+function envCount() { return allEnvRows().length; }
+function findEnv(cloud, id) { return (state.envs[cloud] || []).find(r => r.id === id); }
+function saveEnvs() { clearTimeout(envSaveTimer); store.set('envsV1', state.envs); updateBadges(); paintEnvKpis(); }
+function verParts(v) { return String(v || '').split('.').map(n => parseInt(n, 10) || 0); }
+function verLess(a, b) {
+  const x = verParts(a), y = verParts(b);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) < (y[i] || 0); }
+  return false;
+}
+// Risk flags per cell: outdated Kubernetes minor, deploys older than SITE.envRules.staleDays
+function envFlags(r) {
+  const f = {};
+  if (r.k8s && verLess(r.k8s, SITE.envRules.k8sMinSupported)) f.k8s = { cls: 'warn', tip: `Below supported Kubernetes ${SITE.envRules.k8sMinSupported}` };
+  const t = Date.parse(r.lastDeploy);
+  if (!Number.isNaN(t)) {
+    const days = Math.floor((Date.now() - t) / 86400000);
+    if (days > SITE.envRules.staleDays) f.lastDeploy = { cls: 'bad', tip: `No deploy for ${days} days` };
+  }
+  return f;
+}
+function envTotals() {
+  const rows = allEnvRows().map(x => x.row);
+  return {
+    total: rows.length,
+    healthy: rows.filter(r => r.status === 'Healthy').length,
+    deploying: rows.filter(r => r.status === 'Deploying').length,
+    degraded: rows.filter(r => r.status === 'Degraded' || r.status === 'Maintenance').length,
+    k8sOld: rows.filter(r => envFlags(r).k8s).length,
+    stale: rows.filter(r => envFlags(r).lastDeploy).length
+  };
+}
+function renderEnvironments() {
+  SITE.envTables.forEach(t => { if (!Array.isArray(state.envs[t.id])) state.envs[t.id] = []; });
+  $('#sec-environments').innerHTML = `
     <div class="section-head">
-      <div><h2>Version Tracking</h2><p>Click any cell to edit · <kbd>Enter</kbd> saves · <kbd>Esc</kbd> reverts. Changes persist automatically.</p></div>
+      <div><h2>Cloud Environments</h2><p>Per-customer deployments on AWS and Azure · click a cell to edit · <kbd>Enter</kbd> saves · <kbd>Esc</kbd> reverts.</p></div>
       <div class="row">
-        <div class="search-box" style="max-width:240px"><input id="verFilter" type="search" placeholder="Filter rows…" aria-label="Filter versions" data-page-search></div>
-        <button class="btn primary" type="button" id="verExport">⬇ Export to Excel</button>
+        <div class="search-box" style="max-width:240px"><input id="envFilter" type="search" placeholder="Filter rows…" aria-label="Filter environments" data-page-search></div>
+        <button class="btn primary" type="button" id="envExport">⬇ Export to Excel</button>
       </div>
     </div>
-    ${SITE.versionTables.map(t => `
+    <div class="stats env-kpis" id="envKpis"></div>
+    ${SITE.envTables.map(t => `
     <div class="card">
       <div class="card-title">
-        <h3><span class="plat plat-${esc(t.id)}">${esc(t.label)}</span> app versions</h3>
-        <div class="row"><span class="small muted" data-vcount="${esc(t.id)}"></span><button class="btn sm" type="button" data-vadd="${esc(t.id)}">+ Add row</button></div>
+        <h3><span class="plat plat-${esc(t.id)}">${esc(t.label)}</span> environments</h3>
+        <div class="row"><span class="small muted" data-ecount="${esc(t.id)}"></span><button class="btn sm" type="button" data-eadd="${esc(t.id)}">+ Add environment</button></div>
       </div>
-      <div class="table-wrap"><table class="zebra ver-table"><thead><tr>${SITE.versionColumns.map(c => `<th>${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
-        <tbody data-vbody="${esc(t.id)}"></tbody></table></div>
-    </div>`).join('')}`;
+      <div class="table-wrap"><table class="zebra ver-table env-table"><thead><tr>${SITE.envColumns.map(c => `<th>${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
+        <tbody data-ebody="${esc(t.id)}"></tbody></table></div>
+    </div>`).join('')}
+    <div class="legend env-legend"><span><span class="env-flag-key warn"></span>Kubernetes below ${esc(SITE.envRules.k8sMinSupported)}</span><span><span class="env-flag-key bad"></span>No deploy for &gt; ${esc(SITE.envRules.staleDays)} days</span></div>`;
 
-  const sec = $('#sec-versions');
+  const sec = $('#sec-environments');
   sec.addEventListener('focusin', e => { const td = e.target.closest('td[data-key]'); if (td) td.dataset.orig = td.textContent; });
   sec.addEventListener('input', e => {
     const td = e.target.closest('td[data-key]');
     if (!td) return;
-    const row = findVersion(td.dataset.plat, td.dataset.id);
+    const row = findEnv(td.dataset.cloud, td.dataset.id);
     if (!row) return;
     row[td.dataset.key] = td.textContent.trim();
-    clearTimeout(verSaveTimer);
-    verSaveTimer = setTimeout(saveVersions, 300);
+    clearTimeout(envSaveTimer);
+    envSaveTimer = setTimeout(saveEnvs, 300);
   });
   sec.addEventListener('focusout', e => {
     const td = e.target.closest('td[data-key]');
     if (!td) return;
     const clean = td.textContent.replace(/\s+/g, ' ').trim();
     if (td.textContent !== clean) td.textContent = clean;
-    const row = findVersion(td.dataset.plat, td.dataset.id);
-    if (row) row[td.dataset.key] = clean;
-    saveVersions();
+    const row = findEnv(td.dataset.cloud, td.dataset.id);
+    if (row) { row[td.dataset.key] = clean; flagRow(td.closest('tr'), row); }
+    saveEnvs();
   });
   sec.addEventListener('keydown', e => {
     const td = e.target.closest('td[data-key]');
@@ -2017,44 +2069,93 @@ function renderVersions() {
     const text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\s+/g, ' ');
     document.execCommand('insertText', false, text);
   });
+  sec.addEventListener('change', e => {
+    const sel = e.target.closest('select[data-estatus]');
+    if (!sel) return;
+    const [cloud, id] = sel.dataset.estatus.split('|');
+    const row = findEnv(cloud, id);
+    if (!row) return;
+    row.status = sel.value;
+    sel.className = `env-status status ${ENV_STATUS_CLS[sel.value] || 'info'}`;
+    saveEnvs();
+    toast(`${row.customer || 'Environment'} ${row.env || ''} → ${sel.value}`, ENV_STATUS_CLS[sel.value] === 'bad' ? 'warn' : 'ok');
+  });
   sec.addEventListener('click', e => {
-    const add = e.target.closest('[data-vadd]');
+    const add = e.target.closest('[data-eadd]');
     if (add) {
-      const plat = add.dataset.vadd;
+      const cloud = add.dataset.eadd;
       const row = { id: uid() };
-      SITE.versionColumns.forEach(c => { row[c.key] = ''; });
-      if ('released' in row) row.released = todayISO();
-      state.versions[plat].unshift(row);
-      $('#verFilter').value = '';
-      saveVersions(); paintVersions();
-      const first = $(`td[data-plat="${CSS.escape(plat)}"][data-id="${row.id}"]`);
+      SITE.envColumns.forEach(c => { row[c.key] = ''; });
+      row.env = 'Prod'; row.status = 'Deploying'; row.lastDeploy = todayISO();
+      state.envs[cloud].unshift(row);
+      $('#envFilter').value = '';
+      saveEnvs(); paintEnvironments();
+      const first = $(`td[data-cloud="${CSS.escape(cloud)}"][data-id="${row.id}"]`);
       if (first) first.focus();
       return;
     }
-    const del = e.target.closest('[data-vdel]');
+    const del = e.target.closest('[data-edel]');
     if (del) {
-      const [plat, id] = del.dataset.vdel.split('|');
-      state.versions[plat] = state.versions[plat].filter(r => r.id !== id);
-      saveVersions(); paintVersions();
-      toast('Row removed', 'warn');
+      const [cloud, id] = del.dataset.edel.split('|');
+      state.envs[cloud] = state.envs[cloud].filter(r => r.id !== id);
+      saveEnvs(); paintEnvironments();
+      toast('Environment removed', 'warn');
     }
   });
-  $('#verFilter').addEventListener('input', paintVersions);
-  $('#verExport').addEventListener('click', exportExcel);
-  paintVersions();
+  $('#envFilter').addEventListener('input', paintEnvironments);
+  $('#envExport').addEventListener('click', exportExcel);
+  paintEnvironments();
 }
-function paintVersions() {
-  const q = ($('#verFilter')?.value || '').toLowerCase().trim();
-  const cols = SITE.versionColumns;
-  SITE.versionTables.forEach(t => {
-    const rows = state.versions[t.id] || [];
-    const shown = rows.filter(r => !q || cols.some(c => String(r[c.key] ?? '').toLowerCase().includes(q)));
-    $(`[data-vbody="${CSS.escape(t.id)}"]`).innerHTML = shown.length ? shown.map(r => `<tr>
-      ${cols.map(c => `<td contenteditable="${CE_MODE}" spellcheck="false" data-plat="${esc(t.id)}" data-id="${esc(r.id)}" data-key="${esc(c.key)}" data-placeholder="${esc(c.label)}">${esc(r[c.key])}</td>`).join('')}
-      <td><button class="btn sm danger" type="button" data-vdel="${esc(t.id)}|${esc(r.id)}" aria-label="Delete row">✕</button></td></tr>`).join('')
-      : `<tr><td colspan="${cols.length + 1}"><div class="empty">${q ? 'No rows match the filter.' : 'No versions yet — add a row.'}</div></td></tr>`;
-    $(`[data-vcount="${CSS.escape(t.id)}"]`).textContent = `${rows.length} row${rows.length === 1 ? '' : 's'}`;
+function flagRow(tr, r) {
+  if (!tr) return;
+  const f = envFlags(r);
+  $$('td[data-key]', tr).forEach(td => {
+    const flag = f[td.dataset.key];
+    td.classList.remove('env-flag', 'warn', 'bad');
+    td.removeAttribute('title');
+    if (flag) { td.classList.add('env-flag', flag.cls); td.title = flag.tip; }
   });
+}
+function envCell(cloud, r, c) {
+  if (c.key === 'status') {
+    const opts = SITE.envStatuses.includes(r.status) || !r.status ? SITE.envStatuses : [r.status, ...SITE.envStatuses];
+    return `<td><select class="env-status status ${ENV_STATUS_CLS[r.status] || 'info'}" data-estatus="${esc(cloud)}|${esc(r.id)}" aria-label="${esc(`${r.customer} ${r.env} status`)}">
+      ${opts.map(s => `<option value="${esc(s)}" ${s === r.status ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></td>`;
+  }
+  const flag = envFlags(r)[c.key];
+  return `<td contenteditable="${CE_MODE}" spellcheck="false" class="${c.mono ? 'mono' : ''} ${flag ? `env-flag ${flag.cls}` : ''}" ${flag ? `title="${esc(flag.tip)}"` : ''}
+    data-cloud="${esc(cloud)}" data-id="${esc(r.id)}" data-key="${esc(c.key)}" data-placeholder="${esc(c.label)}">${esc(r[c.key])}</td>`;
+}
+function paintEnvironments() {
+  const q = ($('#envFilter')?.value || '').toLowerCase().trim();
+  const cols = SITE.envColumns;
+  SITE.envTables.forEach(t => {
+    const rows = state.envs[t.id] || [];
+    const shown = rows.filter(r => !q || cols.some(c => String(r[c.key] ?? '').toLowerCase().includes(q)));
+    $(`[data-ebody="${CSS.escape(t.id)}"]`).innerHTML = shown.length
+      ? shown.map(r => `<tr>${cols.map(c => envCell(t.id, r, c)).join('')}
+        <td><button class="btn sm danger" type="button" data-edel="${esc(t.id)}|${esc(r.id)}" aria-label="Delete environment">✕</button></td></tr>`).join('')
+      : `<tr><td colspan="${cols.length + 1}"><div class="empty">${q ? 'No environments match the filter.' : 'No environments yet — add one.'}</div></td></tr>`;
+    $(`[data-ecount="${CSS.escape(t.id)}"]`).textContent = `${rows.length} environment${rows.length === 1 ? '' : 's'}`;
+  });
+  paintEnvKpis();
+}
+function paintEnvKpis() {
+  const el = $('#envKpis');
+  if (!el) return;
+  const t = envTotals();
+  const card = (label, value, sub, cls, pct) => `
+    <div class="stat env-kpi ${cls}">
+      <div class="stat-label">${esc(label)}</div>
+      <div class="stat-value">${esc(value)}</div>
+      <div class="stat-sub">${esc(sub)}</div>
+      ${pct !== null ? `<div class="progress"><span style="width:${Math.round(pct)}%"></span></div>` : ''}
+    </div>`;
+  el.innerHTML =
+    card('Healthy environments', `${t.healthy}/${t.total}`, `${t.degraded} degraded or in maintenance`, t.degraded ? 'warn' : 'ok', t.total ? t.healthy / t.total * 100 : 0) +
+    card('Deploying now', t.deploying, t.deploying ? 'rollouts in progress' : 'no active rollouts', 'info', null) +
+    card('Outdated Kubernetes', t.k8sOld, `below ${SITE.envRules.k8sMinSupported}`, t.k8sOld ? 'warn' : 'ok', null) +
+    card('Stale deployments', t.stale, `no deploy > ${SITE.envRules.staleDays} days`, t.stale ? 'bad' : 'ok', null);
 }
 function loadSheetJS() {
   if (window.XLSX) return Promise.resolve(window.XLSX);
@@ -2071,30 +2172,33 @@ function loadSheetJS() {
   return sheetJsPromise;
 }
 async function exportExcel() {
-  const cols = SITE.versionColumns;
-  const versionRows = id => (state.versions[id] || []).map(r => Object.fromEntries(cols.map(c => [c.label, r[c.key] ?? ''])));
+  const cols = SITE.envColumns;
+  const envRows = id => (state.envs[id] || []).map(r => {
+    const f = envFlags(r);
+    return { ...Object.fromEntries(cols.map(c => [c.label, r[c.key] ?? ''])), Risks: Object.values(f).map(x => x.tip).join('; ') };
+  });
   const matrixRows = customerStatuses().map(s => {
     const row = { Customer: s.customer.name, Domain: s.customer.domain, Platforms: s.customer.platforms.join(' / '), Tier: s.customer.tier, TAM: s.customer.manager };
     SITE.checklistColumns.forEach((k, ci) => { row[k.label] = MX[mxGet(s.index, ci)].label; });
     row.Status = LEVEL_TEXT[s.level];
     return row;
   });
-  const fname = `noc-versions-${todayISO()}`;
+  const fname = `noc-environments-${todayISO()}`;
   try {
     if (!window.XLSX) toast('Loading SheetJS…');
     const X = await loadSheetJS();
     const wb = X.utils.book_new();
-    SITE.versionTables.forEach(t => {
-      const ws = X.utils.json_to_sheet(versionRows(t.id), { header: cols.map(c => c.label) });
-      ws['!cols'] = cols.map(c => ({ wch: c.key === 'notes' ? 36 : Math.max(c.label.length + 4, 14) }));
+    SITE.envTables.forEach(t => {
+      const ws = X.utils.json_to_sheet(envRows(t.id), { header: [...cols.map(c => c.label), 'Risks'] });
+      ws['!cols'] = [...cols.map(c => ({ wch: c.key === 'notes' ? 36 : Math.max(c.label.length + 4, 14) })), { wch: 40 }];
       X.utils.book_append_sheet(wb, ws, t.label.slice(0, 31));
     });
     X.utils.book_append_sheet(wb, X.utils.json_to_sheet(matrixRows), 'Checklist Matrix');
     X.writeFile(wb, `${fname}.xlsx`);
     toast('Excel file exported', 'ok');
   } catch {
-    const header = ['Platform', ...cols.map(c => c.label)];
-    const lines = SITE.versionTables.flatMap(t => (state.versions[t.id] || []).map(r => [t.label, ...cols.map(c => r[c.key] ?? '')]));
+    const header = ['Cloud', ...cols.map(c => c.label)];
+    const lines = allEnvRows().map(({ cloud, row }) => [cloud.label, ...cols.map(c => row[c.key] ?? '')]);
     const csv = [header, ...lines].map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
@@ -3062,7 +3166,7 @@ function paletteIndex() {
   Object.entries(SITE.themes).forEach(([id, label]) => items.push({ type: 'Theme', label: `Theme: ${label}`, sub: '', run: () => { $('#themeSelect').value = id; applyTheme(id); } }));
   items.push({ type: 'Action', label: 'Generate shift handoff', sub: '', run: () => { showSection('shifts'); $('#hoGen').click(); } });
   items.push({ type: 'Action', label: 'Generate checklist report', sub: '', run: () => { showSection('customers'); $('#mxReport').click(); } });
-  items.push({ type: 'Action', label: 'Export versions to Excel', sub: '', run: exportExcel });
+  items.push({ type: 'Action', label: 'Export environments to Excel', sub: '', run: exportExcel });
   items.push({ type: 'Action', label: 'Reset Support Desk demo data', sub: '', run: () => { showSection('support'); sdReset(); } });
   return items;
 }
@@ -3286,7 +3390,7 @@ function boot() {
   renderSupport();
   renderShifts();
   renderTemplates();
-  renderVersions();
+  renderEnvironments();
   renderLinks();
   renderDocs();
   renderTerminal();
